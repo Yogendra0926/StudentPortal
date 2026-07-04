@@ -3,27 +3,32 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 import pymysql
 import pymysql.cursors
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'super_secret_key_student_portal'
+app.secret_key = os.getenv("SECRET_KEY")
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads')
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Database Connection Helper
-# Database Connection Helper using PyMySQL
 def get_db_connection():
     try:
         conn = pymysql.connect(
-            host='localhost',
-            user='root',         # Ensure this matches your MySQL username
-            password='Yoge@2006',         # Add your password here if you set one
-            database='student_portal',
-            cursorclass=pymysql.cursors.DictCursor,  # Returns rows as dictionaries automatically
-            autocommit=True      # Automatically saves changes like attendance/assignments
-        )
+    host=os.getenv("DB_HOST"),
+    port=int(os.getenv("DB_PORT")),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    database=os.getenv("DB_NAME"),
+    cursorclass=pymysql.cursors.DictCursor,
+    autocommit=True,
+    ssl=True
+)
         return conn
     except pymysql.MySQLError as e:
-        print(f"Error connecting to MySQL via PyMySQL: {e}")
+        print(f"Database Error: {e}")
         return None
 
 # --- AUTHENTICATION MODULE ---
@@ -36,7 +41,10 @@ def login():
         password = request.form['password']
         
         conn = get_db_connection()
-        cursor = conn.cursor()
+        if conn is None:
+            flash("Database Connection failed!","danger")
+            return redirect(url_for("login"))
+        cursor=conn.cursor()
         cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
         user = cursor.fetchone()
         cursor.close()
@@ -74,6 +82,9 @@ def student_attendance():
         
     student_id = session['user_id']
     conn = get_db_connection()
+    if conn is None:
+        flash("Database Connection Failed!", "danger")
+        return redirect(url_for("login"))
     cursor = conn.cursor()
     
     # Detailed log
@@ -116,6 +127,9 @@ def student_assignments():
         
     student_id = session['user_id']
     conn = get_db_connection()
+    if conn is None:
+        flash("Database Connection Failed!", "danger")
+        return redirect(url_for("login"))
     cursor = conn.cursor()
     
     if request.method == 'POST' and 'file' in request.files:
@@ -159,6 +173,9 @@ def admin_portal():
         return redirect(url_for('login'))
         
     conn = get_db_connection()
+    if conn is None:
+        flash("Database Connection Failed!", "danger")
+        return redirect(url_for("login"))
     cursor = conn.cursor()
     
     # Fetch students for attendance tab
@@ -199,6 +216,9 @@ def save_attendance():
     marked_by = session['name']
     
     conn = get_db_connection()
+    if conn is None:
+        flash("Database Connection Failed!", "danger")
+        return redirect(url_for("login"))
     cursor = conn.cursor()
     cursor.execute("SELECT id FROM users WHERE role = 'student'")
     students = cursor.fetchall()
@@ -229,6 +249,9 @@ def create_assignment():
     description = request.form['description']
     
     conn = get_db_connection()
+    if conn is None:
+        flash("Database Connection Failed!", "danger")
+        return redirect(url_for("login"))
     cursor = conn.cursor()
     cursor.execute("""
         INSERT INTO assignments (title, course_code, description, max_marks, deadline)
@@ -251,6 +274,9 @@ def grade_submission():
     assign_id = request.form['assign_id']
     
     conn = get_db_connection()
+    if conn is None:
+         flash("Database Connection Failed!", "danger")
+         return redirect(url_for("login"))
     cursor = conn.cursor()
     cursor.execute("UPDATE assignment_submissions SET marks_awarded = %s WHERE submission_id = %s", (marks, submission_id))
     conn.commit()
@@ -260,5 +286,5 @@ def grade_submission():
     flash("Grade updated!", "success")
     return redirect(url_for('admin_portal', assign_id=assign_id))
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+if __name__ == "__main__":
+    app.run(debug=False)

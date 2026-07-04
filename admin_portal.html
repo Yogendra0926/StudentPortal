@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-container">
+    <div class="admin-tabs">
+        <button class="tab-btn active" onclick="switchTab('attendance')">ATTENDANCE</button>
+        <button class="tab-btn" onclick="switchTab('create_assign')">CREATE ASSIGNMENTS</button>
+        <button class="tab-btn" onclick="switchTab('review_assign')">REVIEW SUBMISSIONS</button>
+    </div>
+
+    <div id="tab-attendance" class="tab-content active">
+        <div class="section-card">
+            <h3>Daily Attendance</h3>
+            <form action="{{ url_for('save_attendance') }}" method="POST">
+                <div class="filter-bar">
+                    <select name="course_code" class="form-control w-auto">
+                        <option value="CSP0101">CSP0101</option>
+                        <option value="CSP0102">CSP0102</option>
+                        <option value="CSL0109[T]">CSL0109[T]</option>
+                        <option value="CSL0105[T]">CSL0105[T]</option>
+                    </select>
+                    <input type="date" name="date" class="form-control w-auto" value="{{ datetime.now().strftime('%Y-%m-%d') }}" required>
+                    <button type="button" class="btn-blue">Fetch Students</button>
+                </div>
+                <table class="data-table mt-3">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>NAME</th>
+                            <th>PRESENT?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>{{ student.id }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>
+                                <input type="checkbox" name="present_{{ student.id }}" value="1" checked class="custom-checkbox">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="submit" class="btn-green mt-3">Save Attendance</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="tab-create_assign" class="tab-content" style="display: none;">
+        <div class="section-card max-w-lg">
+            <h3>Create New Assignment</h3>
+            <form action="{{ url_for('create_assignment') }}" method="POST" class="form-grid">
+                <div class="form-group">
+                    <label>Assignment Title</label>
+                    <input type="text" name="title" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Max Marks</label>
+                    <input type="number" name="max_marks" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Course Code</label>
+                    <select name="course_code" class="form-control">
+                        <option value="CSP0101">CSP0101</option>
+                        <option value="CSP0102">CSP0102</option>
+                        <option value="CSL0109[T]">CSL0109[T]</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Submission Deadline</label>
+                    <input type="datetime-local" name="deadline" class="form-control" required>
+                </div>
+                <div class="form-group col-span-2">
+                    <label>Instructions</label>
+                    <textarea name="description" rows="4" class="form-control" required></textarea>
+                </div>
+                <div class="col-span-2">
+                    <button type="submit" class="btn-purple">Publish Assignment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="tab-review_assign" class="tab-content" style="display: none;">
+        <div class="section-card">
+            <h3>Review & Grade Submissions</h3>
+            <form method="GET" action="{{ url_for('admin_portal') }}" class="filter-bar mb-3">
+                <label class="font-weight-bold">Select Assignment:</label>
+                <select name="assign_id" class="form-control w-auto" onchange="this.form.submit()">
+                    <option value="">-- Choose Assignment --</option>
+                    {% for assign in assignments %}
+                        <option value="{{ assign.id }}" {{ 'selected' if assign.id|string == selected_assign_id|string }}>
+                            {{ assign.course_code }} - {{ assign.title }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+
+            {% if submissions %}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>STUDENT ID</th>
+                        <th>NAME</th>
+                        <th>SUBMISSION DATE</th>
+                        <th>FILE</th>
+                        <th>GRADING</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in submissions %}
+                    <tr>
+                        <td>{{ sub.student_id }}</td>
+                        <td>{{ sub.name }}</td>
+                        <td>{{ sub.submitted_at }}</td>
+                        <td>
+                            <a href="{{ url_for('serve_file', filename=sub.submission_link.split('/')[-1]) }}" target="_blank" class="btn-red-sm">
+                                <i class="fa-solid fa-file-pdf"></i> View PDF
+                            </a>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('grade_submission') }}" method="POST" class="inline-flex">
+                                <input type="hidden" name="submission_id" value="{{ sub.submission_id }}">
+                                <input type="hidden" name="assign_id" value="{{ selected_assign_id }}">
+                                <input type="number" name="marks" value="{{ sub.marks_awarded if sub.marks_awarded is not none else '' }}" class="form-control grade-input" max="{{ sub.max_marks }}" required>
+                                <span>/ {{ sub.max_marks }}</span>
+                                <button type="submit" class="btn-orange-sm ml-2"><i class="fa-solid fa-pen"></i> Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% elif selected_assign_id %}
+                <p class="text-muted">No submissions found for this assignment.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
