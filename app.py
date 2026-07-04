@@ -159,6 +159,58 @@ def student_assignments():
     cursor.close()
     conn.close()
     return render_template('student_assignments.html', assignments=assignments)
+@app.route("/internal_marks")
+def internal_marks():
+
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    student_id = session['user_id']
+
+    selected_type = request.args.get("type")
+
+    marks = []
+
+    if selected_type:
+
+        allowed_columns = {
+            "class_participation": "class_participation",
+            "progressive_eval": "progressive_eval",
+            "internal_viva": "internal_viva",
+            "mid_term_1": "mid_term_1",
+            "mid_term_2": "mid_term_2"
+        }
+
+        if selected_type in allowed_columns:
+
+            conn = get_db_connection()
+
+            if conn is None:
+                flash("Database Connection Failed!", "danger")
+                return redirect(url_for("student_attendance"))
+
+            cursor = conn.cursor()
+
+            query = f"""
+                SELECT
+                    course_code,
+                    {allowed_columns[selected_type]} AS marks
+                FROM phase1_marks
+                WHERE student_id=%s
+            """
+
+            cursor.execute(query, (student_id,))
+
+            marks = cursor.fetchall()
+
+            cursor.close()
+            conn.close()
+
+    return render_template(
+        "internal_marks.html",
+        marks=marks,
+        selected_type=selected_type
+    )
 
 @app.route('/uploads/<filename>')
 def serve_file(filename):

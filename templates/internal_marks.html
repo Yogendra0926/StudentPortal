@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Internal Marks{% endblock %}
+
+{% block content %}
+
+<div class="internal-container">
+
+    <div class="internal-card">
+
+        <div class="internal-header">
+
+            <h2>
+                <i class="fas fa-file-alt"></i>
+                Phase-1 Assessment
+            </h2>
+
+            <p>
+                Select the evaluation component to view your internal marks.
+            </p>
+
+        </div>
+
+        <div class="internal-body">
+
+            <!-- Dropdown -->
+
+            <form method="GET" action="{{ url_for('internal_marks') }}">
+
+                <select class="internal-select"
+                        name="type"
+                        onchange="this.form.submit()">
+
+                    <option value="">-- Select Evaluation Head --</option>
+
+                    <option value="class_participation"
+                        {% if selected_type=="class_participation" %}selected{% endif %}>
+                        📘 Class Participation
+                    </option>
+
+                    <option value="progressive_eval"
+                        {% if selected_type=="progressive_eval" %}selected{% endif %}>
+                        📊 Progressive Evaluation
+                    </option>
+
+                    <option value="internal_viva"
+                        {% if selected_type=="internal_viva" %}selected{% endif %}>
+                        🎤 Internal Viva
+                    </option>
+
+                    <option value="mid_term_1"
+                        {% if selected_type=="mid_term_1" %}selected{% endif %}>
+                        📝 Mid Term-1
+                    </option>
+
+                    <option value="mid_term_2"
+                        {% if selected_type=="mid_term_2" %}selected{% endif %}>
+                        📝 Mid Term-2
+                    </option>
+
+                </select>
+
+            </form>
+
+            {% if selected_type %}
+
+            <table class="internal-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Course Code</th>
+
+                        <th>Marks</th>
+
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% if marks %}
+
+                    {% for row in marks %}
+
+                    <tr>
+
+                        <td>{{ loop.index }}</td>
+
+                        <td>
+                            <strong>{{ row.course_code }}</strong>
+                        </td>
+
+                        <td>
+
+                            {% if row.marks is not none %}
+
+                                <span class="mark">
+                                    {{ row.marks }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="status-poor">
+                                    Not Uploaded
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if row.marks is none %}
+
+                                <span class="status-poor">
+                                    Pending
+                                </span>
+
+                            {% elif row.marks >= 18 %}
+
+                                <span class="status-good">
+                                    Excellent ⭐
+                                </span>
+
+                            {% elif row.marks >= 12 %}
+
+                                <span class="status-average">
+                                    Good 👍
+                                </span>
+
+                            {% else %}
+
+                                <span class="status-poor">
+                                    Needs Improvement
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <tr>
+
+                        <td colspan="4">
+
+                            <div class="empty">
+
+                                <i class="fas fa-folder-open"></i>
+
+                                <h3>No Marks Available</h3>
+
+                                <p>Your faculty has not uploaded marks yet.</p>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endif %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+            <div class="empty">
+
+                <i class="fas fa-folder-open"></i>
+
+                <h3>Select Evaluation Component</h3>
+
+                <p>
+                    Choose an evaluation head from the dropdown to view your marks.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
