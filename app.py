@@ -24,7 +24,6 @@ def get_db_connection():
     database=os.getenv("DB_NAME"),
     cursorclass=pymysql.cursors.DictCursor,
     autocommit=True,
-    ssl=True
 )
         return conn
     except pymysql.MySQLError as e:
