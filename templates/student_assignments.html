@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="assignments-section">
+    <h2 class="page-title">My Assignments</h2>
+    <div class="assignments-grid">
+        {% for assign in assignments %}
+        <div class="assign-card">
+            <div class="assign-header">
+                <span class="course-badge">{{ assign.course_code }}</span>
+                <span class="max-marks">Max Marks: {{ assign.max_marks }}</span>
+            </div>
+            <h3 class="assign-title">{{ assign.title }}</h3>
+            
+            {% if assign.submission_id %}
+                <div class="status-badge status-submitted"><i class="fa-solid fa-check"></i> SUBMITTED</div>
+            {% else %}
+                <div class="status-badge status-pending"><i class="fa-solid fa-clock"></i> PENDING</div>
+            {% endif %}
+
+            <div class="deadline-box">
+                <i class="fa-regular fa-calendar-xmark"></i> Deadline: {{ assign.deadline.strftime('%d %b %Y, %I:%M %p') if assign.deadline else 'N/A' }}
+            </div>
+            
+            <p class="assign-desc">{{ assign.description }}</p>
+            <hr class="divider">
+
+            {% if assign.submission_id %}
+                <div class="submission-details">
+                    <span class="file-status"><i class="fa-solid fa-file-pdf"></i> File Submitted</span>
+                    <a href="{{ url_for('serve_file', filename=assign.submission_link.split('/')[-1]) }}" target="_blank" class="btn-dark-sm">
+                        <i class="fa-solid fa-eye"></i> View My PDF
+                    </a>
+                </div>
+                <div class="score-box">
+                    Score: {{ assign.marks_awarded if assign.marks_awarded is not none else 'Not Graded' }} / {{ assign.max_marks }}
+                </div>
+            {% else %}
+                <form action="{{ url_for('student_assignments') }}" method="POST" enctype="multipart/form-data" class="upload-form">
+                    <input type="hidden" name="assignment_id" value="{{ assign.id }}">
+                    <input type="file" name="file" accept=".pdf" required class="file-input">
+                    <button type="submit" class="btn-primary btn-full"><i class="fa-solid fa-upload"></i> Upload Solution (PDF)</button>
+                </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
