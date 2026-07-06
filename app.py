@@ -59,9 +59,9 @@ def login():
             
             # Use the safe variable here instead of user['role']
             if user_role == 'admin':
-                return redirect(url_for('admin_portal'))
+             return redirect(url_for('admin_portal'))
             else:
-                return redirect(url_for('student_attendance'))
+             return redirect(url_for('home'))
         else:
             flash('Invalid Username or Password!', 'danger')
             
@@ -73,6 +73,64 @@ def logout():
     return redirect(url_for('login'))
 
 # --- STUDENT MODULE ---
+@app.route("/home")
+def home():
+
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    student_id = session['user_id']
+
+    conn = get_db_connection()
+
+    if conn is None:
+        flash("Database Connection Failed!", "danger")
+        return redirect(url_for('login'))
+
+    cursor = conn.cursor()
+
+    # Attendance Statistics
+    cursor.execute("""
+        SELECT
+            COUNT(*) AS total,
+            SUM(status='P') AS present
+        FROM attendance_phase1
+        WHERE student_id=%s
+    """, (student_id,))
+
+    attendance_data = cursor.fetchone()
+
+    total = attendance_data["total"] or 0
+    present = attendance_data["present"] or 0
+
+    attendance = round((present / total) * 100) if total > 0 else 0
+
+    # Total Assignments
+    cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM assignments
+    """)
+
+    assignments = cursor.fetchone()["total"]
+
+    # Internal Marks Subjects
+    cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM phase1_marks
+        WHERE student_id=%s
+    """, (student_id,))
+
+    marks = cursor.fetchone()["total"]
+
+    cursor.close()
+    conn.close()
+
+    return render_template(
+        "home.html",
+        attendance=attendance,
+        assignments=assignments,
+        marks=marks
+    )
 
 @app.route('/attendance')
 def student_attendance():
@@ -159,6 +217,50 @@ def student_assignments():
     cursor.close()
     conn.close()
     return render_template('student_assignments.html', assignments=assignments)
+@app.route('/announcements')
+def announcements():
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    webinars = [
+        {
+            "title": "Data Analytics using Python",
+            "date": "18 July 2026",
+            "time": "4:00 PM - 6:30 PM",
+            "credits": 1,
+            "icon": "fa-chart-line",
+            "color": "blue"
+        },
+        {
+            "title": "Web Development",
+            "date": "26 July 2026",
+            "time": "4:00 PM - 7:00 PM",
+            "credits": 1,
+            "icon": "fa-code",
+            "color": "green"
+        },
+        {
+            "title": "AI Tools & Technologies",
+            "date": "30 July 2026",
+            "time": "8:00 PM - 9:30 PM",
+            "credits": 1,
+            "icon": "fa-robot",
+            "color": "purple"
+        },
+        {
+            "title": "API Creation & Integration",
+            "date": "02 August 2026",
+            "time": "7:30 PM - 9:30 PM",
+            "credits": 1,
+            "icon": "fa-plug",
+            "color": "orange"
+        }
+    ]
+
+    return render_template(
+        "announcement.html",
+        webinars=webinars
+    )
 @app.route("/internal_marks")
 def internal_marks():
 

@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<div class="dashboard">
+
+    <!-- Hero Section -->
+    <div class="hero">
+
+        <h1>👋 Welcome Back, {{ session.name }}</h1>
+
+        <p>University Student Portal</p>
+
+        <div class="hero-info">
+
+            <div class="info-box">
+                <i class="fas fa-calendar"></i>
+                <span id="todayDate"></span>
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-clock"></i>
+                <span id="clock"></span>
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-layer-group"></i>
+                <span>Phase - 1</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Statistics -->
+
+    <div class="stats">
+
+        <div class="card">
+            <i class="fas fa-chart-pie"></i>
+            <h2>{{ attendance }}%</h2>
+            <p>Attendance</p>
+        </div>
+
+        <div class="card">
+            <i class="fas fa-book"></i>
+            <h2>{{ assignments }}</h2>
+            <p>Assignments</p>
+        </div>
+
+        <div class="card">
+            <i class="fas fa-square-poll-vertical"></i>
+            <h2>{{ marks }}</h2>
+            <p>Internal Marks</p>
+        </div>
+
+        <div class="card">
+            <i class="fas fa-bullhorn"></i>
+            <h2>4</h2>
+            <p>Announcements</p>
+        </div>
+
+    </div>
+
+    <!-- Announcement -->
+
+    <div class="announcement">
+
+        <h2>📢 Latest Announcement</h2>
+
+        <h3>🔥 Data Analytics using Python</h3>
+
+        <p>
+            📅 18 July 2026 |
+            🕓 4:00 PM - 6:30 PM |
+            ⭐ Credit : 1
+        </p>
+
+    </div>
+
+    <!-- Quick Access -->
+
+    <div class="quick-access">
+
+        <h2>⚡ Quick Access</h2>
+
+        <div class="buttons">
+
+            <a href="{{ url_for('student_attendance') }}">Attendance</a>
+
+            <a href="{{ url_for('student_assignments') }}">Assignments</a>
+
+            <a href="{{ url_for('internal_marks') }}">Internal Marks</a>
+
+            <a href="{{ url_for('announcements') }}">Announcements</a>
+
+        </div>
+
+    </div>
+
+    <!-- Attendance -->
+
+    <div class="progress-card">
+
+        <h2>📈 Attendance Progress</h2>
+
+        <div class="progress">
+
+            <div class="progress-fill"
+                 style="width:{{ attendance }}%">
+                {{ attendance }}%
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Quote -->
+
+    <div class="quote">
+
+        <i class="fas fa-quote-left"></i>
+
+        <p>
+
+            Success is the sum of small efforts repeated every day.
+
+        </p>
+
+    </div>
+
+</div>
+
+<script>
+
+function updateClock(){
+
+    let now=new Date();
+
+    document.getElementById("clock").innerHTML=
+    now.toLocaleTimeString();
+
+    document.getElementById("todayDate").innerHTML=
+    now.toDateString();
+
+}
+
+setInterval(updateClock,1000);
+
+updateClock();
+
+</script>
+
+{% endblock %}

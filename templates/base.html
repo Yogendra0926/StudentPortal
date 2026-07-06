@@ -18,12 +18,22 @@
         </div>
         <div class="nav-links">
             {% if session.role == 'student' %}
+                <a href="{{ url_for('home') }}"
+class="{{ 'active' if request.endpoint=='home' }}">
+<i class="fa-solid fa-house"></i>
+Home
+</a>
                 <a href="{{ url_for('student_attendance') }}" class="{{ 'active' if request.endpoint == 'student_attendance' }}"><i class="fa-solid fa-chart-pie"></i> Attendance</a>
                 <a href="{{ url_for('student_assignments') }}" class="{{ 'active' if request.endpoint == 'student_assignments' }}"><i class="fa-solid fa-book"></i> My Assignments</a>
                 <a href="{{ url_for('internal_marks') }}"
        class="{{ 'active' if request.endpoint == 'internal_marks' }}">
         <i class="fa-solid fa-file-lines"></i> Internal Marks
     </a>
+    <a href="{{ url_for('announcements') }}"
+class="{{ 'active' if request.endpoint=='announcements' }}">
+<i class="fa-solid fa-bullhorn"></i>
+Announcements
+</a>
             {% else %}
                 <a href="{{ url_for('admin_portal') }}" class="active"><i class="fa-solid fa-bars-progress"></i> Dashboard</a>
             {% endif %}

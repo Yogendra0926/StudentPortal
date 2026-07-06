@@ -481,3 +481,402 @@ font-size:24px;
 }
 
 }
+/* ==========================================
+        HOME DASHBOARD
+========================================== */
+
+.dashboard{
+
+    width:95%;
+    max-width:1300px;
+    margin:30px auto;
+
+    animation:fadeIn .8s ease;
+
+}
+
+/* HERO */
+
+.hero{
+
+    background:linear-gradient(135deg,#2563eb,#4f46e5);
+
+    color:white;
+
+    border-radius:20px;
+
+    padding:40px;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.18);
+
+}
+
+.hero h1{
+
+    font-size:40px;
+
+    margin-bottom:10px;
+
+}
+
+.hero p{
+
+    opacity:.9;
+
+    font-size:18px;
+
+}
+
+.hero-info{
+
+    margin-top:30px;
+
+    display:flex;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+
+}
+
+.info-box{
+
+    background:rgba(255,255,255,.15);
+
+    backdrop-filter:blur(15px);
+
+    padding:18px 25px;
+
+    border-radius:15px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    transition:.4s;
+
+}
+
+.info-box:hover{
+
+    transform:translateY(-5px);
+
+    background:rgba(255,255,255,.22);
+
+}
+
+.info-box i{
+
+    font-size:28px;
+
+}
+
+/* ====================== */
+/* Statistics Cards */
+/* ====================== */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+
+    gap:25px;
+
+    margin-top:35px;
+
+}
+
+.card{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    text-align:center;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 20px 40px rgba(0,0,0,.15);
+
+}
+
+.card i{
+
+    font-size:45px;
+
+    color:#2563eb;
+
+    margin-bottom:15px;
+
+}
+
+.card h2{
+
+    font-size:36px;
+
+    margin:10px 0;
+
+    color:#111827;
+
+}
+
+.card p{
+
+    color:#6b7280;
+
+}
+
+/* ====================== */
+/* Announcement */
+/* ====================== */
+
+.announcement{
+
+    margin-top:40px;
+
+    background:white;
+
+    border-left:8px solid #2563eb;
+
+    padding:30px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+}
+
+.announcement h2{
+
+    color:#2563eb;
+
+    margin-bottom:15px;
+
+}
+
+.announcement h3{
+
+    margin-bottom:10px;
+
+}
+
+/* ====================== */
+/* Quick Access */
+/* ====================== */
+
+.quick-access{
+
+    margin-top:40px;
+
+}
+
+.quick-access h2{
+
+    margin-bottom:20px;
+
+}
+
+.buttons{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+}
+
+.buttons a{
+
+    text-decoration:none;
+
+    background:linear-gradient(135deg,#2563eb,#4f46e5);
+
+    color:white;
+
+    padding:18px;
+
+    border-radius:15px;
+
+    text-align:center;
+
+    font-weight:bold;
+
+    transition:.35s;
+
+}
+
+.buttons a:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 12px 25px rgba(37,99,235,.35);
+
+}
+
+/* ====================== */
+/* Progress */
+/* ====================== */
+
+.progress-card{
+
+    margin-top:40px;
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.progress{
+
+    width:100%;
+
+    background:#dbeafe;
+
+    height:28px;
+
+    border-radius:30px;
+
+    overflow:hidden;
+
+    margin-top:20px;
+
+}
+
+.progress-fill{
+
+    background:linear-gradient(90deg,#22c55e,#16a34a);
+
+    color:white;
+
+    font-weight:bold;
+
+    text-align:center;
+
+    height:100%;
+
+    line-height:28px;
+
+    border-radius:30px;
+
+    animation:progress 2s;
+
+}
+
+/* ====================== */
+/* Quote */
+/* ====================== */
+
+.quote{
+
+    margin-top:40px;
+
+    background:linear-gradient(135deg,#111827,#374151);
+
+    color:white;
+
+    text-align:center;
+
+    border-radius:20px;
+
+    padding:35px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.15);
+
+}
+
+.quote i{
+
+    font-size:35px;
+
+    color:#fbbf24;
+
+    margin-bottom:15px;
+
+}
+
+.quote p{
+
+    font-size:22px;
+
+    font-style:italic;
+
+}
+
+/* ====================== */
+/* Animations */
+/* ====================== */
+
+@keyframes fadeIn{
+
+from{
+
+opacity:0;
+
+transform:translateY(40px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+@keyframes progress{
+
+from{
+
+width:0;
+
+}
+
+}
+
+/* ====================== */
+/* Mobile */
+/* ====================== */
+
+@media(max-width:768px){
+
+.hero{
+
+padding:25px;
+
+}
+
+.hero h1{
+
+font-size:28px;
+
+}
+
+.hero-info{
+
+flex-direction:column;
+
+}
+
+}

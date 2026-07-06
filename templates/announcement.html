@@ -1,0 +1,461 @@
+{% extends "base.html" %}
+
+{% block title %}Announcements{% endblock %}
+
+{% block content %}
+
+<style>
+
+body{
+    background:#eef4ff;
+}
+
+/* Header */
+
+.announcement-header{
+    text-align:center;
+    margin:35px 0;
+    animation:fadeDown 1s;
+}
+
+.announcement-header h1{
+    font-size:42px;
+    font-weight:700;
+    color:#0d47a1;
+}
+
+.announcement-header p{
+    color:#555;
+    font-size:18px;
+}
+
+/* Grid */
+
+.webinar-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:30px;
+}
+
+/* Card */
+
+.webinar-card{
+
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 15px 40px rgba(0,0,0,.15);
+
+    transition:.4s;
+    position:relative;
+
+    animation:cardAppear .8s ease;
+}
+
+.webinar-card:hover{
+
+    transform:translateY(-12px) scale(1.03);
+
+    box-shadow:0 20px 45px rgba(0,0,0,.25);
+
+}
+
+.card-top{
+
+    padding:25px;
+    color:white;
+    text-align:center;
+
+}
+
+.blue{
+background:linear-gradient(135deg,#1565c0,#42a5f5);
+}
+
+.green{
+background:linear-gradient(135deg,#2e7d32,#66bb6a);
+}
+
+.purple{
+background:linear-gradient(135deg,#6a1b9a,#ba68c8);
+}
+
+.orange{
+background:linear-gradient(135deg,#ef6c00,#ffa726);
+}
+
+.card-top i{
+
+    font-size:55px;
+    margin-bottom:15px;
+
+    animation:float 2s infinite;
+
+}
+
+.card-top h3{
+
+    font-weight:700;
+
+}
+
+.card-body{
+
+    padding:25px;
+
+}
+
+.info{
+
+margin:15px 0;
+font-size:17px;
+color:#444;
+
+}
+
+.info i{
+
+width:28px;
+color:#1565c0;
+
+}
+
+.credit{
+
+display:inline-block;
+
+padding:8px 18px;
+
+background:#00c853;
+
+color:white;
+
+font-weight:bold;
+
+border-radius:30px;
+
+margin-top:12px;
+
+}
+
+.register{
+
+margin-top:25px;
+
+display:block;
+
+text-align:center;
+
+background:#0d47a1;
+
+padding:12px;
+
+border-radius:10px;
+
+text-decoration:none;
+
+font-weight:bold;
+
+color:white;
+
+transition:.3s;
+
+}
+
+.register:hover{
+
+background:#1565c0;
+
+transform:scale(1.03);
+
+color:white;
+
+}
+
+.ribbon{
+
+position:absolute;
+
+top:15px;
+
+right:-35px;
+
+background:red;
+
+color:white;
+
+padding:8px 40px;
+
+transform:rotate(45deg);
+
+font-size:13px;
+
+font-weight:bold;
+
+}
+
+/* Animations */
+
+@keyframes float{
+
+0%,100%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-10px);
+
+}
+
+}
+
+@keyframes fadeDown{
+
+from{
+
+opacity:0;
+
+transform:translateY(-40px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+@keyframes cardAppear{
+
+from{
+
+opacity:0;
+
+transform:translateY(50px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+</style>
+
+<div class="announcement-header">
+
+<h1>
+<i class="fa-solid fa-bullhorn"></i>
+Upcoming Webinars
+</h1>
+
+<p>
+Enhance your skills by attending these university webinars.
+Earn Academic Credits.
+</p>
+
+</div>
+
+<div class="webinar-grid">
+
+<!-- Card 1 -->
+
+<div class="webinar-card">
+
+<div class="ribbon">Upcoming</div>
+
+<div class="card-top blue">
+
+<i class="fa-solid fa-chart-line"></i>
+
+<h3>Data Analytics using Python</h3>
+
+</div>
+
+<div class="card-body">
+
+<div class="info">
+<i class="fa-solid fa-calendar-days"></i>
+18 July 2026
+</div>
+
+<div class="info">
+<i class="fa-solid fa-clock"></i>
+4:00 PM - 6:30 PM
+</div>
+
+<div class="credit">
+⭐ Credit : 1
+</div>
+
+<a href="#" class="register">
+Register Now
+</a>
+
+</div>
+
+</div>
+
+<!-- Card 2 -->
+
+<div class="webinar-card">
+
+<div class="ribbon">Upcoming</div>
+
+<div class="card-top green">
+
+<i class="fa-solid fa-code"></i>
+
+<h3>Web Development</h3>
+
+</div>
+
+<div class="card-body">
+
+<div class="info">
+<i class="fa-solid fa-calendar-days"></i>
+26 July 2026
+</div>
+
+<div class="info">
+<i class="fa-solid fa-clock"></i>
+4:00 PM - 7:00 PM
+</div>
+
+<div class="credit">
+⭐ Credit : 1
+</div>
+
+<a href="#" class="register">
+Register Now
+</a>
+
+</div>
+
+</div>
+
+<!-- Card 3 -->
+
+<div class="webinar-card">
+
+<div class="ribbon">Upcoming</div>
+
+<div class="card-top purple">
+
+<i class="fa-solid fa-robot"></i>
+
+<h3>AI Tools & Technologies</h3>
+
+</div>
+
+<div class="card-body">
+
+<div class="info">
+<i class="fa-solid fa-calendar-days"></i>
+30 July 2026
+</div>
+
+<div class="info">
+<i class="fa-solid fa-clock"></i>
+8:00 PM - 9:30 PM
+</div>
+
+<div class="credit">
+⭐ Credit : 1
+</div>
+
+<a href="#" class="register">
+Register Now
+</a>
+
+</div>
+
+</div>
+
+<!-- Card 4 -->
+
+<div class="webinar-card">
+
+<div class="ribbon">Upcoming</div>
+
+<div class="card-top orange">
+
+<i class="fa-solid fa-plug"></i>
+
+<h3>API Creation & Integration</h3>
+
+</div>
+
+<div class="card-body">
+
+<div class="info">
+<i class="fa-solid fa-calendar-days"></i>
+02 August 2026
+</div>
+
+<div class="info">
+<i class="fa-solid fa-clock"></i>
+7:30 PM - 9:30 PM
+</div>
+
+<div class="credit">
+⭐ Credit : 1
+</div>
+
+<a href="#" class="register">
+Register Now
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const cards=document.querySelectorAll(".webinar-card");
+
+const observer=new IntersectionObserver(entries=>{
+
+entries.forEach(entry=>{
+
+if(entry.isIntersecting){
+
+entry.target.style.opacity=1;
+
+entry.target.style.transform="translateY(0px)";
+
+}
+
+});
+
+});
+
+cards.forEach(card=>{
+
+card.style.opacity=0;
+
+card.style.transform="translateY(70px)";
+
+card.style.transition="all .8s ease";
+
+observer.observe(card);
+
+});
+
+</script>
+
+{% endblock %}
