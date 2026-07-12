@@ -216,7 +216,11 @@ def student_assignments():
     
     cursor.close()
     conn.close()
-    return render_template('student_assignments.html', assignments=assignments)
+    return render_template(
+    "student_assignments.html",
+    assignments=assignments,
+    now=datetime.now()
+)
 @app.route('/announcements')
 def announcements():
     if 'user_id' not in session or session['role'] != 'student':

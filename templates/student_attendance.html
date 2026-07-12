@@ -1,77 +1,261 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="attendance-dashboard">
+
+<div class="attendance-container">
+
+    <div class="attendance-header">
+        <div>
+            <h1><i class="fa-solid fa-user-graduate"></i> Attendance Dashboard</h1>
+            <p>Track your Phase-1 attendance and monitor your overall performance.</p>
+        </div>
+
+        <div class="attendance-circle">
+            <h2>{{ overall_percentage }}%</h2>
+            <span>Attendance</span>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+
     <div class="stats-grid">
-        <div class="stat-card border-blue">
-            <span class="stat-label">TOTAL CLASSES</span>
-            <span class="stat-value">{{ total_classes }}</span>
+
+        <div class="stat-card blue">
+            <i class="fa-solid fa-calendar-days"></i>
+            <h4>Total Classes</h4>
+            <h2>{{ total_classes }}</h2>
         </div>
-        <div class="stat-card border-green">
-            <span class="stat-label">TOTAL PRESENT</span>
-            <span class="stat-value">{{ total_present }}</span>
+
+        <div class="stat-card green">
+            <i class="fa-solid fa-circle-check"></i>
+            <h4>Present</h4>
+            <h2>{{ total_present }}</h2>
         </div>
-        <div class="stat-card border-red">
-            <span class="stat-label">TOTAL ABSENT</span>
-            <span class="stat-value">{{ total_absent }}</span>
+
+        <div class="stat-card red">
+            <i class="fa-solid fa-circle-xmark"></i>
+            <h4>Absent</h4>
+            <h2>{{ total_absent }}</h2>
         </div>
-        <div class="stat-card border-purple">
-            <span class="stat-label">OVERALL PERCENTAGE</span>
-            <span class="stat-value">{{ overall_percentage }}%</span>
+
+        <div class="stat-card purple">
+            <i class="fa-solid fa-chart-line"></i>
+            <h4>Overall</h4>
+            <h2>{{ overall_percentage }}%</h2>
         </div>
+
     </div>
 
-    <div class="section-card">
-        <h3><i class="fa-solid fa-chart-pie"></i> Course-wise Attendance Summary</h3>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>COURSE CODE</th>
-                    <th>TOTAL PRESENT</th>
-                    <th>TOTAL ABSENT</th>
-                    <th>PERCENTAGE</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for code, stats in course_summary.items() %}
-                <tr>
-                    <td><strong>{{ code }}</strong></td>
-                    <td class="text-teal font-weight-bold">{{ stats.present }}</td>
-                    <td class="text-red font-weight-bold">{{ stats.absent }}</td>
-                    <td><strong>{{ stats.percentage }}%</strong></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <!-- Progress -->
+
+    <div class="progress-card">
+
+        <div class="progress-top">
+
+            <span>Attendance Progress</span>
+
+            <strong>{{ overall_percentage }}%</strong>
+
+        </div>
+
+        <div class="progress-bar">
+
+            <div class="progress-fill"
+                 style="width: {{ overall_percentage }}%">
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="section-card">
-        <h3><i class="fa-solid fa-list-check"></i> Phase-1 Detailed Attendance Log</h3>
-        <table class="data-table">
+    <!-- Course Summary -->
+
+    <div class="table-card">
+
+        <div class="card-title">
+
+            <i class="fa-solid fa-chart-column"></i>
+
+            Course-wise Attendance Summary
+
+        </div>
+
+        <table>
+
             <thead>
+
                 <tr>
-                    <th>SR.</th>
-                    <th>COURSE CODE</th>
-                    <th>STATUS</th>
-                    <th>MARKED BY</th>
-                    <th>DATE</th>
+
+                    <th>Course Code</th>
+
+                    <th>Present</th>
+
+                    <th>Absent</th>
+
+                    <th>Attendance</th>
+
                 </tr>
+
             </thead>
+
             <tbody>
-                {% for log in logs %}
+
+            {% for code, stats in course_summary.items() %}
+
                 <tr>
-                    <td>{{ loop.index }}</td>
-                    <td><strong>{{ log.course_code }}</strong></td>
+
                     <td>
-                        <span class="badge {{ 'badge-present' if log.status == 'P' else 'badge-absent' }}">
-                            {{ log.status }}
+
+                        <span class="course-code">
+
+                            {{ code }}
+
                         </span>
+
                     </td>
-                    <td>{{ log.marked_by }}</td>
-                    <td>{{ log.attendance_date }}</td>
+
+                    <td class="present">
+
+                        {{ stats.present }}
+
+                    </td>
+
+                    <td class="absent">
+
+                        {{ stats.absent }}
+
+                    </td>
+
+                    <td>
+
+                        {% if stats.percentage >= 75 %}
+
+                            <span class="status good">
+
+                                {{ stats.percentage }}%
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="status danger">
+
+                                {{ stats.percentage }}%
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
                 </tr>
-                {% endfor %}
+
+            {% endfor %}
+
             </tbody>
+
         </table>
+
     </div>
+
+    <!-- Attendance History -->
+
+    <div class="table-card">
+
+        <div class="card-title">
+
+            <i class="fa-solid fa-clock-rotate-left"></i>
+
+            Attendance History
+
+        </div>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>#</th>
+
+                    <th>Course</th>
+
+                    <th>Status</th>
+
+                    <th>Faculty</th>
+
+                    <th>Date</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for log in logs %}
+
+                <tr>
+
+                    <td>{{ loop.index }}</td>
+
+                    <td>
+
+                        <span class="course-code">
+
+                            {{ log.course_code }}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        {% if log.status == "P" %}
+
+                            <span class="attendance present-badge">
+
+                                <i class="fa-solid fa-check"></i>
+
+                                Present
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="attendance absent-badge">
+
+                                <i class="fa-solid fa-xmark"></i>
+
+                                Absent
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {{ log.marked_by }}
+
+                    </td>
+
+                    <td>
+
+                        {{ log.attendance_date }}
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
 </div>
+
 {% endblock %}
