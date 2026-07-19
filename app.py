@@ -221,6 +221,37 @@ def student_assignments():
     assignments=assignments,
     now=datetime.now()
 )
+@app.route("/lms")
+def lms():
+    return render_template("lms.html")
+@app.route("/java-course")
+def java_course():
+
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    return render_template("java_course.html")
+@app.route("/data_structures-course")
+def dsa_course():
+
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    return render_template("data_structures.html")
+@app.route("/adv_dsa")
+def adv_dsa_course():
+
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    return render_template("adv_dsa.html")
+@app.route("/Ai")
+def Ai_course():
+
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    return render_template("Ai.html")
 @app.route('/announcements')
 def announcements():
     if 'user_id' not in session or session['role'] != 'student':

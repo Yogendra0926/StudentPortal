@@ -1,0 +1,526 @@
+{% extends "base.html" %}
+
+{% block title %}OOPS Using Java{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='java_course.css') }}">
+
+<div class="course-container">
+
+    <!-- ================= HERO ================= -->
+
+    <div class="course-banner">
+
+        <div class="banner-left">
+
+            <span class="course-tag">
+                <i class="fa-brands fa-java"></i>
+                Java Programming
+            </span>
+
+            <h1>OOPS USING JAVA</h1>
+
+            <p>
+                Learn Java Programming from fundamentals
+                to advanced multithreading concepts through
+                an industry-oriented curriculum.
+            </p>
+
+        </div>
+
+        <div class="banner-right">
+
+            <div class="java-logo">
+
+                <i class="fa-brands fa-java"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================= INFO ================= -->
+
+    <div class="course-info-grid">
+
+        <!-- Instructor -->
+
+        <div class="info-card instructor-card">
+
+            <img src="https://ui-avatars.com/api/?name=Yogendra+Jain&background=1565c0&color=fff&size=180">
+
+            <h2>Yogendra Jain</h2>
+
+            <span>Course Instructor</span>
+
+            <hr>
+
+            <p>
+
+                <i class="fa-solid fa-envelope"></i>
+
+                yogendra@itm.edu
+
+            </p>
+
+            <p>
+
+                <i class="fa-solid fa-graduation-cap"></i>
+
+                Java Programming Expert
+
+            </p>
+
+        </div>
+
+        <!-- Details -->
+
+        <div class="info-card">
+
+            <h2>
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                Course Information
+
+            </h2>
+
+            <div class="details-grid">
+
+                <div>
+
+                    <span>Course Code</span>
+
+                    <h3>CSP0101</h3>
+
+                </div>
+
+                <div>
+
+                    <span>Credits</span>
+
+                    <h3>2</h3>
+
+                </div>
+
+                <div>
+
+                    <span>Semester</span>
+
+                    <h3>Phase-1</h3>
+
+                </div>
+
+                <div>
+
+                    <span>Status</span>
+
+                    <h3 class="active">
+
+                        Active
+
+                    </h3>
+
+                </div>
+
+                <div>
+
+                    <span>Duration</span>
+
+                    <h3>50 Hours</h3>
+
+                </div>
+
+                <div>
+
+                    <span>Language</span>
+
+                    <h3>English</h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================= PROGRESS ================= -->
+
+    <div class="progress-card">
+
+        <div class="progress-header">
+
+            <h2>
+
+                <i class="fa-solid fa-chart-line"></i>
+
+                Course Progress
+
+            </h2>
+
+            <span>100%</span>
+
+        </div>
+
+        <div class="progress">
+
+            <div class="progress-fill"></div>
+
+        </div>
+
+        <p>
+
+            Completed !!
+        </p>
+
+    </div>
+
+    <!-- ================= DESCRIPTION ================= -->
+
+    <div class="description-card">
+
+        <h2>
+
+            <i class="fa-solid fa-book-open"></i>
+
+            Course Description
+
+        </h2>
+
+        <p>
+
+            This course introduces Java programming,
+            object-oriented concepts, inheritance,
+            exception handling and multithreading.
+            Students will develop practical Java
+            applications while understanding industry
+            best practices.
+
+        </p>
+
+    </div>
+
+    <!-- ================= SYLLABUS ================= -->
+
+    <div class="syllabus">
+
+        <h2>
+
+            <i class="fa-solid fa-book"></i>
+
+            Course Syllabus
+
+        </h2>
+
+        <!-- UNIT 1 -->
+
+        <button class="accordion">
+
+            Unit 1 • Introduction to Java
+
+        </button>
+
+        <div class="panel">
+
+            <ul>
+
+                <li>Introduction to Java</li>
+
+                <li>History of Java</li>
+
+                <li>Java vs C++</li>
+
+                <li>Java as Object Oriented Language</li>
+
+                <li>Java Buzzwords</li>
+
+                <li>JVM & JRE</li>
+
+                <li>Compilation & Execution</li>
+
+                <li>Path & Classpath</li>
+
+                <li>Data Types</li>
+
+                <li>Operators</li>
+
+                <li>Type Conversion</li>
+
+                <li>Memory Allocation</li>
+
+                <li>Garbage Collection</li>
+
+            </ul>
+
+        </div>
+
+        <!-- UNIT 2 -->
+
+        <button class="accordion">
+
+            Unit 2 • Decision Making Controls
+
+        </button>
+
+        <div class="panel">
+
+            <ul>
+
+                <li>if</li>
+
+                <li>if...else</li>
+
+                <li>Nested if</li>
+
+                <li>else-if Ladder</li>
+
+                <li>switch</li>
+
+                <li>break</li>
+
+                <li>continue</li>
+
+                <li>for Loop</li>
+
+                <li>while Loop</li>
+
+                <li>do...while</li>
+
+                <li>Enhanced for Loop</li>
+
+                <li>Arrays</li>
+
+                <li>Strings</li>
+
+                <li>StringBuffer</li>
+
+            </ul>
+
+        </div>
+        <!-- ================= UNIT 3 ================= -->
+
+        <button class="accordion">
+
+            Unit 3 • Object Oriented Programming
+
+        </button>
+
+        <div class="panel">
+
+            <ul>
+
+                <li>Class Fundamentals</li>
+
+                <li>Methods</li>
+
+                <li>Object Creation</li>
+
+                <li>Constructors</li>
+
+                <li>Method Overloading</li>
+
+                <li>Constructor Overloading</li>
+
+                <li>Static Members</li>
+
+                <li>Wrapper Classes</li>
+
+                <li>Enumerated Types</li>
+
+                <li>Java Packages</li>
+
+                <li>Creating Packages</li>
+
+                <li>Accessing Packages</li>
+
+                <li>Access Specifiers</li>
+
+                <li>this Keyword</li>
+
+            </ul>
+
+        </div>
+
+        <!-- ================= UNIT 4 ================= -->
+
+        <button class="accordion">
+
+            Unit 4 • Inheritance & Exception Handling
+
+        </button>
+
+        <div class="panel">
+
+            <ul>
+
+                <li>Inheritance Basics</li>
+
+                <li>Method Overriding</li>
+
+                <li>Polymorphism</li>
+
+                <li>Final Variables, Methods & Classes</li>
+
+                <li>Abstract Classes</li>
+
+                <li>Abstract Methods</li>
+
+                <li>Interfaces</li>
+
+                <li>Implementing Interfaces</li>
+
+                <li>Extending Interfaces</li>
+
+                <li>Interface Variables</li>
+
+                <li>super Keyword</li>
+
+                <li>Errors & Exceptions</li>
+
+                <li>Checked Exceptions</li>
+
+                <li>Unchecked Exceptions</li>
+
+                <li>try Statement</li>
+
+                <li>catch Statement</li>
+
+                <li>Multiple catch Blocks</li>
+
+                <li>finally Statement</li>
+
+            </ul>
+
+        </div>
+
+        <!-- ================= UNIT 5 ================= -->
+
+        <button class="accordion">
+
+            Unit 5 • Multithreading
+
+        </button>
+
+        <div class="panel">
+
+            <ul>
+
+                <li>Thread Basics</li>
+
+                <li>Process vs Thread</li>
+
+                <li>Multithreaded Programming</li>
+
+                <li>Life Cycle of Thread</li>
+
+                <li>Creating Thread Class</li>
+
+                <li>Runnable Interface</li>
+
+                <li>Thread Priority</li>
+
+                <li>Thread Methods</li>
+
+                <li>Thread Synchronization</li>
+
+                <li>Inter-thread Communication</li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- ================= QUICK ACTIONS ================= -->
+
+    <div class="quick-actions">
+
+        <h2>
+
+            <i class="fa-solid fa-bolt"></i>
+
+            Quick Actions
+
+        </h2>
+
+        <div class="action-grid">
+
+            <a href="{{ url_for('static', filename='uploads/Java updated syllabus.pdf') }}"
+               target="_blank"
+               class="action-card">
+
+                <i class="fa-solid fa-file-pdf"></i>
+
+                <span>View Syllabus</span>
+
+            </a>
+
+            <a href="https://java-programming.mooc.fi/?utm_source=chatgpt.com"
+               class="action-card">
+
+                <i class="fa-solid fa-book"></i>
+
+                <span>Lecture Notes</span>
+
+            </a>
+
+            <a href="{{ url_for('student_assignments') }}"
+   class="action-card">
+
+    <i class="fa-solid fa-file-lines"></i>
+
+    <span>Assignments</span>
+
+</a>
+
+            <a href="#"
+        
+               class="action-card">
+
+                <i class="fa-solid fa-video"></i>
+
+                <span>Recorded Lectures</span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const acc=document.getElementsByClassName("accordion");
+
+for(let i=0;i<acc.length;i++){
+
+    acc[i].addEventListener("click",function(){
+
+        this.classList.toggle("active");
+
+        const panel=this.nextElementSibling;
+
+        if(panel.style.maxHeight){
+
+            panel.style.maxHeight=null;
+
+        }
+
+        else{
+
+            panel.style.maxHeight=panel.scrollHeight+"px";
+
+        }
+
+    });
+
+}
+
+</script>
+
+{% endblock %}

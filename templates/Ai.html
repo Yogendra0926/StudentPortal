@@ -1,0 +1,459 @@
+{% extends "base.html" %}
+
+{% block title %}OOPS Using Java{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='java_course.css') }}">
+
+<div class="course-container">
+
+    <!-- ================= HERO ================= -->
+
+    <div class="course-banner">
+
+        <div class="banner-left">
+
+            <span class="course-tag">
+                <i class="fa-brands fa-java"></i>
+                Artificial Intelligence
+            </span>
+
+            <h1> Artificial Intelligence</h1>
+
+            <p>
+                Complete Knowledge of AI 
+            </p>
+
+        </div>
+
+        <div class="banner-right">
+
+            <div class="AI-logo">
+
+                <i class="fa-brands fa-java"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================= INFO ================= -->
+
+    <div class="course-info-grid">
+
+        <!-- Instructor -->
+
+        <div class="info-card instructor-card">
+
+            <img src="https://ui-avatars.com/api/?name=Yogendra+Jain&background=1565c0&color=fff&size=180">
+
+            <h2>Yogendra Jain</h2>
+
+            <span>Course Instructor</span>
+
+            <hr>
+
+            <p>
+
+                <i class="fa-solid fa-envelope"></i>
+
+                yogendra@itm.edu
+
+            </p>
+
+            <p>
+
+                <i class="fa-solid fa-graduation-cap"></i>
+
+                Python Programming Expert
+
+            </p>
+
+        </div>
+
+        <!-- Details -->
+
+        <div class="info-card">
+
+            <h2>
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                Course Information
+
+            </h2>
+
+            <div class="details-grid">
+
+                <div>
+
+                    <span>Course Code</span>
+
+                    <h3>CSL0105</h3>
+
+                </div>
+
+                <div>
+
+                    <span>Credits</span>
+
+                    <h3>3</h3>
+
+                </div>
+
+                <div>
+
+                    <span>Semester</span>
+
+                    <h3>Phase-1</h3>
+
+                </div>
+
+                <div>
+
+                    <span>Status</span>
+
+                    <h3 class="active">
+
+                        Active
+
+                    </h3>
+
+                </div>
+
+                <div>
+
+                    <span>Duration</span>
+
+                    <h3>50 Hours</h3>
+
+                </div>
+
+                <div>
+
+                    <span>Language</span>
+
+                    <h3>English</h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================= PROGRESS ================= -->
+
+    <div class="progress-card">
+
+        <div class="progress-header">
+
+            <h2>
+
+                <i class="fa-solid fa-chart-line"></i>
+
+                Course Progress
+
+            </h2>
+
+            <span>12%</span>
+
+        </div>
+
+        <div class="progress">
+
+            <div class="progress-fill"></div>
+
+        </div>
+
+        <p>
+
+            In progress.....
+        </p>
+
+    </div>
+
+    <!-- ================= DESCRIPTION ================= -->
+
+    <div class="description-card">
+
+        <h2>
+
+            <i class="fa-solid fa-book-open"></i>
+
+            Course Description
+
+        </h2>
+
+        <p>
+
+            This course including all concepts about AI 
+        </p>
+
+    </div>
+
+    <!-- ================= SYLLABUS ================= -->
+
+    <div class="syllabus">
+
+        <h2>
+
+            <i class="fa-solid fa-book"></i>
+
+            Course Syllabus
+
+        </h2>
+
+        <!-- UNIT 1 -->
+
+        <button class="accordion">
+
+            Unit 1 • Machine Learning
+
+        </button>
+
+        <div class="panel">
+
+            <ul>
+
+                <li> Data Preprocessing</li>
+
+                <li>Feature Engineering</li>
+
+                <li>Supervised Learning</li>
+
+                <li>Unsupervised Learning</li>
+
+                <li>Regression</li>
+
+                <li>Classification</li>
+
+                <li>Clustering</li>
+
+                <li> Ensemble Methods</li>
+
+                <li>Sckit-Learn and Model Evaluation</li>
+
+            </ul>
+
+        </div>
+
+        <!-- UNIT 2 -->
+
+        <button class="accordion">
+
+            Unit 2 •  Deep Learning & Computer Vision
+
+        </button>
+
+        <div class="panel">
+
+            <ul>
+
+                <li>ANN</li>
+
+                <li>CNN</li>
+
+                <li>Transfer Learning</li>
+
+                <li>Object Detection (YOLO, Faster R-CNN)</li>
+
+                <li>Image Segmentation (U-Net)</li>
+
+                <li>Vision Transformers (ViT)</li>
+
+                <li>OpenCV</li>
+
+                <li>Image Enhancement</li>
+
+                <li>Remote Sensing Applications</li>
+
+            </ul>
+
+        </div>
+        <!-- ================= UNIT 3 ================= -->
+
+        <button class="accordion">
+
+            Unit 3 •  Natural Language Processing (NLP)
+
+        </button>
+
+        <div class="panel">
+
+            <ul>
+
+                <li> Text Preprocessing</li>
+
+                <li>Tokenization</li>
+
+                <li>Word Embeddings</li>
+
+                <li>RNN, LSTM, GRU</li>
+
+                <li>Sentiment Analysis</li>
+
+                <li>Text Classification and Machine Translation
+                </li>
+
+                <li> Named Entity Recognition</li>
+
+                <li> Transformers</li>
+
+                <li>BERT</li>
+
+                
+            </ul>
+
+        </div>
+
+        <!-- ================= UNIT 4 ================= -->
+
+        <button class="accordion">
+
+            Unit 4 • LLM & RAG
+
+        </button>
+        <div class="panel">
+            <ul>
+
+                <li>Generative AI Fundamentals</li>
+
+                <li>Transformer Architecture & GPT Models</li>
+
+                <li>Prompt Engineering & Fine-Tuning</li>
+
+                <li>Embeddings & Vector Databases</li>
+
+                <li>RAG Architecture</li>
+
+                <li>LangChain</li>
+
+                <li>AI Agents & Multi-Agent Systems</li>
+            </ul>
+        </div>
+        <button class="accordion">
+
+            Unit 5 • MLOps, Deployment & Generative AI Applications
+
+        </button>
+
+        <div class="panel">
+
+            <ul>
+
+                <li>MLOps Fundamentals</li>
+
+                <li>Git & GitHub , Docker</li>
+
+                <li>CI/CD for ML</li>
+
+                <li>Model Deployment (Flask, FastAPI, Streamlit)</li>
+
+                <li>Cloud AI (AWS, Azure, GCP)</li>
+
+                <li>Model Monitoring &  Hugging Fac</li>
+
+                <li> Diffusion Models & AI Ethics & Responsible AI</li>
+
+                <li>AI Product Development & End-to-End AI Projects</li>
+
+
+                
+            </ul>
+
+        </div>
+
+
+    <!-- ================= QUICK ACTIONS ================= -->
+
+    <div class="quick-actions">
+
+        <h2>
+
+            <i class="fa-solid fa-bolt"></i>
+
+            Quick Actions
+
+        </h2>
+
+        <div class="action-grid">
+
+            <a href="{{ url_for('static', filename='uploads/Java updated syllabus.pdf') }}"
+               target="_blank"
+               class="action-card">
+
+                <i class="fa-solid fa-file-pdf"></i>
+
+                <span>View Syllabus</span>
+
+            </a>
+
+            <a href="https://www.deeplearning.ai/?utm_source=chatgpt.com"
+               class="action-card">
+
+                <i class="fa-solid fa-book"></i>
+
+                <span>Lecture Notes</span>
+
+            </a>
+
+            <a href="{{ url_for('student_assignments') }}"
+   class="action-card">
+
+    <i class="fa-solid fa-file-lines"></i>
+
+    <span>Assignments</span>
+
+</a>
+
+            <a href="#"
+               class="action-card">
+
+                <i class="fa-solid fa-video"></i>
+
+                <span>Recorded Lectures</span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const acc=document.getElementsByClassName("accordion");
+
+for(let i=0;i<acc.length;i++){
+
+    acc[i].addEventListener("click",function(){
+
+        this.classList.toggle("active");
+
+        const panel=this.nextElementSibling;
+
+        if(panel.style.maxHeight){
+
+            panel.style.maxHeight=null;
+
+        }
+
+        else{
+
+            panel.style.maxHeight=panel.scrollHeight+"px";
+
+        }
+
+    });
+
+}
+
+</script>
+
+{% endblock %}

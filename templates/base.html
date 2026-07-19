@@ -33,8 +33,11 @@ Home
 class="{{ 'active' if request.endpoint=='announcements' }}">
 <i class="fa-solid fa-bullhorn"></i>
 Announcements
-</a>
-            {% else %}
+<a href="{{ url_for('lms') }}"
+   class="{{ 'active' if request.endpoint=='lms' }}">
+    <i class="fa-solid fa-book-open"></i>
+    LMS
+</a>      {% else %}
                 <a href="{{ url_for('admin_portal') }}" class="active"><i class="fa-solid fa-bars-progress"></i> Dashboard</a>
             {% endif %}
             <div class="user-profile">

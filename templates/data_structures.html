@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% block title %}OOPS Using Java{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='java_course.css') }}">
+
+<div class="course-container">
+
+    <!-- ================= HERO ================= -->
+
+    <div class="course-banner">
+
+        <div class="banner-left">
+
+            <span class="course-tag">
+                <i class="fa-brands fa-java"></i>
+                Data Structures
+            </span>
+
+            <h1>Data Structures</h1>
+
+            <p>
+                Learn Data Structures from fundamentals
+                to advanced !!
+            </p>
+
+        </div>
+
+        <div class="banner-right">
+
+            <div class="java-logo">
+
+                <i class="fa-brands fa-java"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================= INFO ================= -->
+
+    <div class="course-info-grid">
+
+        <!-- Instructor -->
+
+        <div class="info-card instructor-card">
+
+            <img src="https://ui-avatars.com/api/?name=Yogendra+Jain&background=1565c0&color=fff&size=180">
+
+            <h2>Yogendra Jain</h2>
+
+            <span>Course Instructor</span>
+
+            <hr>
+
+            <p>
+
+                <i class="fa-solid fa-envelope"></i>
+
+                yogendra@itm.edu
+
+            </p>
+
+            <p>
+
+                <i class="fa-solid fa-graduation-cap"></i>
+
+                Python Programming Expert
+
+            </p>
+
+        </div>
+
+        <!-- Details -->
+
+        <div class="info-card">
+
+            <h2>
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                Course Information
+
+            </h2>
+
+            <div class="details-grid">
+
+                <div>
+
+                    <span>Course Code</span>
+
+                    <h3>CSP0102</h3>
+
+                </div>
+
+                <div>
+
+                    <span>Credits</span>
+
+                    <h3>2</h3>
+
+                </div>
+
+                <div>
+
+                    <span>Semester</span>
+
+                    <h3>Phase-1</h3>
+
+                </div>
+
+                <div>
+
+                    <span>Status</span>
+
+                    <h3 class="active">
+
+                        Active
+
+                    </h3>
+
+                </div>
+
+                <div>
+
+                    <span>Duration</span>
+
+                    <h3>50 Hours</h3>
+
+                </div>
+
+                <div>
+
+                    <span>Language</span>
+
+                    <h3>English</h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================= PROGRESS ================= -->
+
+    <div class="progress-card">
+
+        <div class="progress-header">
+
+            <h2>
+
+                <i class="fa-solid fa-chart-line"></i>
+
+                Course Progress
+
+            </h2>
+
+            <span>20%</span>
+
+        </div>
+
+        <div class="progress">
+
+            <div class="progress-fill"></div>
+
+        </div>
+
+        <p>
+
+            In progress.....
+        </p>
+
+    </div>
+
+    <!-- ================= DESCRIPTION ================= -->
+
+    <div class="description-card">
+
+        <h2>
+
+            <i class="fa-solid fa-book-open"></i>
+
+            Course Description
+
+        </h2>
+
+        <p>
+
+            This course including : Array,Linked lists , stack and queue with leetcode integeration!
+        </p>
+
+    </div>
+
+    <!-- ================= SYLLABUS ================= -->
+
+    <div class="syllabus">
+
+        <h2>
+
+            <i class="fa-solid fa-book"></i>
+
+            Course Syllabus
+
+        </h2>
+
+        <!-- UNIT 1 -->
+
+        <button class="accordion">
+
+            Unit 1 • Arrays
+
+        </button>
+
+        <div class="panel">
+
+            <ul>
+
+                <li>Introduction</li>
+
+                <li>Basic Concepts</li>
+
+                <li>Implementation</li>
+
+                <li>n dimensional Array</li>
+
+
+            </ul>
+
+        </div>
+
+        <!-- UNIT 2 -->
+
+        <button class="accordion">
+
+            Unit 2 •Linked List
+
+        </button>
+
+        <div class="panel">
+
+            <ul>
+
+                <li>Introduction</li>
+
+                <li>Basic concepts</li>
+
+                <li>Doubly Linked List</li>
+
+                <li>Circular Linked list</li>
+
+                <li>garbage colection</li>
+
+                <li>Important types of Linked list</li>
+
+            </ul>
+
+        </div>
+        <!-- ================= UNIT 3 ================= -->
+
+        <button class="accordion">
+
+            Unit 3 •Stack
+
+        </button>
+
+        <div class="panel">
+
+            <ul>
+
+                <li>Introduction</li>
+
+                <li>Basic Stack</li>
+
+                <li>Recursion</li>
+
+                <li>Stack using array</li>
+
+                <li>Stack using linked list</li>
+
+                <li>Tower of Hanoi</li>
+
+                
+            </ul>
+
+        </div>
+
+        <!-- ================= UNIT 4 ================= -->
+
+        <button class="accordion">
+
+            Unit 4 • Queue
+
+        </button>
+
+        <div class="panel">
+
+            <ul>
+
+                <li>Introductions</li>
+
+                <li>Types of queue</li>
+
+                <li>queue using array</li>
+
+                <li>queue using linked list</li>
+
+                
+            </ul>
+
+        </div>
+
+
+    <!-- ================= QUICK ACTIONS ================= -->
+
+    <div class="quick-actions">
+
+        <h2>
+
+            <i class="fa-solid fa-bolt"></i>
+
+            Quick Actions
+
+        </h2>
+
+        <div class="action-grid">
+
+            <a href="{{ url_for('static', filename='uploads/Java updated syllabus.pdf') }}"
+               target="_blank"
+               class="action-card">
+
+                <i class="fa-solid fa-file-pdf"></i>
+
+                <span>View Syllabus</span>
+
+            </a>
+
+            <a href="https://www.geeksforgeeks.org/dsa/dsa-tutorial-learn-data-structures-and-algorithms/"
+               class="action-card">
+
+                <i class="fa-solid fa-book"></i>
+
+                <span>Lecture Notes</span>
+
+            </a>
+
+            <a href="{{ url_for('student_assignments') }}"
+   class="action-card">
+
+    <i class="fa-solid fa-file-lines"></i>
+
+    <span>Assignments</span>
+
+</a>
+
+            <a href="#"
+               class="action-card">
+
+                <i class="fa-solid fa-video"></i>
+
+                <span>Recorded Lectures</span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const acc=document.getElementsByClassName("accordion");
+
+for(let i=0;i<acc.length;i++){
+
+    acc[i].addEventListener("click",function(){
+
+        this.classList.toggle("active");
+
+        const panel=this.nextElementSibling;
+
+        if(panel.style.maxHeight){
+
+            panel.style.maxHeight=null;
+
+        }
+
+        else{
+
+            panel.style.maxHeight=panel.scrollHeight+"px";
+
+        }
+
+    });
+
+}
+
+</script>
+
+{% endblock %}

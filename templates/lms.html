@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block title %}Learning Management System{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='lms.css') }}">
+
+<div class="lms-container">
+
+    <!-- Hero Section -->
+
+    <div class="hero">
+
+        <div class="hero-left">
+
+            <span class="tag">
+                <i class="fa-solid fa-graduation-cap"></i>
+                Student LMS
+            </span>
+
+            <h1>Learning Management System</h1>
+
+            <p>
+                Access all your enrolled courses, lecture materials,
+                assignments and syllabus from one place.
+            </p>
+
+        </div>
+
+        <div class="hero-right">
+
+            <div class="hero-icon">
+
+                <i class="fa-solid fa-book-open-reader"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Stats -->
+
+    <div class="stats">
+
+        <div class="stat-card">
+
+            <i class="fa-solid fa-book"></i>
+
+            <h2>3</h2>
+
+            <span>Total Courses</span>
+
+        </div>
+
+        <div class="stat-card">
+
+            <i class="fa-solid fa-circle-play"></i>
+
+            <h2>3</h2>
+
+            <span>Active Courses</span>
+
+        </div>
+
+        <div class="stat-card">
+
+            <i class="fa-solid fa-user-check"></i>
+
+            <h2>100%</h2>
+
+            <span>Enrollment</span>
+
+        </div>
+
+    </div>
+
+    <!-- Search -->
+
+    <div class="search-box">
+
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <input
+        type="text"
+        id="courseSearch"
+        placeholder="Search your course..."
+        onkeyup="searchCourses()">
+
+    </div>
+
+    <!-- Courses -->
+
+    <div class="course-grid" id="courseGrid">
+
+        <!-- Java -->
+
+        <div class="course-card">
+
+            <div class="course-header blue">
+
+                <i class="fa-brands fa-java"></i>
+
+            </div>
+
+            <div class="course-body">
+
+                <span class="course-code">
+                    CSP0101
+                </span>
+
+                <h2>OOPS using JAVA</h2>
+
+                <p>
+
+                    <i class="fa-solid fa-user"></i>
+
+                    Instructor :
+                    <strong>Yogendra Jain</strong>
+
+                </p>
+
+                <p>
+
+                    <i class="fa-solid fa-calendar"></i>
+
+                    Phase-1
+
+                </p>
+
+                <p>
+
+                    <i class="fa-solid fa-star"></i>
+
+                    Credits : 2
+
+                </p>
+
+                <a href="{{ url_for('java_course') }}"
+                class="open-btn">
+
+                    Open Course
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- DSA -->
+
+        <div class="course-card">
+
+            <div class="course-header green">
+
+                <i class="fa-solid fa-code"></i>
+
+            </div>
+
+            <div class="course-body">
+
+                <span class="course-code">
+                    CSP0102
+                </span>
+
+                <h2>Data Structures</h2>
+
+                <p>
+
+                    <i class="fa-solid fa-user"></i>
+
+                    Instructor :
+                    <strong>Yogendra Jain</strong>
+
+                </p>
+
+                <p>
+
+                    <i class="fa-solid fa-calendar"></i>
+
+                    Phase-1
+
+                </p>
+
+                <p>
+
+                    <i class="fa-solid fa-star"></i>
+
+                    Credits : 2
+
+                </p>
+
+                <a href="{{ url_for('dsa_course') }}"
+                class="open-btn">
+                    Open Course
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- DACS -->
+
+        <div class="course-card">
+
+            <div class="course-header purple">
+
+                <i class="fa-solid fa-diagram-project"></i>
+
+            </div>
+
+            <div class="course-body">
+
+                <span class="course-code">
+                    CSL0109
+                </span>
+
+                <h2>Design & Analysis of Complex Structures</h2>
+
+                <p>
+
+                    <i class="fa-solid fa-user"></i>
+
+                    Instructor :
+                    <strong>Yogendra Jain</strong>
+
+                </p>
+
+                <p>
+
+                    <i class="fa-solid fa-calendar"></i>
+
+                    Phase-1
+
+                </p>
+
+                <p>
+
+                    <i class="fa-solid fa-star"></i>
+
+                    Credits : 3
+
+                </p>
+
+                <a href="{{ url_for('adv_dsa_course') }}"
+                class="open-btn">
+
+                    Open Course
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="course-card">
+
+            <div class="course-header purple">
+
+                <i class="fa-solid fa-diagram-project"></i>
+
+            </div>
+
+            <div class="course-body">
+
+                <span class="course-code">
+                    CSL0105
+                </span>
+
+                <h2>Artificial Intelligence</h2>
+
+                <p>
+
+                    <i class="fa-solid fa-user"></i>
+
+                    Instructor :
+                    <strong>Yogendra Jain</strong>
+
+                </p>
+
+                <p>
+
+                    <i class="fa-solid fa-calendar"></i>
+
+                    Phase-1
+
+                </p>
+
+                <p>
+
+                    <i class="fa-solid fa-star"></i>
+
+                    Credits : 3
+
+                </p>
+
+                <a href="{{ url_for('Ai_course') }}"
+                class="open-btn">
+
+                    Open Course
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function searchCourses(){
+
+    let input =
+    document.getElementById("courseSearch").value.toLowerCase();
+
+    let cards =
+    document.querySelectorAll(".course-card");
+
+    cards.forEach(card=>{
+
+        let title =
+        card.innerText.toLowerCase();
+
+        if(title.includes(input)){
+
+            card.style.display="block";
+
+        }
+
+        else{
+
+            card.style.display="none";
+
+        }
+
+    });
+
+}
+
+</script>
+
+{% endblock %}
