@@ -1,0 +1,387 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+    background-color: #f8fafc;
+    color: #334155;
+    overflow-x: hidden;
+}
+
+/* --- Main Page Layout --- */
+.login-page {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background: #f1f5f9;
+}
+
+.login-container {
+    display: flex;
+    max-width: 1200px;
+    width: 100%;
+    min-height: 680px;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* --- Left Side: Portal Features --- */
+.portal-info {
+    flex: 1.2;
+    padding: 3.5rem 4rem 3.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid #f1f5f9;
+    background: #ffffff;
+    z-index: 2;
+}
+
+.university-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f0fdf4;
+    color: #16a34a;
+    padding: 0.4rem 0.8rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    width: fit-content;
+}
+
+.portal-content h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.portal-content .subtitle {
+    color: #64748b;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    margin-bottom: 2.5rem;
+    max-width: 480px;
+}
+
+/* Feature Grid */
+.portal-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #f8fafc;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.feature:hover {
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+    transform: translateY(-2px);
+}
+
+.feature-icon {
+    width: 32px;
+    height: 32px;
+    background: #eff6ff;
+    color: #3b82f6;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.feature span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.feature-highlight {
+    grid-column: span 2;
+    background: #faf5ff;
+    border: 1px dashed #d8b4fe;
+}
+
+.feature-highlight .feature-icon {
+    background: #f3e8ff;
+    color: #9333ea;
+}
+
+.feature-highlight span {
+    color: #7e22ce;
+}
+
+/* --- Right Side: Image Background --- */
+.login-section {
+    flex: 1.1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem;
+    position: relative;
+    
+    /* Background image setup: Shifted position down slightly (15%) so her face isn't cut off at the top */
+    background-image: url('https://thumbs.dreamstime.com/b/school-teenage-student-girl-education-books-21144255.jpg');
+    background-size: cover;
+    background-position: center 15%;
+    background-repeat: no-repeat;
+}
+
+/* Lighter overlay so the image stays vivid and bright */
+.login-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(15, 23, 42, 0.15));
+    z-index: 1;
+}
+
+/* --- High-Transparency Glass Card (Makes Face Clearly Visible) --- */
+.login-card {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 400px;
+    padding: 2.2rem;
+    
+    /* Reduced alpha to 0.45 for much higher transparency */
+    background: rgba(255, 255, 255, 0.45);
+    
+    /* Soft blur so text is readable without hiding the face behind it */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.login-header {
+    margin-bottom: 1.8rem;
+    text-align: center;
+}
+
+.login-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.3rem;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.login-header p {
+    font-size: 0.88rem;
+    color: #1e293b;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* --- Semi-Transparent Stacked Input Box --- */
+.input-stack {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.input-stack:focus-within {
+    border-color: #6366f1;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+}
+
+.input-field {
+    position: relative;
+    width: 100%;
+}
+
+.border-bottom {
+    border-bottom: 1px solid rgba(203, 213, 225, 0.6);
+}
+
+.input-field input {
+    width: 100%;
+    padding: 1.05rem 1.2rem;
+    background: transparent;
+    border: none;
+    font-size: 0.95rem;
+    color: #0f172a;
+    font-weight: 500;
+    outline: none;
+}
+
+.input-field input::placeholder {
+    color: #475569;
+    font-weight: 500;
+}
+
+/* --- Remember Me & Forgot Password --- */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.8rem;
+    font-size: 0.85rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #0f172a;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-label input {
+    display: none;
+}
+
+.custom-checkbox {
+    width: 18px;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #64748b;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.7rem;
+    transition: all 0.2s ease;
+}
+
+.checkbox-label input:checked + .custom-checkbox {
+    background: #6366f1;
+    border-color: #6366f1;
+}
+
+.forgot-link {
+    color: #0f172a;
+    text-decoration: underline;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.forgot-link:hover {
+    color: #6366f1;
+}
+
+/* --- Log In Button --- */
+.login-btn {
+    width: 100%;
+    padding: 1.05rem;
+    background: #6366f1;
+    border: none;
+    border-radius: 12px;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.5);
+}
+
+.login-btn:hover {
+    background: #4f46e5;
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.6);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+/* --- Footer & Alerts --- */
+.login-footer {
+    margin-top: 1.8rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #1e293b;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+.alert {
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.alert.error, .alert.danger {
+    background: rgba(254, 242, 242, 0.9);
+    border: 1px solid #fecaca;
+    color: #ef4444;
+}
+
+.alert.success {
+    background: rgba(240, 253, 244, 0.9);
+    border: 1px solid #bbf7d0;
+    color: #16a34a;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 950px) {
+    .login-container {
+        flex-direction: column-reverse;
+        max-width: 500px;
+    }
+    
+    .portal-info {
+        padding: 2.5rem 2rem;
+        border-right: none;
+        border-top: 1px solid #f1f5f9;
+    }
+    
+    .portal-content h1 {
+        font-size: 2rem;
+    }
+    
+    .portal-features {
+        grid-template-columns: 1fr;
+    }
+    
+    .feature-highlight {
+        grid-column: span 1;
+    }
+    
+    .login-section {
+        padding: 3rem 1.5rem;
+        min-height: 500px;
+        background-position: center top;
+    }
+}

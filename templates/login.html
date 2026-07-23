@@ -1,29 +1,141 @@
 {% extends "base.html" %}
+
+{% block title %}Student Portal Login{% endblock %}
+
 {% block content %}
-<div class="login-wrapper">
-    <div class="login-card">
-        <div class="login-header">
-            <i class="fa-solid fa-building-columns logo-icon"></i>
-            <h2>Portal Login</h2>
-            <p>Enter your credentials to access your academic dashboard</p>
+<link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+
+<div class="login-page">
+    <div class="login-container">
+        
+        <!-- Left Side: Portal Features -->
+        <div class="portal-info">
+            <div class="portal-content">
+                <div class="university-badge">
+                    <i class="fa-solid fa-building-columns"></i>
+                    <span>VIPEY-TECHNOLOGIES</span>
+                </div>
+                
+                <h1>Student Portal</h1>
+                <p class="subtitle">Welcome to the Academic Management System. Access all your educational tools from one secure dashboard.</p>
+
+                <!-- Feature List -->
+                <div class="portal-features">
+                    <div class="feature">
+                        <div class="feature-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                        <span>View Attendance</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon"><i class="fa-solid fa-file-arrow-up"></i></div>
+                        <span>Upload Assignments</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon"><i class="fa-solid fa-book-open-reader"></i></div>
+                        <span>Separate LMS Portal</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon"><i class="fa-solid fa-chart-line"></i></div>
+                        <span>See Marks & Results</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                        <span>Live Announcements</span>
+                    </div>
+                    <div class="feature feature-highlight">
+                        <div class="feature-icon"><i class="fa-solid fa-sparkles"></i></div>
+                        <span>More features adding soon...</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <form action="{{ url_for('login') }}" method="POST">
-            <div class="input-group">
-                <label>Username</label>
-                <div class="input-field">
-                    <i class="fa-solid fa-user"></i>
-                    <input type="text" name="username" placeholder="e.g. paras or admin" required>
+
+        <!-- Right Side: Background Image + Glassmorphism Login Card -->
+        <div class="login-section">
+            <div class="login-card" id="loginCard">
+                
+                <div class="login-header">
+                    <h2>Sign In</h2>
+                    <p>Enter your student credentials to access your dashboard and daily campus updates.</p>
                 </div>
-            </div>
-            <div class="input-group">
-                <label>Password</label>
-                <div class="input-field">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert {{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form action="{{ url_for('login') }}" method="POST">
+                    
+                    <!-- Stacked Input Box -->
+                    <div class="input-stack">
+                        <div class="input-field border-bottom">
+                            <input type="text" name="username" placeholder="Username" required>
+                        </div>
+                        <div class="input-field">
+                            <input type="password" name="password" placeholder="Password" required>
+                        </div>
+                    </div>
+
+                    <!-- Remember Me & Forgot Password Row -->
+                    <div class="form-actions">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="remember" checked>
+                            <span class="custom-checkbox"><i class="fa-solid fa-check"></i></span>
+                            Remember me
+                        </label>
+                        <a href="#" class="forgot-link">Forgot Password</a>
+                    </div>
+
+                    <button type="submit" class="login-btn">
+                        <span>Log In</span>
+                    </button>
+                    
+                </form>
+
+                <div class="login-footer">
                     <i class="fa-solid fa-lock"></i>
-                    <input type="password" name="password" placeholder="••••••••" required>
+                    <span>Your credentials are securely encrypted.</span>
                 </div>
+                
             </div>
-            <button type="submit" class="btn-primary btn-full">Sign In <i class="fa-solid fa-arrow-right"></i></button>
-        </form>
+        </div>
+        
     </div>
 </div>
+
+<!-- Embedded JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Button Loading Animation on Submit
+    const form = document.querySelector('form');
+    const loginBtn = document.querySelector('.login-btn');
+    
+    if (form && loginBtn) {
+        form.addEventListener('submit', () => {
+            const btnSpan = loginBtn.querySelector('span');
+            if (btnSpan) btnSpan.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
+            
+            loginBtn.style.opacity = '0.85';
+            loginBtn.style.pointerEvents = 'none';
+        });
+    }
+
+    // 2. Auto-Dismiss Flash Alerts after 4 seconds
+    const alerts = document.querySelectorAll('.alert');
+    if (alerts.length > 0) {
+        setTimeout(() => {
+            alerts.forEach(alert => {
+                alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-10px)';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 4000);
+    }
+});
+</script>
 {% endblock %}
