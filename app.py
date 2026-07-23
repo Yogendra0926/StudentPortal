@@ -73,6 +73,71 @@ def logout():
     return redirect(url_for('login'))
 
 # --- STUDENT MODULE ---
+@app.route('/change-password', methods=['GET', 'POST'])
+def change_password():
+    if request.method == 'POST':
+        username = request.form['username']
+        old_password = request.form['old_password']
+        new_password = request.form['new_password']
+        confirm_password = request.form['confirm_password']
+
+        # 1. Check if new passwords match
+        if new_password != confirm_password:
+            flash('New Password and Confirm Password do not match!', 'danger')
+            return redirect(url_for('change_password'))
+
+        if old_password == new_password:
+            flash('New password cannot be the same as your old password!', 'danger')
+            return redirect(url_for('change_password'))
+
+        conn = get_db_connection()
+        if conn is None:
+            flash("Database Connection failed!", "danger")
+            return redirect(url_for("change_password"))
+            
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, password, last_password_change FROM users WHERE username = %s", (username,))
+        user = cursor.fetchone()
+
+        # 2. Verify User and Old Password
+        if not user:
+            cursor.close()
+            conn.close()
+            flash('Username not found!', 'danger')
+            return redirect(url_for('change_password'))
+
+        if old_password != user['password']:
+            cursor.close()
+            conn.close()
+            flash('Incorrect Old Password!', 'danger')
+            return redirect(url_for('change_password'))
+
+        # 3. Enforce 30-Day (1 Month) Restriction
+        last_change = user['last_password_change']
+        if last_change:
+            days_since_change = (datetime.now() - last_change).days
+            if days_since_change < 30:
+                days_left = 30 - days_since_change
+                cursor.close()
+                conn.close()
+                flash(f'Password change restricted! You can change your password again in {days_left} day(s).', 'danger')
+                return redirect(url_for('change_password'))
+
+        # 4. Update Password and Timestamp
+        cursor.execute("""
+            UPDATE users 
+            SET password = %s, last_password_change = %s 
+            WHERE id = %s
+        """, (new_password, datetime.now(), user['id']))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        flash('Password successfully changed! Please log in with your new password.', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('change_password.html')
 @app.route("/home")
 def home():
 
