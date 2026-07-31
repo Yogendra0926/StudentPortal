@@ -18,28 +18,32 @@
         </div>
         <div class="nav-links">
             {% if session.role == 'student' %}
-                <a href="{{ url_for('home') }}"
-class="{{ 'active' if request.endpoint=='home' }}">
-<i class="fa-solid fa-house"></i>
-Home
-</a>
-                <a href="{{ url_for('student_attendance') }}" class="{{ 'active' if request.endpoint == 'student_attendance' }}"><i class="fa-solid fa-chart-pie"></i> Attendance</a>
-                <a href="{{ url_for('student_assignments') }}" class="{{ 'active' if request.endpoint == 'student_assignments' }}"><i class="fa-solid fa-book"></i> My Assignments</a>
-                <a href="{{ url_for('internal_marks') }}"
-       class="{{ 'active' if request.endpoint == 'internal_marks' }}">
-        <i class="fa-solid fa-file-lines"></i> Internal Marks
-    </a>
-    <a href="{{ url_for('announcements') }}"
-class="{{ 'active' if request.endpoint=='announcements' }}">
-<i class="fa-solid fa-bullhorn"></i>
-Announcements
-<a href="{{ url_for('lms') }}"
-   class="{{ 'active' if request.endpoint=='lms' }}">
-    <i class="fa-solid fa-book-open"></i>
-    LMS
-</a>      {% else %}
+                <a href="{{ url_for('home') }}" class="{{ 'active' if request.endpoint=='home' }}">
+                    <i class="fa-solid fa-house"></i> Home
+                </a>
+                <a href="{{ url_for('student_attendance') }}" class="{{ 'active' if request.endpoint == 'student_attendance' }}">
+                    <i class="fa-solid fa-chart-pie"></i> Attendance
+                </a>
+                <a href="{{ url_for('student_assignments') }}" class="{{ 'active' if request.endpoint == 'student_assignments' }}">
+                    <i class="fa-solid fa-book"></i> My Assignments
+                </a>
+                <a href="{{ url_for('internal_marks') }}" class="{{ 'active' if request.endpoint == 'internal_marks' }}">
+                    <i class="fa-solid fa-file-lines"></i> Internal Marks
+                </a>
+                <a href="{{ url_for('announcements') }}" class="{{ 'active' if request.endpoint=='announcements' }}">
+                    <i class="fa-solid fa-bullhorn"></i> Announcements
+                </a> <!-- Fixed missing closing tag here -->
+                <a href="{{ url_for('lms') }}" class="{{ 'active' if request.endpoint=='lms' }}">
+                    <i class="fa-solid fa-book-open"></i> LMS
+                </a>
+                <!-- NEW QUIZ LINK ADDED HERE -->
+                <a href="{{ url_for('quiz_dashboard') }}" class="{{ 'active' if request.endpoint=='quiz_dashboard' or request.endpoint=='take_quiz' }}">
+                    <i class="fa-solid fa-laptop-code"></i> Quizzes
+                </a>
+            {% else %}
                 <a href="{{ url_for('admin_portal') }}" class="active"><i class="fa-solid fa-bars-progress"></i> Dashboard</a>
             {% endif %}
+            
             <div class="user-profile">
                 <span>{{ session.name }}</span>
                 <a href="{{ url_for('logout') }}" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>

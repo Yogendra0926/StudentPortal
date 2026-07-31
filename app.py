@@ -420,6 +420,8 @@ def serve_file(filename):
 
 # --- ADMIN MODULE ---
 
+# --- ADMIN MODULE ---
+
 @app.route('/admin', methods=['GET'])
 def admin_portal():
     if 'user_id' not in session or session['role'] != 'admin':
@@ -452,12 +454,16 @@ def admin_portal():
         """, (selected_assign_id,))
         submissions = cursor.fetchall()
         
+    # Fetch quizzes for the Manage Quizzes tab
+    cursor.execute("SELECT * FROM quizzes ORDER BY created_at DESC")
+    admin_quizzes = cursor.fetchall()
+        
     cursor.close()
     conn.close()
     
-    # ---> ADD datetime=datetime TO THIS LINE BELOW <---
     return render_template('admin_portal.html', students=students, assignments=assignments, 
-                           submissions=submissions, selected_assign_id=selected_assign_id, datetime=datetime)
+                           submissions=submissions, selected_assign_id=selected_assign_id, 
+                           admin_quizzes=admin_quizzes, datetime=datetime)
 
 @app.route('/admin/save_attendance', methods=['POST'])
 def save_attendance():
@@ -538,6 +544,168 @@ def grade_submission():
     
     flash("Grade updated!", "success")
     return redirect(url_for('admin_portal', assign_id=assign_id))
+
+# ==========================================
+# --- QUIZ MODULE (STUDENT & ADMIN) ---
+# ==========================================
+
+@app.route('/quizzes')
+def quiz_dashboard():
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Fetch all active quizzes
+    cursor.execute("SELECT * FROM quizzes WHERE is_active = TRUE")
+    quizzes = cursor.fetchall()
+
+    # Check which quizzes the student has already submitted
+    for quiz in quizzes:
+        cursor.execute("""
+            SELECT score, total_questions 
+            FROM quiz_submissions 
+            WHERE quiz_id = %s AND student_id = %s
+        """, (quiz['id'], session['user_id']))
+        submission = cursor.fetchone()
+        
+        if submission:
+            quiz['has_submitted'] = True
+            quiz['score'] = submission['score']
+            quiz['total_questions'] = submission['total_questions']
+        else:
+            quiz['has_submitted'] = False
+
+    cursor.close()
+    conn.close()
+    return render_template('quiz.html', view='list', quizzes=quizzes)
+
+
+@app.route('/quizzes/<int:quiz_id>')
+def take_quiz(quiz_id):
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Security check: Ensure student hasn't already submitted this quiz
+    cursor.execute("SELECT id FROM quiz_submissions WHERE quiz_id = %s AND student_id = %s", (quiz_id, session['user_id']))
+    if cursor.fetchone():
+        flash("You have already submitted this quiz. You cannot take it twice.", "danger")
+        return redirect(url_for('quiz_dashboard'))
+
+    # Fetch quiz details
+    cursor.execute("SELECT * FROM quizzes WHERE id = %s", (quiz_id,))
+    quiz = cursor.fetchone()
+
+    # Fetch questions (excluding the correct answer so it isn't sent to the browser)
+    cursor.execute("SELECT id, question_text, opt_a, opt_b, opt_c, opt_d FROM questions WHERE quiz_id = %s", (quiz_id,))
+    questions = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+    return render_template('take_quiz.html', quiz=quiz, questions=questions)
+
+
+@app.route('/quizzes/<int:quiz_id>/submit', methods=['POST'])
+def submit_quiz(quiz_id):
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Fetch correct answers to grade the test
+    cursor.execute("SELECT id, correct_opt FROM questions WHERE quiz_id = %s", (quiz_id,))
+    questions = cursor.fetchall()
+
+    score = 0
+    total_questions = len(questions)
+
+    # Loop through each question and check the submitted answer
+    for q in questions:
+        student_answer = request.form.get(f"q_{q['id']}")
+        if student_answer == q['correct_opt']:
+            score += 1
+
+    # Save final score to database
+    cursor.execute("""
+        INSERT INTO quiz_submissions (quiz_id, student_id, score, total_questions)
+        VALUES (%s, %s, %s, %s)
+    """, (quiz_id, session['user_id'], score, total_questions))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash("Quiz submitted successfully! Marks will be displayed once the Admin releases them.", "success")
+    return redirect(url_for('quiz_dashboard'))
+
+
+@app.route('/admin/create_quiz', methods=['POST'])
+def admin_create_quiz():
+    if 'user_id' not in session or session['role'] != 'admin':
+        return redirect(url_for('login'))
+
+    title = request.form['title']
+    course_code = request.form['course_code']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO quizzes (title, course_code) VALUES (%s, %s)", (title, course_code))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash("Quiz Framework created! You can now add questions to it via the database.", "success")
+    return redirect(url_for('admin_portal'))
+
+
+@app.route('/admin/toggle_quiz_results', methods=['POST'])
+def admin_toggle_quiz_results():
+    if 'user_id' not in session or session['role'] != 'admin':
+        return redirect(url_for('login'))
+
+    quiz_id = request.form['quiz_id']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Toggle the boolean true/false
+    cursor.execute("UPDATE quizzes SET results_released = NOT results_released WHERE id = %s", (quiz_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash("Quiz marks visibility updated for students!", "success")
+    return redirect(url_for('admin_portal'))
+@app.route('/admin/add_question', methods=['POST'])
+def admin_add_question():
+    if 'user_id' not in session or session['role'] != 'admin':
+        return redirect(url_for('login'))
+
+    quiz_id = request.form['quiz_id']
+    question_text = request.form['question_text']
+    opt_a = request.form['opt_a']
+    opt_b = request.form['opt_b']
+    opt_c = request.form['opt_c']
+    opt_d = request.form['opt_d']
+    correct_opt = request.form['correct_opt']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO questions (quiz_id, question_text, opt_a, opt_b, opt_c, opt_d, correct_opt)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """, (quiz_id, question_text, opt_a, opt_b, opt_c, opt_d, correct_opt))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash("Question added to the quiz successfully!", "success")
+    return redirect(url_for('admin_portal'))
 
 if __name__ == "__main__":
     app.run(debug=False)

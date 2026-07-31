@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Academic Quizzes - Student Portal{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='quiz.css') }}">
+
+<div class="quiz-page">
+    <div class="quiz-container">
+        
+        <!-- Header Banner -->
+        <div class="quiz-header-banner">
+            <div class="header-text">
+                <h1>Available Quizzes & Assessments</h1>
+                <p>Complete your pending assessments before the deadline. Scores will be visible once access is granted by your professor.</p>
+            </div>
+            <div class="header-badge">
+                <i class="fa-solid fa-stopwatch"></i>
+                <span>Proctored Portal</span>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Quizzes Grid -->
+        <div class="quiz-grid">
+            {% if quizzes %}
+                {% for quiz in quizzes %}
+                <!-- UPDATED: changed quiz.submitted to quiz.has_submitted -->
+                <div class="quiz-card {% if quiz.has_submitted %}card-submitted{% endif %}">
+                    
+                    <div class="quiz-card-top">
+                        <span class="course-tag">{{ quiz.course_code }}</span>
+                        <!-- UPDATED: changed quiz.submitted to quiz.has_submitted -->
+                        {% if quiz.has_submitted %}
+                            <span class="status-badge submitted"><i class="fa-solid fa-check-circle"></i> Submitted</span>
+                        {% elif not quiz.is_active %}
+                            <span class="status-badge closed"><i class="fa-solid fa-lock"></i> Closed</span>
+                        {% else %}
+                            <span class="status-badge active"><i class="fa-solid fa-circle-play"></i> Available</span>
+                        {% endif %}
+                    </div>
+
+                    <h3 class="quiz-title">{{ quiz.title }}</h3>
+                    <p class="quiz-desc">{{ quiz.description or 'No specific instructions provided.' }}</p>
+
+                    <div class="quiz-meta">
+                        <div class="meta-item">
+                            <i class="fa-regular fa-clock"></i>
+                            <span>{{ quiz.duration_minutes | default(30) }} Mins</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fa-solid fa-list-ol"></i>
+                            <span>{{ quiz.question_count | default(10) }} Questions</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fa-solid fa-award"></i>
+                            <span>{{ quiz.total_marks | default(10) }} Marks</span>
+                        </div>
+                    </div>
+
+                    <!-- Action / Marking Section -->
+                    <div class="quiz-card-footer">
+                        <!-- UPDATED: changed quiz.submitted to quiz.has_submitted -->
+                        {% if not quiz.has_submitted %}
+                            {% if quiz.is_active %}
+                                <a href="{{ url_for('take_quiz', quiz_id=quiz.id) }}" class="btn-primary-quiz">
+                                    <span>Start Quiz</span>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </a>
+                            {% else %}
+                                <button class="btn-disabled" disabled>Assessment Closed</button>
+                            {% endif %}
+                        {% else %}
+                            <!-- Submission Completed -> Check if Admin published marking -->
+                            <!-- UPDATED: changed results_published to results_released -->
+                            <div class="result-box {% if quiz.results_released %}published{% else %}hidden-score{% endif %}">
+                                {% if quiz.results_released %}
+                                    <div class="score-display">
+                                        <span class="score-label">Your Score:</span>
+                                        <!-- UPDATED: changed student_score/max_score to score/total_questions -->
+                                        <span class="score-value">{{ quiz.score }} / {{ quiz.total_questions }}</span>
+                                    </div>
+                                    <span class="access-granted"><i class="fa-solid fa-unlock-keyhole"></i> Marking Released</span>
+                                {% else %}
+                                    <div class="score-display">
+                                        <span class="score-label">Status:</span>
+                                        <span class="score-value pending">Pending Release</span>
+                                    </div>
+                                    <span class="access-locked"><i class="fa-solid fa-lock"></i> Marks Hidden by Admin</span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Empty State -->
+                <div class="empty-quiz-state">
+                    <div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div>
+                    <h3>No Assessments Active</h3>
+                    <p>There are no quizzes assigned to your courses right now. Check back later!</p>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

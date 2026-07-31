@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}{{ quiz.title }} - Examination Room{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='quiz.css') }}">
+
+<div class="quiz-page">
+    <div class="quiz-container exam-room">
+        
+        <div class="exam-header">
+            <div>
+                <span class="course-tag">{{ quiz.course_code }}</span>
+                <h2>{{ quiz.title }}</h2>
+            </div>
+            <div class="timer-box" id="timerBox">
+                <i class="fa-solid fa-stopwatch"></i>
+                <!-- Defaulting to 30 minutes if database column doesn't exist -->
+                <span id="timeRemaining">{{ quiz.duration_minutes | default(30) }}:00</span>
+            </div>
+        </div>
+
+        <form action="{{ url_for('submit_quiz', quiz_id=quiz.id) }}" method="POST" id="quizForm">
+            
+            <div class="questions-list">
+                {% for q in questions %}
+                <div class="question-card">
+                    <div class="q-header">
+                        <span class="q-number">Question {{ loop.index }}</span>
+                        <!-- Defaulting to 1 Mark -->
+                        <span class="q-marks">{{ q.marks | default(1) }} Mark(s)</span>
+                    </div>
+                    
+                    <p class="q-text">{{ q.question_text }}</p>
+
+                    <div class="options-group">
+                        <label class="option-label">
+                            <input type="radio" name="q_{{ q.id }}" value="A" required>
+                            <span class="opt-badge">A</span>
+                            <!-- Updated to opt_a -->
+                            <span class="opt-text">{{ q.opt_a }}</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q_{{ q.id }}" value="B" required>
+                            <span class="opt-badge">B</span>
+                            <!-- Updated to opt_b -->
+                            <span class="opt-text">{{ q.opt_b }}</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q_{{ q.id }}" value="C" required>
+                            <span class="opt-badge">C</span>
+                            <!-- Updated to opt_c -->
+                            <span class="opt-text">{{ q.opt_c }}</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q_{{ q.id }}" value="D" required>
+                            <span class="opt-badge">D</span>
+                            <!-- Updated to opt_d -->
+                            <span class="opt-text">{{ q.opt_d }}</span>
+                        </label>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="exam-footer">
+                <a href="{{ url_for('quiz_dashboard') }}" class="btn-cancel">Cancel Attempt</a>
+                <button type="submit" class="btn-submit-exam">
+                    <span>Submit Examination</span>
+                    <i class="fa-solid fa-check"></i>
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- Countdown Timer Automation -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Defaulting to 30 minutes safely for JS
+    let duration = {{ quiz.duration_minutes | default(30) }} * 60;
+    const display = document.getElementById('timeRemaining');
+    const form = document.getElementById('quizForm');
+
+    const countdown = setInterval(() => {
+        let minutes = Math.floor(duration / 60);
+        let seconds = duration % 60;
+        
+        display.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        
+        if (--duration < 0) {
+            clearInterval(countdown);
+            alert("Time is up! Submitting your answers automatically.");
+            form.submit();
+        }
+    }, 1000);
+});
+</script>
+{% endblock %}

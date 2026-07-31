@@ -5,6 +5,8 @@
         <button class="tab-btn active" onclick="switchTab('attendance')">ATTENDANCE</button>
         <button class="tab-btn" onclick="switchTab('create_assign')">CREATE ASSIGNMENTS</button>
         <button class="tab-btn" onclick="switchTab('review_assign')">REVIEW SUBMISSIONS</button>
+        <!-- NEW TAB FOR QUIZZES -->
+        <button class="tab-btn" onclick="switchTab('manage_quizzes')">MANAGE QUIZZES</button>
     </div>
 
     <div id="tab-attendance" class="tab-content active">
@@ -138,5 +140,80 @@
             {% endif %}
         </div>
     </div>
+
+    <!-- NEW SECTION: MANAGE QUIZZES -->
+    <div id="tab-manage_quizzes" class="tab-content" style="display: none;">
+        
+        <!-- Part 1: Create Quiz -->
+        <div class="section-card max-w-lg mb-4" style="margin-bottom: 2rem;">
+            <h3>Create New Quiz</h3>
+            <form action="{{ url_for('admin_create_quiz') }}" method="POST" class="form-grid">
+                <div class="form-group">
+                    <label>Quiz Title</label>
+                    <input type="text" name="title" class="form-control" placeholder="e.g. Mid-Term DSA Test" required>
+                </div>
+                <div class="form-group">
+                    <label>Course Code</label>
+                    <select name="course_code" class="form-control">
+                        <option value="CSP0101">CSP0101</option>
+                        <option value="CSP0102">CSP0102</option>
+                        <option value="CSL0109[T]">CSL0109[T]</option>
+                        <option value="CSL0105[T]">CSL0105[T]</option>
+                    </select>
+                </div>
+                <div class="col-span-2">
+                    <button type="submit" class="btn-purple">Create Quiz Framework</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Part 2: Release Results & Manage Active Quizzes -->
+        <div class="section-card">
+            <h3>Manage Existing Quizzes & Results</h3>
+            <table class="data-table mt-3">
+                <thead>
+                    <tr>
+                        <th>QUIZ ID</th>
+                        <th>TITLE</th>
+                        <th>COURSE</th>
+                        <th>RESULTS STATUS</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if admin_quizzes %}
+                        {% for quiz in admin_quizzes %}
+                        <tr>
+                            <td>{{ quiz.id }}</td>
+                            <td>{{ quiz.title }}</td>
+                            <td>{{ quiz.course_code }}</td>
+                            <td>
+                                {% if quiz.results_released %}
+                                    <span style="color: #16a34a; font-weight: 600;"><i class="fa-solid fa-check"></i> Released</span>
+                                {% else %}
+                                    <span style="color: #d97706; font-weight: 600;"><i class="fa-solid fa-lock"></i> Hidden</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <!-- Toggle Release Results -->
+                                <form action="{{ url_for('admin_toggle_quiz_results') }}" method="POST" class="inline-flex">
+                                    <input type="hidden" name="quiz_id" value="{{ quiz.id }}">
+                                    <button type="submit" class="btn-blue-sm">
+                                        {% if quiz.results_released %} Hide Marks {% else %} Grant Access to Marks {% endif %}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-muted" style="text-align: center;">No quizzes created yet.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
