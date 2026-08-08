@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Study Materials - {{ course_code }}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<div class="lms-container" style="padding: 20px;">
+    
+    <div class="header-section" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2><i class="fa-solid fa-file-pdf" style="color: #0d6efd;"></i> Study Materials for {{ course_code }}</h2>
+        <a href="javascript:history.back()" class="btn-back" style="padding: 10px 20px; background: #f1f5f9; border-radius: 8px; text-decoration: none; color: #333;">
+            <i class="fa-solid fa-arrow-left"></i> Back to Course
+        </a>
+    </div>
+
+    <!-- PDF Viewer -->
+    <div class="pdf-viewer-container" style="width: 100%; height: 80vh; border: 2px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+        <!-- The iframe seamlessly displays the PDF hosted in your static folder -->
+        <iframe 
+            src="{{ url_for('static', filename='uploads/study_materials/' + pdf_filename) }}" 
+            width="100%" 
+            height="100%" 
+            style="border: none;">
+            This browser does not support PDFs. Please download the PDF to view it.
+        </iframe>
+    </div>
+
+</div>
+{% endblock %}

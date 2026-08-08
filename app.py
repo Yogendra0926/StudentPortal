@@ -9,8 +9,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+# Give the study materials its own unique config key
+app.config['STUDY_MATERIALS_FOLDER'] = 'static/uploads/study_materials'
 app.secret_key = os.getenv("SECRET_KEY")
+
+# Keep your original upload folder for other features
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads')
+
+# Create both directories if they don't exist
+os.makedirs(app.config['STUDY_MATERIALS_FOLDER'], exist_ok=True)
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Database Connection Helper
@@ -361,52 +368,76 @@ def announcements():
         "announcement.html",
         webinars=webinars
     )
+# ... your other routes might be up here ...
+
+@app.route('/course/<course_code>/study-materials')
+def study_materials(course_code):
+    # TODO: In a complete system, query your MySQL database here to get the filename
+    # Example: pdf_filename = db.execute("SELECT pdf_file FROM materials WHERE course_code = %s", (course_code,))
+    
+    # For now, assuming the admin uploaded a file named 'java_notes.pdf' for CSP0101
+    pdf_filename = "java_notes.pdf" 
+    
+    return render_template('study_materials.html', 
+                           course_code=course_code, 
+                           pdf_filename=pdf_filename)
+
+# ... more of your routes down here ...
+
 @app.route("/internal_marks")
 def internal_marks():
 
+    # Only students can access internal marks
     if 'user_id' not in session or session['role'] != 'student':
         return redirect(url_for('login'))
 
     student_id = session['user_id']
 
+    # Get selected evaluation component
     selected_type = request.args.get("type")
 
     marks = []
 
-    if selected_type:
+    # Allowed database columns
+    allowed_columns = {
+        "class_participation": "class_participation",
+        "progressive_eval": "progressive_eval",
+        "internal_viva": "internal_viva",
+        "mid_term_1": "mid_term_1",
+        "mid_term_2": "mid_term_2"
+    }
 
-        allowed_columns = {
-            "class_participation": "class_participation",
-            "progressive_eval": "progressive_eval",
-            "internal_viva": "internal_viva",
-            "mid_term_1": "mid_term_1",
-            "mid_term_2": "mid_term_2"
-        }
+    if selected_type and selected_type in allowed_columns:
 
-        if selected_type in allowed_columns:
+        column = allowed_columns[selected_type]
 
-            conn = get_db_connection()
+        conn = get_db_connection()
 
-            if conn is None:
-                flash("Database Connection Failed!", "danger")
-                return redirect(url_for("student_attendance"))
+        if conn is None:
+            flash("Database Connection Failed!", "danger")
+            return redirect(url_for("home"))
 
-            cursor = conn.cursor()
+        cursor = conn.cursor()
 
-            query = f"""
-                SELECT
-                    course_code,
-                    {allowed_columns[selected_type]} AS marks
-                FROM phase1_marks
-                WHERE student_id=%s
-            """
+        # IMPORTANT:
+        # Only show courses where the selected evaluation
+        # component actually exists.
+        query = f"""
+            SELECT
+                course_code,
+                {column} AS marks
+            FROM phase1_marks
+            WHERE student_id = %s
+              AND {column} IS NOT NULL
+            ORDER BY course_code
+        """
 
-            cursor.execute(query, (student_id,))
+        cursor.execute(query, (student_id,))
 
-            marks = cursor.fetchall()
+        marks = cursor.fetchall()
 
-            cursor.close()
-            conn.close()
+        cursor.close()
+        conn.close()
 
     return render_template(
         "internal_marks.html",

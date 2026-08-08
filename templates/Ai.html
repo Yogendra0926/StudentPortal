@@ -411,14 +411,13 @@ href="{{ url_for('static', filename='java_course.css') }}">
 
 </a>
 
-            <a href="#"
-               class="action-card">
-
-                <i class="fa-solid fa-video"></i>
-
-                <span>Recorded Lectures</span>
-
-            </a>
+   <a href="{{ url_for('study_materials', course_code='CSL0105') }}" class="action-card" style="text-decoration: none; color: inherit;">
+    <div class="card-content">
+        <!-- Using a PDF icon instead of the video camera -->
+        <i class="fa-solid fa-file-pdf" style="color: #0d6efd; font-size: 2rem; margin-bottom: 10px;"></i>
+        <h3>Study Materials</h3>
+    </div>
+</a>
 
         </div>
 
