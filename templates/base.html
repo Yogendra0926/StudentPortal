@@ -36,6 +36,10 @@
                 <a href="{{ url_for('lms') }}" class="{{ 'active' if request.endpoint=='lms' }}">
                     <i class="fa-solid fa-book-open"></i> LMS
                 </a>
+                <a href="{{ url_for('phase2') }}" class="{{ 'active' if request.endpoint=='lms' }}">
+                    <i class="fa-solid fa-book-open"></i> Phase2(beta)
+                </a>
+
                 <!-- NEW QUIZ LINK ADDED HERE -->
                 <a href="{{ url_for('quiz_dashboard') }}" class="{{ 'active' if request.endpoint=='quiz_dashboard' or request.endpoint=='take_quiz' }}">
                     <i class="fa-solid fa-laptop-code"></i> Quizzes

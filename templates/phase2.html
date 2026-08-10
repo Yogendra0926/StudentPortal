@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student LMS - Phase 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #eef4fa;
+            color: #1e293b;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Top Hero Banner */
+        .hero-card {
+            background: linear-gradient(135deg, #1872e5 0%, #0d5bbd 100%);
+            border-radius: 24px;
+            padding: 36px 40px;
+            color: #ffffff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(24, 114, 229, 0.2);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            backdrop-filter: blur(4px);
+        }
+
+        .hero-title {
+            font-size: 2.1rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-subtitle {
+            font-size: 0.95rem;
+            color: #e0edff;
+            max-width: 520px;
+            line-height: 1.5;
+        }
+
+        .hero-icon {
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 180px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-icon svg {
+            width: 90px;
+            height: 90px;
+            fill: none;
+            stroke: #ffffff;
+            stroke-width: 1.8;
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            background: #eff6ff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 4px;
+        }
+
+        .stat-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: #1872e5;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Search Bar */
+        .search-box {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e2e8f0;
+        }
+
+        .search-box svg {
+            width: 20px;
+            height: 20px;
+            stroke: #94a3b8;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 0.95rem;
+            color: #334155;
+        }
+
+        .search-box input::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Course Cards Grid */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .courses-grid, .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-icon {
+                display: none;
+            }
+        }
+
+        .course-card {
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+        }
+
+        .course-banner {
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .banner-ai { background-color: #2563eb; }
+        .banner-dsa { background-color: #38a169; }
+        .banner-apt { background-color: #8b5cf6; }
+        .banner-mnc { background-color: #6366f1; }
+
+        .course-banner svg {
+            width: 56px;
+            height: 56px;
+            fill: none;
+            stroke: #ffffff;
+            stroke-width: 2;
+        }
+
+        .course-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-grow: 1;
+        }
+
+        .course-code-badge {
+            align-self: flex-start;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            letter-spacing: 0.03em;
+        }
+
+        .course-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.3;
+        }
+
+        .course-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: #475569;
+            margin-top: 4px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-item svg {
+            width: 16px;
+            height: 16px;
+            stroke: #2563eb;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .btn-open-course {
+            margin-top: auto;
+            background-color: #1e88e5;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-open-course:hover {
+            background-color: #1565c0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top LMS Header -->
+        <div class="hero-card">
+            <div class="hero-badge">
+                <span>🎓</span> Student LMS
+            </div>
+            <h1 class="hero-title">Welcome to Phase-2</h1>
+            <p class="hero-subtitle">Phase-2 training program starts on 01st October. Access all your enrolled courses, lectures, assignments, and curriculum materials below.</p>
+            <div class="hero-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Metric Stat Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                </div>
+                <div class="stat-value">4</div>
+                <div class="stat-label">Total Courses</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                    </svg>
+                </div>
+                <div class="stat-value">4</div>
+                <div class="stat-label">Active Courses</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Enrollment</div>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-box">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" placeholder="Search your course...">
+        </div>
+
+        <!-- Courses Cards Grid -->
+        <div class="courses-grid">
+
+            <!-- Course 1 -->
+            <div class="course-card">
+                <div class="course-banner banner-ai">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                        <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                    </svg>
+                </div>
+                <div class="course-body">
+                    <span class="course-code-badge">CSL0208</span>
+                    <h3 class="course-title">Advance Artificial Intelligence</h3>
+                    <div class="course-details">
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            Instructor : <strong>Yogendra Jain</strong>
+                        </div>
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            Phase-2 (Starts 01st Oct)
+                        </div>
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            Credits : 3
+                        </div>
+                    </div>
+                    <button class="btn-open-course">Open Course</button>
+                </div>
+            </div>
+
+            <!-- Course 2 -->
+            <div class="course-card">
+                <div class="course-banner banner-dsa">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                </div>
+                <div class="course-body">
+                    <span class="course-code-badge">CSL0205</span>
+                    <h3 class="course-title">DSA with Dynamic Programming</h3>
+                    <div class="course-details">
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            Instructor : <strong>Yogendra Jain</strong>
+                        </div>
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            Phase-2 (Starts 01st Oct)
+                        </div>
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            Credits : 3
+                        </div>
+                    </div>
+                    <button class="btn-open-course">Open Course</button>
+                </div>
+            </div>
+
+            <!-- Course 3 -->
+            <div class="course-card">
+                <div class="course-banner banner-apt">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="18" cy="5" r="3"></circle>
+                        <circle cx="6" cy="12" r="3"></circle>
+                        <circle cx="18" cy="19" r="3"></circle>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    </svg>
+                </div>
+                <div class="course-body">
+                    <span class="course-code-badge">AIP0201</span>
+                    <h3 class="course-title">Aptitude and Reasoning</h3>
+                    <div class="course-details">
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            Instructor : <strong>Yogendra Jain</strong>
+                        </div>
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            Phase-2 (Starts 01st Oct)
+                        </div>
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            Credits : 2
+                        </div>
+                    </div>
+                    <button class="btn-open-course">Open Course</button>
+                </div>
+            </div>
+
+            <!-- Course 4 -->
+            <div class="course-card">
+                <div class="course-banner banner-mnc">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                </div>
+                <div class="course-body">
+                    <span class="course-code-badge">CSD0201</span>
+                    <h3 class="course-title">Cracking MNC</h3>
+                    <div class="course-details">
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            Instructor : <strong>Yogendra Jain</strong>
+                        </div>
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            Phase-2 (Starts 01st Oct)
+                        </div>
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            Credits : 3
+                        </div>
+                    </div>
+                    <button class="btn-open-course">Open Course</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

@@ -444,6 +444,11 @@ def internal_marks():
         marks=marks,
         selected_type=selected_type
     )
+from flask import render_template
+
+@app.route('/phase2')
+def phase2():
+    return render_template('phase2.html')
 
 @app.route('/uploads/<filename>')
 def serve_file(filename):
