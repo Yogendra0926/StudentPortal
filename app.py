@@ -318,7 +318,7 @@ def chatbot():
             }), 400
 
         # Get API key from Render Environment Variables
-        api_key = os.getenv("OPENROUTER_API_KEY")
+        api_key = os.getenv("OPENROUTER_API_KEY", "").strip()
 
         if not api_key:
             print("OPENROUTER_API_KEY is missing!")
