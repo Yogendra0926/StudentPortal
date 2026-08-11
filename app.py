@@ -302,6 +302,7 @@ def chatbot():
         return render_template("chatbot.html")
 
     try:
+        # Get question from chatbot.html
         data = request.get_json()
 
         if not data:
@@ -316,18 +317,50 @@ def chatbot():
                 "error": "Please enter a question."
             }), 400
 
-        ollama_response = requests.post(
-            "http://localhost:11434/api/chat",
+        # Get API key from Render Environment Variables
+        api_key = os.getenv("OPENROUTER_API_KEY")
+
+        if not api_key:
+            print("OPENROUTER_API_KEY is missing!")
+
+            return jsonify({
+                "error": "AI service is not configured."
+            }), 500
+
+        # Send request to OpenRouter
+        response = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+
+                # Optional but recommended
+                "HTTP-Referer": "https://studentportal-rk08.onrender.com",
+                "X-Title": "Student Portal AI Assistant"
+            },
+
             json={
-                "model": "qwen3:4b",
+                "model": "openrouter/free",
+
                 "messages": [
                     {
                         "role": "system",
                         "content": (
-                            "You are an AI Study Assistant for a university "
-                            "student portal. Answer study-related questions "
-                            "clearly and simply. Explain concepts step by "
-                            "step and give examples when useful."
+                            "You are an AI Study Assistant "
+                            "for a university student portal. "
+
+                            "Answer study-related questions clearly "
+                            "and accurately. "
+
+                            "Explain difficult concepts in simple "
+                            "language and use examples when helpful. "
+
+                            "You can help with programming, "
+                            "Data Structures, Algorithms, "
+                            "Machine Learning, Deep Learning, "
+                            "NLP, LLMs, SQL, DBMS, mathematics "
+                            "and other academic topics."
                         )
                     },
                     {
@@ -335,55 +368,79 @@ def chatbot():
                         "content": message
                     }
                 ],
+
+                "temperature": 0.7,
+
+                "max_tokens": 1000,
+
                 "stream": False
             },
+
             timeout=120
         )
 
-        if ollama_response.status_code != 200:
+        # Print error in Render logs if OpenRouter fails
+        print(
+            "OpenRouter Status:",
+            response.status_code
+        )
+
+        if response.status_code != 200:
 
             print(
-                "OLLAMA ERROR:",
-                ollama_response.text
+                "OpenRouter Error:",
+                response.text
             )
 
             return jsonify({
-                "error": f"Ollama error: {ollama_response.text}"
+                "error": "AI service returned an error."
             }), 500
 
-        result = ollama_response.json()
+        # Convert response to JSON
+        result = response.json()
 
-        answer = result.get(
-            "message",
-            {}
-        ).get(
-            "content"
+        # Extract AI answer
+        answer = (
+            result
+            .get("choices", [{}])[0]
+            .get("message", {})
+            .get("content")
         )
 
         if not answer:
+
             return jsonify({
                 "error": "AI did not return a response."
             }), 500
 
+        # Send answer back to chatbot.html
         return jsonify({
             "response": answer
         })
 
-    except requests.exceptions.ConnectionError:
-
-        return jsonify({
-            "error": "Cannot connect to Ollama."
-        }), 503
-
     except requests.exceptions.Timeout:
 
         return jsonify({
-            "error": "AI response timed out."
+            "error": "AI response timed out. Please try again."
         }), 504
+
+    except requests.exceptions.RequestException as e:
+
+        print(
+            "OpenRouter connection error:",
+            repr(e)
+        )
+
+        return jsonify({
+            "error": "Unable to connect to AI service."
+        }), 503
 
     except Exception as e:
 
-        print("CHATBOT ERROR:", repr(e))
+        print(
+            "Chatbot error:",
+            repr(e)
+        )
 
         return jsonify({
             "error": "Something went wrong."
