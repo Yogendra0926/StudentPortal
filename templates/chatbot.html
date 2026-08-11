@@ -1,0 +1,1726 @@
+{% extends "base.html" %}
+
+{% block title %}AI Study Assistant{% endblock %}
+
+{% block content %}
+
+<div class="ai-page">
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <div class="ai-header">
+
+        <div class="ai-header-icon">
+            <i class="fa-solid fa-robot"></i>
+        </div>
+
+        <div>
+            <h1>AI Study Assistant</h1>
+
+            <p>
+                Ask anything related to your studies, programming,
+                mathematics, AI, DSA and more.
+            </p>
+        </div>
+
+        <div class="ai-status">
+            <span class="status-dot"></span>
+            AI Online
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         MAIN CHAT AREA
+    ========================== -->
+
+    <div class="chat-wrapper">
+
+        <!-- Sidebar -->
+
+        <aside class="chat-sidebar">
+
+            <div class="sidebar-title">
+
+                <i class="fa-solid fa-sparkles"></i>
+
+                Quick Study
+
+            </div>
+
+
+            <button
+                class="quick-question"
+                onclick="askQuestion('Explain Java inheritance in simple words')">
+
+                <i class="fa-brands fa-java"></i>
+
+                Explain Java Inheritance
+
+            </button>
+
+
+            <button
+                class="quick-question"
+                onclick="askQuestion('What is a linked list in Data Structures?')">
+
+                <i class="fa-solid fa-link"></i>
+
+                Linked List
+
+            </button>
+
+
+            <button
+                class="quick-question"
+                onclick="askQuestion('Explain machine learning for a beginner')">
+
+                <i class="fa-solid fa-brain"></i>
+
+                Machine Learning
+
+            </button>
+
+
+            <button
+                class="quick-question"
+                onclick="askQuestion('What is a convolutional neural network?')">
+
+                <i class="fa-solid fa-network-wired"></i>
+
+                CNN
+
+            </button>
+
+
+            <button
+                class="quick-question"
+                onclick="askQuestion('Explain SQL joins with examples')">
+
+                <i class="fa-solid fa-database"></i>
+
+                SQL Joins
+
+            </button>
+
+
+            <button
+                class="quick-question"
+                onclick="askQuestion('Give me some important DSA interview questions')">
+
+                <i class="fa-solid fa-code"></i>
+
+                DSA Questions
+
+            </button>
+
+
+            <div class="sidebar-bottom">
+
+                <button
+                    class="clear-chat"
+                    onclick="clearChat()">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                    Clear Chat
+
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =========================
+             CHAT
+        ========================== -->
+
+        <main class="chat-container">
+
+            <!-- Chat Messages -->
+
+            <div
+                class="messages"
+                id="messages">
+
+
+                <!-- Welcome Message -->
+
+                <div class="message ai-message">
+
+                    <div class="avatar ai-avatar">
+
+                        <i class="fa-solid fa-robot"></i>
+
+                    </div>
+
+                    <div class="message-content">
+
+                        <div class="message-name">
+                            AI Study Assistant
+                        </div>
+
+                        <div class="message-bubble">
+
+                            <p>
+                                👋 Hello!
+                            </p>
+
+                            <p>
+                                I'm your AI Study Assistant.
+                                Ask me anything related to your studies.
+                            </p>
+
+                            <p>
+                                You can ask about:
+                            </p>
+
+                            <ul>
+
+                                <li>Programming & Java</li>
+
+                                <li>Data Structures & Algorithms</li>
+
+                                <li>Machine Learning</li>
+
+                                <li>Deep Learning</li>
+
+                                <li>Database & SQL</li>
+
+                                <li>Mathematics</li>
+
+                                <li>NLP & LLMs</li>
+
+                            </ul>
+
+                            <p>
+                                What would you like to learn today? 🚀
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 TYPING INDICATOR
+            ========================== -->
+
+            <div
+                class="typing-container"
+                id="typingContainer">
+
+                <div class="avatar ai-avatar">
+
+                    <i class="fa-solid fa-robot"></i>
+
+                </div>
+
+                <div class="typing-bubble">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 INPUT AREA
+            ========================== -->
+
+            <div class="input-area">
+
+                <form
+                    id="chatForm"
+                    onsubmit="sendMessage(event)">
+
+                    <div class="input-wrapper">
+
+                        <textarea
+                            id="userInput"
+                            name="message"
+                            rows="1"
+                            placeholder="Ask your study question..."
+                            autocomplete="off"
+                            required></textarea>
+
+
+                        <button
+                            type="submit"
+                            class="send-button"
+                            id="sendButton">
+
+                            <i class="fa-solid fa-paper-plane"></i>
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <div class="input-footer">
+
+                    <span>
+
+                        <i class="fa-solid fa-shield-halved"></i>
+
+                        AI responses may contain mistakes.
+                        Verify important information.
+
+                    </span>
+
+                    <span>
+
+                        Powered by
+                        <strong>Ollama</strong>
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     CHATBOT CSS
+====================================================== -->
+
+<style>
+
+.ai-page {
+
+    min-height: calc(100vh - 120px);
+
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.ai-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    padding: 25px 30px;
+
+    margin-bottom: 22px;
+
+    border-radius: 22px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #111827,
+            #312e81,
+            #4f46e5,
+            #0891b2
+        );
+
+    box-shadow:
+        0 20px 45px
+        rgba(49,46,129,.25);
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+
+.ai-header::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 220px;
+
+    height: 220px;
+
+    right: -70px;
+
+    top: -100px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.08);
+
+}
+
+
+.ai-header-icon {
+
+    width: 65px;
+
+    height: 65px;
+
+    display: grid;
+
+    place-items: center;
+
+    flex-shrink: 0;
+
+    border-radius: 20px;
+
+    background:
+        rgba(255,255,255,.15);
+
+    border:
+        1px solid
+        rgba(255,255,255,.2);
+
+    backdrop-filter:
+        blur(10px);
+
+    font-size: 28px;
+
+    animation:
+        robotFloat 3s ease-in-out infinite;
+
+}
+
+
+.ai-header h1 {
+
+    margin: 0;
+
+    font-size: 28px;
+
+    font-weight: 850;
+
+}
+
+
+.ai-header p {
+
+    margin: 3px 0 0;
+
+    color:
+        rgba(255,255,255,.78);
+
+    font-size: 14px;
+
+}
+
+
+.ai-status {
+
+    margin-left: auto;
+
+    padding: 8px 14px;
+
+    border-radius: 30px;
+
+    background:
+        rgba(16,185,129,.15);
+
+    border:
+        1px solid
+        rgba(16,185,129,.35);
+
+    color: #d1fae5;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+}
+
+
+.status-dot {
+
+    display: inline-block;
+
+    width: 8px;
+
+    height: 8px;
+
+    margin-right: 6px;
+
+    border-radius: 50%;
+
+    background: #34d399;
+
+    box-shadow:
+        0 0 10px #34d399;
+
+    animation:
+        pulseDot 1.8s infinite;
+
+}
+
+
+/* =========================
+   CHAT WRAPPER
+========================= */
+
+.chat-wrapper {
+
+    display: grid;
+
+    grid-template-columns:
+        250px 1fr;
+
+    min-height: 650px;
+
+    overflow: hidden;
+
+    border-radius: 22px;
+
+    background:
+        rgba(255,255,255,.82);
+
+    backdrop-filter:
+        blur(20px);
+
+    border:
+        1px solid
+        rgba(255,255,255,.8);
+
+    box-shadow:
+        0 20px 50px
+        rgba(15,23,42,.13);
+
+}
+
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.chat-sidebar {
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 22px 15px;
+
+    background:
+        rgba(248,250,252,.88);
+
+    border-right:
+        1px solid
+        #e2e8f0;
+
+}
+
+
+.sidebar-title {
+
+    padding:
+        0 8px 15px;
+
+    color:
+        #1e293b;
+
+    font-size: 15px;
+
+    font-weight: 850;
+
+}
+
+
+.sidebar-title i {
+
+    color: #8b5cf6;
+
+    margin-right: 7px;
+
+}
+
+
+.quick-question {
+
+    width: 100%;
+
+    padding: 11px 12px;
+
+    margin-bottom: 7px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    border: none;
+
+    border-radius: 11px;
+
+    background: transparent;
+
+    color: #475569;
+
+    text-align: left;
+
+    font-size: 13px;
+
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        .25s ease;
+
+}
+
+
+.quick-question i {
+
+    width: 20px;
+
+    color: #6366f1;
+
+}
+
+
+.quick-question:hover {
+
+    color: #3730a3;
+
+    background:
+        #eef2ff;
+
+    transform:
+        translateX(4px);
+
+}
+
+
+.sidebar-bottom {
+
+    margin-top: auto;
+
+    padding-top: 15px;
+
+    border-top:
+        1px solid
+        #e2e8f0;
+
+}
+
+
+.clear-chat {
+
+    width: 100%;
+
+    padding: 10px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    color: #ef4444;
+
+    background:
+        #fef2f2;
+
+    cursor: pointer;
+
+    font-weight: 700;
+
+    transition: .25s ease;
+
+}
+
+
+.clear-chat:hover {
+
+    color: white;
+
+    background:
+        #ef4444;
+
+}
+
+
+/* =========================
+   CHAT CONTAINER
+========================= */
+
+.chat-container {
+
+    position: relative;
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(248,250,252,.7),
+            rgba(255,255,255,.9)
+        );
+
+}
+
+
+/* =========================
+   MESSAGES
+========================= */
+
+.messages {
+
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 30px;
+
+    scroll-behavior: smooth;
+
+}
+
+
+.message {
+
+    display: flex;
+
+    gap: 12px;
+
+    margin-bottom: 25px;
+
+    max-width: 90%;
+
+    animation:
+        messageAppear
+        .4s ease;
+
+}
+
+
+.user-message {
+
+    margin-left: auto;
+
+    flex-direction: row-reverse;
+
+}
+
+
+.avatar {
+
+    width: 40px;
+
+    height: 40px;
+
+    display: grid;
+
+    place-items: center;
+
+    flex-shrink: 0;
+
+    border-radius: 13px;
+
+    font-size: 16px;
+
+}
+
+
+.ai-avatar {
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6366f1,
+            #8b5cf6
+        );
+
+    box-shadow:
+        0 6px 15px
+        rgba(99,102,241,.25);
+
+}
+
+
+.user-avatar {
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0891b2,
+            #06b6d4
+        );
+
+}
+
+
+.message-content {
+
+    min-width: 0;
+
+}
+
+
+.message-name {
+
+    margin-bottom: 5px;
+
+    color: #64748b;
+
+    font-size: 12px;
+
+    font-weight: 750;
+
+}
+
+
+.user-message
+.message-name {
+
+    text-align: right;
+
+}
+
+
+.message-bubble {
+
+    padding: 15px 18px;
+
+    border-radius:
+        5px 18px 18px 18px;
+
+    color: #334155;
+
+    background: white;
+
+    border:
+        1px solid
+        #e2e8f0;
+
+    box-shadow:
+        0 5px 18px
+        rgba(15,23,42,.06);
+
+    line-height: 1.65;
+
+}
+
+
+.message-bubble p {
+
+    margin:
+        0 0 8px;
+
+}
+
+
+.message-bubble p:last-child {
+
+    margin-bottom: 0;
+
+}
+
+
+.message-bubble ul {
+
+    margin:
+        8px 0 10px 20px;
+
+}
+
+
+.user-message
+.message-bubble {
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4f46e5,
+            #6366f1
+        );
+
+    border:
+        none;
+
+    border-radius:
+        18px 5px 18px 18px;
+
+    box-shadow:
+        0 8px 20px
+        rgba(79,70,229,.2);
+
+}
+
+
+/* =========================
+   CODE BLOCK
+========================= */
+
+.message-bubble pre {
+
+    overflow-x: auto;
+
+    margin: 12px 0;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    color: #e2e8f0;
+
+    background: #0f172a;
+
+    font-size: 13px;
+
+}
+
+
+.message-bubble code {
+
+    font-family:
+        "Cascadia Code",
+        Consolas,
+        monospace;
+
+}
+
+
+/* =========================
+   TYPING
+========================= */
+
+.typing-container {
+
+    display: none;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding:
+        0 30px 15px;
+
+}
+
+
+.typing-container.show {
+
+    display: flex;
+
+}
+
+
+.typing-bubble {
+
+    display: flex;
+
+    gap: 5px;
+
+    padding: 13px 17px;
+
+    border-radius:
+        5px 16px 16px 16px;
+
+    background: white;
+
+    border:
+        1px solid
+        #e2e8f0;
+
+}
+
+
+.typing-bubble span {
+
+    width: 7px;
+
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #6366f1;
+
+    animation:
+        typingBounce 1.2s infinite;
+
+}
+
+
+.typing-bubble span:nth-child(2) {
+
+    animation-delay:
+        .15s;
+
+}
+
+
+.typing-bubble span:nth-child(3) {
+
+    animation-delay:
+        .3s;
+
+}
+
+
+/* =========================
+   INPUT
+========================= */
+
+.input-area {
+
+    padding:
+        15px 25px 18px;
+
+    background:
+        rgba(255,255,255,.95);
+
+    border-top:
+        1px solid
+        #e2e8f0;
+
+}
+
+
+.input-wrapper {
+
+    display: flex;
+
+    align-items: flex-end;
+
+    gap: 10px;
+
+    padding: 8px;
+
+    border:
+        1px solid
+        #cbd5e1;
+
+    border-radius: 16px;
+
+    background: white;
+
+    transition:
+        .25s ease;
+
+}
+
+
+.input-wrapper:focus-within {
+
+    border-color:
+        #6366f1;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(99,102,241,.1);
+
+}
+
+
+.input-wrapper textarea {
+
+    flex: 1;
+
+    width: 100%;
+
+    min-height: 42px;
+
+    max-height: 130px;
+
+    padding:
+        10px 12px;
+
+    border: none;
+
+    outline: none;
+
+    resize: none;
+
+    color: #1e293b;
+
+    background: transparent;
+
+    font-size: 14px;
+
+}
+
+
+.send-button {
+
+    width: 44px;
+
+    height: 44px;
+
+    display: grid;
+
+    place-items: center;
+
+    flex-shrink: 0;
+
+    border: none;
+
+    border-radius: 12px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4f46e5,
+            #8b5cf6
+        );
+
+    cursor: pointer;
+
+    transition:
+        .25s ease;
+
+}
+
+
+.send-button:hover {
+
+    transform:
+        translateY(-2px)
+        scale(1.04);
+
+    box-shadow:
+        0 8px 18px
+        rgba(99,102,241,.3);
+
+}
+
+
+.send-button:disabled {
+
+    opacity: .55;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+}
+
+
+.input-footer {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    padding-top: 8px;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+
+}
+
+
+.input-footer i {
+
+    color: #10b981;
+
+}
+
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes robotFloat {
+
+    0%,100% {
+
+        transform:
+            translateY(0);
+
+    }
+
+    50% {
+
+        transform:
+            translateY(-6px);
+
+    }
+
+}
+
+
+@keyframes pulseDot {
+
+    0%,100% {
+
+        opacity: 1;
+
+        transform:
+            scale(1);
+
+    }
+
+    50% {
+
+        opacity: .5;
+
+        transform:
+            scale(.75);
+
+    }
+
+}
+
+
+@keyframes messageAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(12px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+@keyframes typingBounce {
+
+    0%,60%,100% {
+
+        transform:
+            translateY(0);
+
+    }
+
+    30% {
+
+        transform:
+            translateY(-5px);
+
+    }
+
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+
+    .chat-wrapper {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+    .chat-sidebar {
+
+        display: none;
+
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .ai-header {
+
+        padding: 20px;
+
+    }
+
+    .ai-header-icon {
+
+        width: 50px;
+
+        height: 50px;
+
+        font-size: 21px;
+
+    }
+
+    .ai-header h1 {
+
+        font-size: 21px;
+
+    }
+
+    .ai-header p {
+
+        font-size: 12px;
+
+    }
+
+    .ai-status {
+
+        display: none;
+
+    }
+
+    .messages {
+
+        padding: 20px 15px;
+
+    }
+
+    .message {
+
+        max-width: 96%;
+
+    }
+
+    .input-area {
+
+        padding:
+            12px;
+
+    }
+
+    .input-footer {
+
+        flex-direction: column;
+
+    }
+
+}
+
+</style>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
+
+<script>
+
+const chatForm =
+    document.getElementById("chatForm");
+
+const userInput =
+    document.getElementById("userInput");
+
+const messages =
+    document.getElementById("messages");
+
+const typingContainer =
+    document.getElementById("typingContainer");
+
+const sendButton =
+    document.getElementById("sendButton");
+
+
+/* =====================================================
+   SEND MESSAGE
+===================================================== */
+
+async function sendMessage(event) {
+
+    event.preventDefault();
+
+    const message =
+        userInput.value.trim();
+
+    if (!message) return;
+
+
+    /* Add user message */
+
+    addMessage(
+        message,
+        "user"
+    );
+
+
+    userInput.value = "";
+
+    autoResize();
+
+
+    sendButton.disabled = true;
+
+    typingContainer.classList.add(
+        "show"
+    );
+
+    scrollToBottom();
+
+
+    try {
+
+        const response =
+            await fetch(
+                "{{ url_for('chatbot') }}",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        message: message
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        typingContainer.classList.remove(
+            "show"
+        );
+
+
+        if (data.error) {
+
+            addMessage(
+                "⚠️ " + data.error,
+                "ai"
+            );
+
+        } else {
+
+            addMessage(
+                data.response,
+                "ai"
+            );
+
+        }
+
+
+    } catch (error) {
+
+        typingContainer.classList.remove(
+            "show"
+        );
+
+        addMessage(
+            "⚠️ Unable to connect to the AI server. Please try again.",
+            "ai"
+        );
+
+        console.error(error);
+
+    }
+
+
+    sendButton.disabled = false;
+
+    userInput.focus();
+
+    scrollToBottom();
+
+}
+
+
+/* =====================================================
+   ADD MESSAGE
+===================================================== */
+
+function addMessage(
+    text,
+    sender
+) {
+
+    const message =
+        document.createElement(
+            "div"
+        );
+
+    message.className =
+        sender === "user"
+            ? "message user-message"
+            : "message ai-message";
+
+
+    const avatar =
+        document.createElement(
+            "div"
+        );
+
+    avatar.className =
+        sender === "user"
+            ? "avatar user-avatar"
+            : "avatar ai-avatar";
+
+
+    avatar.innerHTML =
+        sender === "user"
+            ? '<i class="fa-solid fa-user"></i>'
+            : '<i class="fa-solid fa-robot"></i>';
+
+
+    const content =
+        document.createElement(
+            "div"
+        );
+
+    content.className =
+        "message-content";
+
+
+    const name =
+        document.createElement(
+            "div"
+        );
+
+    name.className =
+        "message-name";
+
+    name.textContent =
+        sender === "user"
+            ? "You"
+            : "AI Study Assistant";
+
+
+    const bubble =
+        document.createElement(
+            "div"
+        );
+
+    bubble.className =
+        "message-bubble";
+
+
+    if (sender === "ai") {
+
+        bubble.innerHTML =
+            formatAIResponse(text);
+
+    } else {
+
+        bubble.textContent =
+            text;
+
+    }
+
+
+    content.appendChild(name);
+
+    content.appendChild(bubble);
+
+
+    message.appendChild(avatar);
+
+    message.appendChild(content);
+
+
+    messages.appendChild(message);
+
+}
+
+
+/* =====================================================
+   FORMAT AI RESPONSE
+===================================================== */
+
+function formatAIResponse(text) {
+
+    if (!text) return "";
+
+
+    let formatted =
+        escapeHTML(text);
+
+
+    /* Code blocks */
+
+    formatted =
+        formatted.replace(
+            /```([\s\S]*?)```/g,
+            "<pre><code>$1</code></pre>"
+        );
+
+
+    /* Bold */
+
+    formatted =
+        formatted.replace(
+            /\*\*(.*?)\*\*/g,
+            "<strong>$1</strong>"
+        );
+
+
+    /* Line breaks */
+
+    formatted =
+        formatted.replace(
+            /\n/g,
+            "<br>"
+        );
+
+
+    return formatted;
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+
+}
+
+
+/* =====================================================
+   QUICK QUESTION
+===================================================== */
+
+function askQuestion(question) {
+
+    userInput.value =
+        question;
+
+    autoResize();
+
+    userInput.focus();
+
+}
+
+
+/* =====================================================
+   CLEAR CHAT
+===================================================== */
+
+function clearChat() {
+
+    if (
+        !confirm(
+            "Clear the entire conversation?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    messages.innerHTML = "";
+
+
+    addMessage(
+        "👋 Chat cleared! Ask me a new study question.",
+        "ai"
+    );
+
+}
+
+
+/* =====================================================
+   AUTO RESIZE TEXTAREA
+===================================================== */
+
+userInput.addEventListener(
+    "input",
+    autoResize
+);
+
+
+function autoResize() {
+
+    userInput.style.height =
+        "auto";
+
+    userInput.style.height =
+        Math.min(
+            userInput.scrollHeight,
+            130
+        ) + "px";
+
+}
+
+
+/* =====================================================
+   ENTER TO SEND
+===================================================== */
+
+userInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            chatForm.requestSubmit();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   SCROLL
+===================================================== */
+
+function scrollToBottom() {
+
+    messages.scrollTop =
+        messages.scrollHeight;
+
+}
+
+</script>
+
+{% endblock %}

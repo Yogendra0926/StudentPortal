@@ -4,6 +4,8 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import pymysql
 import pymysql.cursors
 from dotenv import load_dotenv
+import requests
+from flask import request, jsonify
 
 
 load_dotenv()
@@ -293,6 +295,99 @@ def student_assignments():
     assignments=assignments,
     now=datetime.now()
 )
+@app.route("/chatbot", methods=["GET", "POST"])
+def chatbot():
+
+    if request.method == "GET":
+        return render_template("chatbot.html")
+
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({
+                "error": "No data received."
+            }), 400
+
+        message = data.get("message", "").strip()
+
+        if not message:
+            return jsonify({
+                "error": "Please enter a question."
+            }), 400
+
+        ollama_response = requests.post(
+            "http://localhost:11434/api/chat",
+            json={
+                "model": "qwen3:4b",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are an AI Study Assistant for a university "
+                            "student portal. Answer study-related questions "
+                            "clearly and simply. Explain concepts step by "
+                            "step and give examples when useful."
+                        )
+                    },
+                    {
+                        "role": "user",
+                        "content": message
+                    }
+                ],
+                "stream": False
+            },
+            timeout=120
+        )
+
+        if ollama_response.status_code != 200:
+
+            print(
+                "OLLAMA ERROR:",
+                ollama_response.text
+            )
+
+            return jsonify({
+                "error": f"Ollama error: {ollama_response.text}"
+            }), 500
+
+        result = ollama_response.json()
+
+        answer = result.get(
+            "message",
+            {}
+        ).get(
+            "content"
+        )
+
+        if not answer:
+            return jsonify({
+                "error": "AI did not return a response."
+            }), 500
+
+        return jsonify({
+            "response": answer
+        })
+
+    except requests.exceptions.ConnectionError:
+
+        return jsonify({
+            "error": "Cannot connect to Ollama."
+        }), 503
+
+    except requests.exceptions.Timeout:
+
+        return jsonify({
+            "error": "AI response timed out."
+        }), 504
+
+    except Exception as e:
+
+        print("CHATBOT ERROR:", repr(e))
+
+        return jsonify({
+            "error": "Something went wrong."
+        }), 500
 @app.route("/lms")
 def lms():
     return render_template("lms.html")
