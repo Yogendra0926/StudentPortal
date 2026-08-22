@@ -5,8 +5,338 @@
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
 
-<div class="login-page">
-    <div class="login-container">
+<style>
+    /* 3D Canvas Perspective */
+    .login-page {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 20px;
+        background: #f1f5f9;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        perspective: 1200px; /* Essential for 3D depth */
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Ambient Floating 3D Background Orbs */
+    .bg-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(50px);
+        opacity: 0.6;
+        z-index: 0;
+        animation: floatOrb 8s infinite alternate ease-in-out;
+    }
+    .bg-orb-1 {
+        width: 300px;
+        height: 300px;
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        top: 10%;
+        left: 15%;
+    }
+    .bg-orb-2 {
+        width: 350px;
+        height: 350px;
+        background: linear-gradient(135deg, #3b82f6, #06b6d4);
+        bottom: 10%;
+        right: 15%;
+        animation-delay: -4s;
+    }
+
+    @keyframes floatOrb {
+        0% { transform: translateY(0) scale(1) translateZ(-50px); }
+        100% { transform: translateY(-30px) scale(1.1) translateZ(20px); }
+    }
+
+    /* Main Container with 3D Transform Space */
+    .login-container {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        width: 100%;
+        max-width: 1100px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15), 0 0 1px rgba(15, 23, 42, 0.12);
+        min-height: 620px;
+        transform-style: preserve-3d;
+        transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+    }
+
+    /* Left Side: Portal Info */
+    .portal-info {
+        padding: 50px 45px;
+        background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-right: 1px solid #f1f5f9;
+        transform-style: preserve-3d;
+    }
+
+    .university-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #ecfdf5;
+        color: #059669;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-bottom: 24px;
+        width: fit-content;
+        border: 1px solid #a7f3d0;
+        transform: translateZ(20px); /* 3D Layer Pop */
+    }
+
+    .portal-info h1 {
+        font-size: 2.3rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 12px 0;
+        letter-spacing: -0.5px;
+        transform: translateZ(25px);
+    }
+
+    .portal-info .subtitle {
+        color: #64748b;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 32px;
+        text-transform: none !important;
+        transform: translateZ(20px);
+    }
+
+    /* Interactive 3D Feature Cards */
+    .portal-features {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        transform-style: preserve-3d;
+    }
+
+    .feature {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #334155;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        transform: translateZ(15px);
+    }
+
+    .feature:hover {
+        border-color: #cbd5e1;
+        transform: translateZ(35px) translateY(-4px) rotateX(4deg);
+        box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08);
+    }
+
+    .feature-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        background: #eff6ff;
+        color: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        flex-shrink: 0;
+    }
+
+    .feature-highlight {
+        grid-column: span 2;
+        background: #faf5ff;
+        border: 1px dashed #c084fc;
+        color: #7e22ce;
+    }
+
+    .feature-highlight .feature-icon {
+        background: #f3e8ff;
+        color: #9333ea;
+    }
+
+    /* Right Side: Glassmorphism Login Card in 3D Space */
+    .login-section {
+        position: relative;
+        background: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1000') center/cover no-repeat;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 30px;
+        transform-style: preserve-3d;
+    }
+
+    .login-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.3);
+    }
+
+    .login-card {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 380px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 20px;
+        padding: 32px 28px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        transform: translateZ(40px); /* Lifts card forward off background */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .login-card:hover {
+        transform: translateZ(50px) scale(1.01);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+    }
+
+    .login-header h2 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+    }
+
+    .login-header p {
+        font-size: 0.85rem;
+        color: #475569;
+        margin: 0 0 24px 0;
+        line-height: 1.5;
+    }
+
+    /* Input Fields */
+    .input-stack {
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.95);
+        margin-bottom: 18px;
+        transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+
+    .input-stack:focus-within {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        transform: translateZ(10px);
+    }
+
+    .input-field input {
+        width: 100%;
+        padding: 14px 16px;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 0.92rem;
+        color: #0f172a;
+        box-sizing: border-box;
+    }
+
+    .input-field.border-bottom {
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 22px;
+        font-size: 0.82rem;
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #334155;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .forgot-link {
+        color: #4f46e5;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+
+    .forgot-link:hover {
+        color: #3730a3;
+        text-decoration: underline;
+    }
+
+    /* Primary 3D Button */
+    .login-btn {
+        width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+        color: #ffffff;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 8px 16px -4px rgba(79, 70, 229, 0.4);
+        transform: translateZ(15px);
+    }
+
+    .login-btn:hover {
+        transform: translateZ(25px) translateY(-2px);
+        box-shadow: 0 12px 24px -4px rgba(79, 70, 229, 0.5);
+    }
+
+    .login-footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 20px;
+        font-size: 0.78rem;
+        color: #64748b;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 868px) {
+        .login-container {
+            grid-template-columns: 1fr;
+            max-width: 480px;
+            transform: none !important; /* Disable heavy tilt on small mobile view */
+        }
+
+        .portal-info {
+            padding: 35px 25px;
+        }
+
+        .login-section {
+            padding: 35px 20px;
+        }
+    }
+</style>
+
+<div class="login-page" id="pageCanvas">
+    <!-- Ambient 3D Orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+
+    <div class="login-container" id="tiltContainer">
         
         <!-- Left Side: Portal Features -->
         <div class="portal-info">
@@ -80,16 +410,15 @@
                         </div>
                     </div>
 
-                    <!-- Remember Me & Forgot Password Row -->
                     <!-- Remember Me & Change Password Row -->
-<div class="form-actions">
-    <label class="checkbox-label">
-        <input type="checkbox" name="remember" checked>
-        <span class="custom-checkbox"><i class="fa-solid fa-check"></i></span>
-        Remember me
-    </label>
-    <a href="{{ url_for('change_password') }}" class="forgot-link">Change Password</a>
-</div>
+                    <div class="form-actions">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="remember" checked>
+                            <span class="custom-checkbox"><i class="fa-solid fa-check"></i></span>
+                            Remember me
+                        </label>
+                        <a href="{{ url_for('change_password') }}" class="forgot-link">Change Password</a>
+                    </div>
 
                     <button type="submit" class="login-btn">
                         <span>Log In</span>
@@ -108,10 +437,37 @@
     </div>
 </div>
 
-<!-- Embedded JavaScript -->
+<!-- JavaScript for Interactive 3D Physics -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Button Loading Animation on Submit
+    // 1. Mouse Interaction 3D Parallax / Tilt Logic
+    const canvas = document.getElementById('pageCanvas');
+    const container = document.getElementById('tiltContainer');
+
+    if (canvas && container && window.innerWidth > 868) {
+        canvas.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            const { innerWidth, innerHeight } = window;
+            
+            // Calculate tilt degrees relative to center (-12deg to +12deg)
+            const rotateX = ((clientY / innerHeight) - 0.5) * -16;
+            const rotateY = ((clientX / innerWidth) - 0.5) * 16;
+
+            container.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        // Smooth reset when mouse leaves
+        canvas.addEventListener('mouseleave', () => {
+            container.style.transition = 'transform 0.5s ease';
+            container.style.transform = 'rotateX(0deg) rotateY(0deg)';
+        });
+
+        canvas.addEventListener('mouseenter', () => {
+            container.style.transition = 'transform 0.15s ease-out';
+        });
+    }
+
+    // 2. Button Loading Animation
     const form = document.querySelector('form');
     const loginBtn = document.querySelector('.login-btn');
     
@@ -125,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. Auto-Dismiss Flash Alerts after 4 seconds
+    // 3. Auto-Dismiss Flash Alerts
     const alerts = document.querySelectorAll('.alert');
     if (alerts.length > 0) {
         setTimeout(() => {

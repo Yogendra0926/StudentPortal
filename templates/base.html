@@ -5,10 +5,194 @@
     <title>University Portal</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            background-color: #f4f6f9; 
+            overflow-x: hidden; 
+        }
+        
+        /* Fixed Left Sidebar with sliding transition */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh; 
+            background-color: #1e293b; 
+            overflow-y: auto; 
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start !important; /* Forces all flex children to the top */
+            padding: 20px 0;
+            box-sizing: border-box;
+            z-index: 1000;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease; 
+        }
+        
+        /* Custom styling for sidebar scrollbar */
+        .navbar::-webkit-scrollbar { width: 6px; }
+        .navbar::-webkit-scrollbar-track { background: #1e293b; }
+        .navbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+        .navbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        /* Branding at the top */
+        .navbar .nav-brand {
+            padding: 0 20px 20px 20px;
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-bottom: 1px solid #334155;
+            margin-bottom: 15px !important; /* Ensure gap isn't coming from here */
+            margin-top: 0 !important;
+            text-align: center;
+        }
+
+        /* Nav Links Container - FIXED TO ALIGN TOP */
+        .navbar .nav-links {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start !important; /* Anchors items to the top */
+            align-items: stretch !important;
+            flex-grow: 1; /* Takes up available space to push profile to bottom */
+            width: 100%;
+            gap: 5px !important; 
+            padding: 0 !important;
+            margin: 0 !important; 
+        }
+
+        /* Individual Nav Links */
+        .navbar .nav-links a {
+            padding: 12px 15px !important;
+            margin: 0 15px !important; 
+            border-radius: 8px; 
+            color: #cbd5e1 !important;
+            text-decoration: none;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-start !important; 
+            transition: background 0.2s;
+            font-size: 15px;
+            border-left: none !important; 
+        }
+
+        /* Fixed width for icons */
+        .navbar .nav-links a i {
+            width: 24px;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        /* Hover and Active states */
+        .navbar .nav-links a:hover,
+        .navbar .nav-links a.active {
+            background-color: #334155 !important;
+            color: #ffffff !important;
+        }
+
+        /* User Profile section at the bottom */
+        .navbar .user-profile {
+            margin-top: auto !important; /* Pushes profile strictly to bottom */
+            padding: 20px;
+            border-top: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .navbar .btn-logout {
+            background-color: #ef4444 !important;
+            color: white !important;
+            padding: 10px !important;
+            border-radius: 6px !important;
+            text-decoration: none;
+            display: flex !important;
+            align-items: center;
+            justify-content: center !important; 
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0 !important;
+        }
+        
+        .navbar .btn-logout:hover {
+            background-color: #dc2626 !important;
+        }
+
+        /* Toggle Button Styles */
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            left: 270px; 
+            z-index: 1005;
+            background-color: #3b82f6; 
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: left 0.3s ease, background-color 0.2s;
+        }
+
+        .toggle-btn:hover {
+            background-color: #2563eb;
+        }
+
+        /* Closed States */
+        .navbar.closed {
+            transform: translateX(-100%); 
+        }
+        
+        .navbar.closed ~ .toggle-btn {
+            left: 20px; 
+        }
+
+        .container.expanded {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        /* Main Content Container */
+        .container {
+            margin-left: 250px; 
+            padding: 30px;
+            width: calc(100% - 250px);
+            box-sizing: border-box;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease, width 0.3s ease; 
+        }
+
+        /* Mobile & Tablet Adjustments */
+        @media (max-width: 768px) {
+            .navbar { width: 220px; }
+            .container { margin-left: 220px; width: calc(100% - 220px); padding: 50px 20px 20px 20px; }
+            
+            .toggle-btn { left: 235px; top: 15px; padding: 8px 12px; font-size: 1.1rem; }
+            .navbar.closed ~ .toggle-btn { left: 15px; }
+        }
+
+        @media (max-width: 480px) {
+            .navbar { width: 160px; padding: 15px 0; }
+            .container { margin-left: 160px; width: calc(100% - 160px); padding: 50px 15px 15px 15px; }
+            .navbar .nav-brand { font-size: 1rem; padding: 0 10px 10px 10px; }
+            .navbar .nav-links a { font-size: 13px; padding: 10px !important; margin: 0 8px !important; }
+            .navbar .nav-links a i { margin-right: 6px; width: 18px; }
+            .navbar .user-profile span { font-size: 13px; }
+            
+            .toggle-btn { left: 175px; }
+            .navbar.closed ~ .toggle-btn { left: 15px; }
+        }
+    </style>
 </head>
 <body>
     {% if session.user_id %}
-    <nav class="navbar">
+    <nav class="navbar" id="sidebar">
         <div class="nav-brand">
             {% if session.role == 'admin' %}
                 <i class="fa-solid fa-user-shield text-warning"></i> ADMIN PORTAL
@@ -32,15 +216,13 @@
                 </a>
                 <a href="{{ url_for('announcements') }}" class="{{ 'active' if request.endpoint=='announcements' }}">
                     <i class="fa-solid fa-bullhorn"></i> Announcements
-                </a> <!-- Fixed missing closing tag here -->
+                </a> 
                 <a href="{{ url_for('lms') }}" class="{{ 'active' if request.endpoint=='lms' }}">
                     <i class="fa-solid fa-book-open"></i> LMS
                 </a>
-                <a href="{{ url_for('chatbot') }}" class="{{ 'active' if request.endpoint=='lms' }}">
-                    <i class="fa-solid fa-book-open"></i> chatbot
+                <a href="{{ url_for('chatbot') }}" class="{{ 'active' if request.endpoint=='chatbot' }}">
+                    <i class="fa-solid fa-robot"></i> Chatbot
                 </a>
-
-                <!-- NEW QUIZ LINK ADDED HERE -->
                 <a href="{{ url_for('quiz_dashboard') }}" class="{{ 'active' if request.endpoint=='quiz_dashboard' or request.endpoint=='take_quiz' }}">
                     <i class="fa-solid fa-laptop-code"></i> Quizzes
                 </a>
@@ -54,9 +236,14 @@
             </div>
         </div>
     </nav>
+
+    <!-- Toggle Button -->
+    <button class="toggle-btn" onclick="toggleSidebar()" id="toggleBtn">
+        <i class="fa-solid fa-xmark" id="toggleIcon"></i>
+    </button>
     {% endif %}
 
-    <div class="container">
+    <div class="container" id="mainContent">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -66,6 +253,32 @@
         {% endwith %}
         {% block content %}{% endblock %}
     </div>
+    
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const icon = document.getElementById('toggleIcon');
+            
+            sidebar.classList.toggle('closed');
+            mainContent.classList.toggle('expanded');
+            
+            if (sidebar.classList.contains('closed')) {
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.innerWidth <= 768) {
+                toggleSidebar(); 
+            }
+        });
+    </script>
 </body>
 </html>

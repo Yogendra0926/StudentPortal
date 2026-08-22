@@ -22,7 +22,8 @@
                         <option value="CSL0105[T]">CSL0105[T]</option>
                         <option value="Webinar-01">Webinar-01</option>
                     </select>
-                    <input type="date" name="date" class="form-control w-auto" value="{{ datetime.now().strftime('%Y-%m-%d') }}" required>
+                    <!-- Fixed: Replaced raw python datetime.now() call with dynamic current_date variable or safe default -->
+                    <input type="date" name="date" class="form-control w-auto" value="{{ current_date if current_date else '' }}" required>
                     <button type="submit" class="btn-blue">Fetch Students</button>
                 </div>
             </form>

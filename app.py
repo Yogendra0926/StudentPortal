@@ -610,48 +610,68 @@ def serve_file(filename):
 
 # --- ADMIN MODULE ---
 
+from datetime import datetime
+from flask import render_template, request, redirect, url_for, session, flash
+
 @app.route('/admin', methods=['GET'])
 def admin_portal():
-    if 'user_id' not in session or session['role'] != 'admin':
+    if 'user_id' not in session or session.get('role') != 'admin':
         return redirect(url_for('login'))
         
     conn = get_db_connection()
     if conn is None:
         flash("Database Connection Failed!", "danger")
         return redirect(url_for("login"))
+    
+    # Use DictCursor if available so template properties (e.g. student.id, student.name) work seamlessly
     cursor = conn.cursor()
     
-    # Fetch students for attendance tab
-    cursor.execute("SELECT id, name FROM users WHERE role = 'student'")
-    students = cursor.fetchall()
-    
-    # Fetch assignments for review tab
-    cursor.execute("SELECT * FROM assignments ORDER BY created_at DESC")
-    assignments = cursor.fetchall()
-    
-    # Selected assignment submissions for grading
-    selected_assign_id = request.args.get('assign_id')
-    submissions = []
-    if selected_assign_id:
-        cursor.execute("""
-            SELECT s.*, u.name, a.max_marks 
-            FROM assignment_submissions s
-            JOIN users u ON s.student_id = u.id
-            JOIN assignments a ON s.assignment_id = a.id
-            WHERE s.assignment_id = %s
-        """, (selected_assign_id,))
-        submissions = cursor.fetchall()
+    try:
+        # Fetch students for attendance tab
+        cursor.execute("SELECT id, name FROM users WHERE role = 'student'")
+        students = cursor.fetchall()
         
-    # Fetch quizzes for the Manage Quizzes tab
-    cursor.execute("SELECT * FROM quizzes ORDER BY created_at DESC")
-    admin_quizzes = cursor.fetchall()
+        # Fetch assignments for review tab
+        cursor.execute("SELECT * FROM assignments ORDER BY created_at DESC")
+        assignments = cursor.fetchall()
         
-    cursor.close()
-    conn.close()
+        # Selected assignment submissions for grading
+        selected_assign_id = request.args.get('assign_id')
+        submissions = []
+        if selected_assign_id:
+            cursor.execute("""
+                SELECT s.*, u.name, a.max_marks 
+                FROM assignment_submissions s
+                JOIN users u ON s.student_id = u.id
+                JOIN assignments a ON s.assignment_id = a.id
+                WHERE s.assignment_id = %s
+            """, (selected_assign_id,))
+            submissions = cursor.fetchall()
+            
+        # Fetch quizzes for the Manage Quizzes tab
+        cursor.execute("SELECT * FROM quizzes ORDER BY created_at DESC")
+        admin_quizzes = cursor.fetchall()
+
+    except Exception as e:
+        flash(f"An error occurred while fetching data: {str(e)}", "danger")
+        students, assignments, submissions, admin_quizzes = [], [], [], []
+    finally:
+        cursor.close()
+        conn.close()
     
-    return render_template('admin_portal.html', students=students, assignments=assignments, 
-                           submissions=submissions, selected_assign_id=selected_assign_id, 
-                           admin_quizzes=admin_quizzes, datetime=datetime)
+    # Pass current_date explicitly to prevent Jinja evaluation issues, and pass datetime module safely
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    
+    return render_template(
+        'admin_portal.html', 
+        students=students, 
+        assignments=assignments, 
+        submissions=submissions, 
+        selected_assign_id=selected_assign_id, 
+        admin_quizzes=admin_quizzes, 
+        datetime=datetime,
+        current_date=current_date
+    )
 
 @app.route('/admin/save_attendance', methods=['POST'])
 def save_attendance():
