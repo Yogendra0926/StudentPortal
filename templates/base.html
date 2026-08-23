@@ -205,6 +205,9 @@
                 <a href="{{ url_for('home') }}" class="{{ 'active' if request.endpoint=='home' }}">
                     <i class="fa-solid fa-house"></i> Home
                 </a>
+                <a href="{{ url_for('profile') }}" class="{{ 'active' if request.endpoint=='profile' else '' }}">
+            <i class="fa-solid fa-user-gear"></i> Student Profile
+        </a>
                 <a href="{{ url_for('student_attendance') }}" class="{{ 'active' if request.endpoint == 'student_attendance' }}">
                     <i class="fa-solid fa-chart-pie"></i> Attendance
                 </a>
@@ -220,12 +223,21 @@
                 <a href="{{ url_for('lms') }}" class="{{ 'active' if request.endpoint=='lms' }}">
                     <i class="fa-solid fa-book-open"></i> LMS
                 </a>
+                <a href="{{ url_for('repeater_status') }}" class="{{ 'active' if request.endpoint=='quiz_dashboard' or request.endpoint=='take_quiz' }}">
+                    <i class="fa-solid fa-laptop-code"></i> Repeater Apply
+                </a>
+                <a href="{{ url_for('result_list') }}" class="{{ 'active' if request.endpoint=='result_list' or request.endpoint=='view_marksheet' else '' }}">
+    <i class="fa-solid fa-file-signature"></i> Results
+</a>
                 <a href="{{ url_for('chatbot') }}" class="{{ 'active' if request.endpoint=='chatbot' }}">
                     <i class="fa-solid fa-robot"></i> Chatbot
                 </a>
-                <a href="{{ url_for('quiz_dashboard') }}" class="{{ 'active' if request.endpoint=='quiz_dashboard' or request.endpoint=='take_quiz' }}">
-                    <i class="fa-solid fa-laptop-code"></i> Quizzes
-                </a>
+                <a href="{{ url_for('game_center') }}" class="{{ 'active' if request.endpoint=='profile' else '' }}">
+            <i class="fa-solid fa-user-gear"></i>game center
+        </a>
+    <a href="{{ url_for('rp_shop') }}" class="{{ 'active' if request.endpoint=='rp_shop' or request.endpoint=='my_purchases' else '' }}">
+        <i class="fa-solid fa-cart-shopping"></i> RP Shop
+    </a>
             {% else %}
                 <a href="{{ url_for('admin_portal') }}" class="active"><i class="fa-solid fa-bars-progress"></i> Dashboard</a>
             {% endif %}

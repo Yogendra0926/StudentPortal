@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .shop-container { padding: 20px; max-width: 1100px; margin: 0 auto; }
+    .shop-header { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #4f46e5, #3730a3); color: white; padding: 30px; border-radius: 16px; margin-bottom: 30px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    .rp-balance-card { background: rgba(255,255,255,0.15); padding: 15px 25px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
+    .rp-balance-card strong { display: block; font-size: 2rem; color: #f59e0b; margin-top: 5px; }
+
+    .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .shop-card { background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s; }
+    .shop-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+    .shop-icon { font-size: 2.5rem; margin-bottom: 15px; }
+    .shop-card h2 { margin: 0 0 10px 0; color: #0f172a; font-size: 1.3rem; }
+    .shop-card p { color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0 0 20px 0; }
+
+    .reward-value { background: #f8fafc; padding: 10px 15px; border-radius: 8px; font-weight: 600; color: #334155; font-size: 0.9rem; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+
+    .shop-card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 15px; }
+    .price strong { font-size: 1.2rem; color: #0f172a; }
+
+    .redeem-btn { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .redeem-btn:hover { background: #059669; }
+    .redeem-btn.disabled { background: #cbd5e1; color: #64748b; cursor: not-allowed; }
+</style>
+
+<div class="shop-container">
+    <div class="shop-header">
+        <div>
+            <span style="font-size: 0.8rem; letter-spacing: 1px; font-weight: 700; opacity: 0.8;">REWARD CENTER</span>
+            <h1 style="margin: 5px 0; font-size: 2rem;">RP Shop 🛒</h1>
+            <p style="margin: 0; opacity: 0.9;">Spend your earned Reward Points on useful academic perks.</p>
+        </div>
+        <div class="rp-balance-card">
+            <span style="font-size: 0.85rem; text-transform: uppercase;">Your Balance</span>
+            <strong><i class="fa-solid fa-trophy"></i> {{ student.rp_points }} RP</strong>
+        </div>
+    </div>
+
+    <div class="shop-grid">
+        {% for item in shop_items %}
+        <div class="shop-card">
+            <div>
+                <div class="shop-icon">
+                    {% if item.reward_type == 'assignment_skip' %} 🎯
+                    {% elif item.reward_type == 'attendance_boost' %} 📈
+                    {% elif item.reward_type == 'grace_marks' %} 🏆
+                    {% endif %}
+                </div>
+                <h2>{{ item.item_name }}</h2>
+                <p>{{ item.description }}</p>
+                <div class="reward-value">
+                    {% if item.reward_type == 'assignment_skip' %} Skip 1 Assignment
+                    {% elif item.reward_type == 'attendance_boost' %} +{{ item.reward_value|int }}% Attendance Boost
+                    {% elif item.reward_type == 'grace_marks' %} Up to {{ item.reward_value|int }} Grace Marks
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="shop-card-footer">
+                <div class="price">
+                    <span style="font-size: 0.75rem; color: #64748b; display: block;">Cost</span>
+                    <strong>{{ item.rp_cost }} RP</strong>
+                </div>
+
+                {% if student.rp_points >= item.rp_cost %}
+                <form method="POST" action="{{ url_for('purchase_shop_item', item_id=item.id) }}" onsubmit="return confirm('Confirm purchase of {{ item.item_name }} for {{ item.rp_cost }} RP?');">
+                    <button type="submit" class="redeem-btn">Redeem Now</button>
+                </form>
+                {% else %}
+                <button class="redeem-btn disabled" disabled>Not Enough RP</button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

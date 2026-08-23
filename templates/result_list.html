@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .result-list-container {
+        padding: 20px;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #4f46e5, #3730a3);
+        color: white;
+        padding: 30px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+    }
+
+    .page-header p {
+        margin: 5px 0 0 0;
+        opacity: 0.9;
+        font-size: 0.95rem;
+    }
+
+    /* Modern Table Card */
+    .table-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .custom-table th {
+        background-color: #f8fafc;
+        color: #475569;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 15px 20px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .custom-table td {
+        padding: 16px 20px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #1e293b;
+        font-size: 0.95rem;
+    }
+
+    .custom-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .custom-table tbody tr:hover {
+        background-color: #f8fafc;
+    }
+
+    /* Action Buttons */
+    .action-btns {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-action {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+        padding: 6px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: 0.2s ease;
+    }
+
+    .btn-action:hover {
+        background: #4f46e5;
+        color: white;
+        border-color: #4f46e5;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 12px;
+        border: 2px dashed #cbd5e1;
+    }
+
+    .empty-state i {
+        font-size: 3.5rem;
+        color: #94a3b8;
+        margin-bottom: 15px;
+    }
+
+    .empty-state h3 {
+        color: #475569;
+        margin: 0 0 5px 0;
+    }
+</style>
+
+<div class="result-list-container">
+
+    <!-- Header Banner -->
+    <div class="page-header">
+        <h1><i class="fa-solid fa-file-lines"></i> Marksheet List</h1>
+        <p>Access and download your official semester marksheets</p>
+    </div>
+
+    {% if marksheets %}
+    <div class="table-card">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Marksheet Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in marksheets %}
+                <tr>
+                    <td style="font-weight: 600; color: #0f172a;">
+                        <i class="fa-solid fa-file-pdf" style="color: #ef4444; margin-right: 8px;"></i> {{ item.name }}
+                    </td>
+                    <td>{{ item.start_date if item.start_date else 'N/A' }}</td>
+                    <td>{{ item.end_date if item.end_date else 'N/A' }}</td>
+                    <td>{{ item.description if item.description else 'End-Term Result' }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="{{ url_for('view_marksheet', marksheet_id=item.id) }}" class="btn-action" title="View Details">
+                                <i class="fa-solid fa-eye"></i> View
+                            </a>
+                            <a href="{{ url_for('view_marksheet', marksheet_id=item.id) }}?print=true" class="btn-action" title="Print/Download">
+                                <i class="fa-solid fa-print"></i> Print
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fa-solid fa-folder-open"></i>
+        <h3>No Result Available !!</h3>
+        <!-- <p style="color: #64748b; margin: 0;">Your semester marksheets have not been uploaded by the administration yet.</p> -->
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}  

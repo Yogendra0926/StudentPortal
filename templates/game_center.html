@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .game-container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+    .game-header { background: linear-gradient(135deg, #1e293b, #0f172a); color: white; padding: 30px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    
+    .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .game-card { background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s; }
+    .game-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    
+    .game-card-body { padding: 20px; }
+    .game-card-footer { background: #f8fafc; padding: 15px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+    
+    .btn-play { background: #10b981; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; transition: 0.2s; }
+    .btn-play:hover { background: #059669; }
+</style>
+
+<div class="game-container">
+    <div class="game-header">
+        <div>
+            <h1 style="margin: 0; font-size: 1.8rem;"><i class="fa-solid fa-gamepad"></i> Game Center</h1>
+            <p style="margin: 5px 0 0 0; color: #94a3b8;">Challenge yourself, test your knowledge, and earn Reward Points (RP).</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); text-align: center;">
+            <span style="font-size: 0.8rem; text-transform: uppercase; color: #94a3b8; display: block;">Your Balance</span>
+            <strong style="font-size: 1.4rem; color: #f59e0b;"><i class="fa-solid fa-trophy"></i> {{ student_rp }} RP</strong>
+        </div>
+    </div>
+
+    <div class="game-grid">
+        {% if games %}
+            {% for g in games %}
+            <div class="game-card">
+                <div class="game-card-body">
+                    <h3 style="margin: 0 0 10px 0; color: #0f172a;"><i class="fa-solid fa-puzzle-piece" style="color: #4f46e5;"></i> {{ g.name }}</h3>
+                    <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0 0 15px 0;">{{ g.description }}</p>
+                    <div style="font-size: 0.85rem; color: #475569; background: #f8fafc; padding: 8px 12px; border-radius: 6px;">
+                        ⚡ Reward: <strong>{{ g.rp_per_question }} RP / Question</strong>
+                    </div>
+                </div>
+                <div class="game-card-footer">
+    {% if g.id in completed_games %}
+        <span style="font-size: 0.85rem; color: #10b981; font-weight: 600;"><i class="fa-solid fa-circle-check"></i> Completed</span>
+        <button class="btn-play" style="background: #cbd5e1; cursor: not-allowed;" disabled>PLAYED</button>
+    {% else %}
+        <span style="font-size: 0.8rem; color: #64748b;"><i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Available</span>
+        <a href="{{ url_for('play_game', game_id=g.id) }}" class="btn-play">PLAY NOW</a>
+    {% endif %}
+</div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 50px; background: white; border-radius: 12px; border: 2px dashed #cbd5e1;">
+                <i class="fa-solid fa-ghost" style="font-size: 3rem; color: #94a3b8; margin-bottom: 10px;"></i>
+                <h3 style="color: #475569; margin: 0;">No Games Available</h3>
+                <p style="color: #64748b;">The administrator hasn't published any active games yet. Check back soon!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

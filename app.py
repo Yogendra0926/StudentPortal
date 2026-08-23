@@ -206,28 +206,42 @@ def home():
         marks=marks
     )
 
+from flask import request # Make sure request is imported at the top of your file
+
 @app.route('/attendance')
 def student_attendance():
     if 'user_id' not in session or session['role'] != 'student':
         return redirect(url_for('login'))
-        
+
     student_id = session['user_id']
     conn = get_db_connection()
     if conn is None:
         flash("Database Connection Failed!", "danger")
         return redirect(url_for("login"))
     cursor = conn.cursor()
+
+    # --- NEW DYNAMIC LOGIC STARTS HERE ---
+    # URL se phase ki value pakdo (Agar koi value nahi hai toh default '1' mano)
+    phase = request.args.get('phase', '1')
+
+    # Phase ke hisaab se SQL query decide karo
+    if phase == '2':
+        query = "SELECT * FROM phase2_attendance WHERE student_id = %s ORDER BY attendance_date DESC"
+    else:
+        query = "SELECT * FROM attendance_phase1 WHERE student_id = %s ORDER BY attendance_date DESC"
     
-    # Detailed log
-    cursor.execute("SELECT * FROM attendance_phase1 WHERE student_id = %s ORDER BY attendance_date DESC", (student_id,))
+    # Decide ki gayi query ko execute karo
+    cursor.execute(query, (student_id,))
+    # --- NEW DYNAMIC LOGIC ENDS HERE ---
+
     logs = cursor.fetchall()
-    
+
     # Summary Calculations
     total_classes = len(logs)
     total_present = sum(1 for log in logs if log['status'] == 'P')
     total_absent = total_classes - total_present
     overall_percentage = round((total_present / total_classes * 100)) if total_classes > 0 else 0
-    
+
     # Course-wise summary
     course_summary = {}
     for log in logs:
@@ -239,13 +253,13 @@ def student_attendance():
             course_summary[code]['present'] += 1
         else:
             course_summary[code]['absent'] += 1
-            
+
     for code, stats in course_summary.items():
         stats['percentage'] = round((stats['present'] / stats['total']) * 100)
-        
+
     cursor.close()
     conn.close()
-    
+
     return render_template('student_attendance.html', 
                            total_classes=total_classes, total_present=total_present,
                            total_absent=total_absent, overall_percentage=overall_percentage,
@@ -445,6 +459,473 @@ def chatbot():
         return jsonify({
             "error": "Something went wrong."
         }), 500
+@app.route('/repeater')
+def repeater_status():
+    # Security check: User logged in hai ya nahi
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    student_id = session['user_id']
+    conn = get_db_connection()
+    if conn is None:
+        flash("Database Connection Failed!", "danger")
+        return redirect(url_for("login"))
+    
+    cursor = conn.cursor()
+
+    # Repeater table se student ka data fetch karna
+    cursor.execute("SELECT course_code, failed_id FROM repeater WHERE student_id = %s", (student_id,))
+    failed_subjects = cursor.fetchall()
+    
+    cursor.close()
+    conn.close()
+
+    # Data ko repeater.html par bhej do
+    return render_template('repeater.html', failed_subjects=failed_subjects)
+@app.route('/results')
+def result_list():
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    student_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Fetch all marksheets for this student
+    cursor.execute("SELECT * FROM marksheet_list WHERE student_id = %s", (student_id,))
+    marksheets = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('result_list.html', marksheets=marksheets)
+
+
+@app.route('/view_marksheet/<int:marksheet_id>')
+def view_marksheet(marksheet_id):
+    # Check if user is logged in
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    student_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor() # Ensure 'dictionary=True' nahi hataya hai (Sirf in dono naye routes par 'dictionary=True' chahiye hota hai kyunki hum marksheet['item'] aise likh rahe hain)
+
+    # 1. Fetch marksheet WITH SECURITY CHECK (Sirf wahi marksheet laao jiska id aur student_id dono match hon)
+    cursor.execute("SELECT * FROM marksheet_list WHERE id = %s AND student_id = %s", (marksheet_id, student_id))
+    marksheet = cursor.fetchone()
+
+    # Agar marksheet nahi mili, iska matlab student kisi aur ka result URL change karke dekhne ki koshish kar raha hai
+    if not marksheet:
+        cursor.close()
+        conn.close()
+        return "Unauthorized Access! Yeh result aapka nahi hai.", 403
+
+    # 2. Fetch all subjects for this marksheet
+    cursor.execute("SELECT * FROM marksheet_details WHERE marksheet_id = %s", (marksheet_id,))
+    subjects = cursor.fetchall()
+    
+    # 3. Fetch User Details strictly using current session ID
+    cursor.execute("SELECT * FROM users WHERE id = %s", (student_id,))
+    user_info = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('detailed_marksheet.html', marksheet=marksheet, subjects=subjects, user_info=user_info)
+import os
+from werkzeug.utils import secure_filename
+
+# 1. View & Edit Profile Route
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+    
+    student_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    if request.method == 'POST':
+        phone = request.form.get('phone')
+        dob = request.form.get('dob')
+        gender = request.form.get('gender')
+        course = request.form.get('course')
+        branch = request.form.get('branch')
+        semester = request.form.get('semester')
+        university = request.form.get('university')
+        bio = request.form.get('bio')
+        skills = request.form.get('skills')
+        github = request.form.get('github')
+        linkedin = request.form.get('linkedin')
+
+        # Handle Profile Photo Upload
+        photo_filename = None
+        if 'profile_photo' in request.files:
+            file = request.files['profile_photo']
+            if file and file.filename != '':
+                photo_filename = secure_filename(file.filename)
+                upload_folder = os.path.join('static', 'uploads')
+                os.makedirs(upload_folder, exist_ok=True)
+                file.save(os.path.join(upload_folder, photo_filename))
+
+        # Check if profile exists, update or insert
+        cursor.execute("SELECT id FROM student_profiles WHERE student_id = %s", (student_id,))
+        existing = cursor.fetchone()
+
+        if existing:
+            if photo_filename:
+                cursor.execute("""
+                    UPDATE student_profiles SET phone=%s, date_of_birth=%s, gender=%s, course=%s, 
+                    branch=%s, semester=%s, university=%s, profile_photo=%s, bio=%s, skills=%s, github=%s, linkedin=%s 
+                    WHERE student_id=%s
+                """, (phone, dob, gender, course, branch, semester, university, photo_filename, bio, skills, github, linkedin, student_id))
+            else:
+                cursor.execute("""
+                    UPDATE student_profiles SET phone=%s, date_of_birth=%s, gender=%s, course=%s, 
+                    branch=%s, semester=%s, university=%s, bio=%s, skills=%s, github=%s, linkedin=%s 
+                    WHERE student_id=%s
+                """, (phone, dob, gender, course, branch, semester, university, bio, skills, github, linkedin, student_id))
+        else:
+            cursor.execute("""
+                INSERT INTO student_profiles (student_id, phone, date_of_birth, gender, course, branch, semester, university, profile_photo, bio, skills, github, linkedin, rp_points)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0)
+            """, (student_id, phone, dob, gender, course, branch, semester, university, photo_filename, bio, skills, github, linkedin))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        flash("Profile updated successfully!", "success")
+        return redirect(url_for('profile'))
+
+    # Fetch Profile & User Details + RP History
+    cursor.execute("SELECT * FROM users WHERE id = %s", (student_id,))
+    user = cursor.fetchone()
+
+    cursor.execute("SELECT * FROM student_profiles WHERE student_id = %s", (student_id,))
+    profile_data = cursor.fetchone()
+
+    cursor.execute("SELECT * FROM rp_transactions WHERE student_id = %s ORDER BY created_at DESC", (student_id,))
+    rp_history = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('profile.html', user=user, profile=profile_data, rp_history=rp_history)
+
+
+# 2. Game Center Dashboard
+@app.route('/games')
+def game_center():
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+    
+    student_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Active games fetch karo
+    cursor.execute("SELECT * FROM games WHERE status = 'active'")
+    games = cursor.fetchall()
+
+    # Get student RP
+    cursor.execute("SELECT rp_points FROM student_profiles WHERE student_id = %s", (student_id,))
+    p_data = cursor.fetchone()
+    student_rp = p_data['rp_points'] if p_data else 0
+
+    # Find out which games this student has already completed
+    cursor.execute("SELECT game_id FROM game_attempts WHERE student_id = %s AND status = 'completed'", (student_id,))
+    completed_games = {row['game_id'] for row in cursor.fetchall()}
+
+    cursor.close()
+    conn.close()
+
+    return render_template('game_center.html', games=games, student_rp=student_rp, completed_games=completed_games)
+
+
+# 3. Play Game Route
+@app.route('/game/<int:game_id>')
+def play_game(game_id):
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+    
+    student_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM games WHERE id = %s AND status = 'active'", (game_id,))
+    game = cursor.fetchone()
+    if not game:
+        flash("Game not available or inactive.", "danger")
+        return redirect(url_for('game_center'))
+
+    # Check if already completed and replay is not allowed
+    if not game['allow_replay']:
+        cursor.execute("SELECT * FROM game_attempts WHERE student_id = %s AND game_id = %s AND status = 'completed'", (student_id, game_id))
+        if cursor.fetchone():
+            flash("You have already completed this game!", "warning")
+            return redirect(url_for('game_center'))
+
+    cursor.execute("SELECT id, question_text, option_a, option_b, option_c, option_d, question_order FROM game_questions WHERE game_id = %s ORDER BY question_order ASC", (game_id,))
+    questions = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('play_game.html', game=game, questions=questions)
+
+
+@app.route('/game/<int:game_id>/submit', methods=['POST'])
+def submit_game(game_id):
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+    
+    student_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM games WHERE id = %s", (game_id,))
+    game = cursor.fetchone()
+    if not game:
+        return redirect(url_for('game_center'))
+
+    # Fetch questions and correct options from DB (Secure Server-side check)
+    cursor.execute("SELECT id, correct_option, rp_points FROM game_questions WHERE game_id = %s", (game_id,))
+    questions = {q['id']: q for q in cursor.fetchall()}
+
+    correct_answers = 0
+    total_questions = len(questions)
+    rp_earned = 0
+
+    for q_id, q_data in questions.items():
+        user_answer = request.form.get(f'question_{q_id}')
+        if user_answer and user_answer.upper() == q_data['correct_option']:
+            correct_answers += 1
+            rp_earned += q_data['rp_points']
+
+    try:
+        # 1. Ensure student profile entry exists so RP doesn't fail
+        cursor.execute("SELECT id FROM student_profiles WHERE student_id = %s", (student_id,))
+        if not cursor.fetchone():
+            cursor.execute("INSERT INTO student_profiles (student_id, rp_points) VALUES (%s, 0)", (student_id,))
+
+        # 2. Record game attempt
+        cursor.execute("""
+            INSERT INTO game_attempts (student_id, game_id, total_questions, correct_answers, rp_earned, status, completed_at)
+            VALUES (%s, %s, %s, %s, %s, 'completed', NOW())
+        """, (student_id, game_id, total_questions, correct_answers, rp_earned))
+        
+        attempt_id = cursor.lastrowid
+
+        # 3. Update student RP points
+        cursor.execute("UPDATE student_profiles SET rp_points = rp_points + %s WHERE student_id = %s", (rp_earned, student_id))
+
+        # 4. Log transaction history
+        if rp_earned > 0:
+            cursor.execute("""
+                INSERT INTO rp_transactions (student_id, points, transaction_type, reference_id, description)
+                VALUES (%s, %s, 'game', %s, %s)
+            """, (student_id, rp_earned, attempt_id, f"Completed game: {game['name']}"))
+
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        print(f"Error updating RP: {e}")
+    finally:
+        cursor.close()
+        conn.close()
+
+    return render_template('game_result.html', game=game, correct_answers=correct_answers, total_questions=total_questions, rp_earned=rp_earned)
+# 1. View RP Shop
+@app.route('/shop')
+def rp_shop():
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+    
+    student_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Get student RP from student_profiles
+    cursor.execute("SELECT rp_points FROM student_profiles WHERE student_id = %s", (student_id,))
+    p_data = cursor.fetchone()
+    student_rp = p_data['rp_points'] if p_data else 0
+
+    # Create dummy user object for template compatibility
+    student_obj = {'rp_points': student_rp}
+
+    # Fetch active shop items
+    cursor.execute("SELECT * FROM shop WHERE status = 'active'")
+    shop_items = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('shop.html', student=student_obj, shop_items=shop_items)
+
+
+# 2. Secure Purchase Route (Atomic Update & DB Transaction)
+@app.route('/shop/purchase/<int:item_id>', methods=['POST'])
+def purchase_shop_item(item_id):
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+    
+    student_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Fetch item details strictly from DB (Never trust browser data)
+        cursor.execute("SELECT * FROM shop WHERE id = %s AND status = 'active'", (item_id,))
+        item = cursor.fetchone()
+        if not item:
+            flash("Invalid or inactive item.", "danger")
+            return redirect(url_for('rp_shop'))
+
+        cost = item['rp_cost']
+
+        # Start Transaction & Atomic deduction to prevent race conditions
+        cursor.execute("START TRANSACTION")
+
+        # Deduct RP only if student has enough points
+        cursor.execute("""
+            UPDATE student_profiles 
+            SET rp_points = rp_points - %s 
+            WHERE student_id = %s AND rp_points >= %s
+        """, (cost, student_id, cost))
+
+        if cursor.rowcount == 0:
+            cursor.execute("ROLLBACK")
+            flash("Not enough RP points to redeem this reward!", "danger")
+            return redirect(url_for('rp_shop'))
+
+        # Create Purchase Record
+        cursor.execute("""
+            INSERT INTO shop_purchases (student_id, shop_item_id, item_name, rp_spent, reward_type, reward_value, status)
+            VALUES (%s, %s, %s, %s, %s, %s, 'pending')
+        """, (student_id, item['id'], item['item_name'], cost, item['reward_type'], item['reward_value']))
+        
+        purchase_id = cursor.lastrowid
+
+        # Log RP Transaction (Negative points for spending)
+        cursor.execute("""
+            INSERT INTO rp_transactions (student_id, points, transaction_type, reference_id, description)
+            VALUES (%s, %s, 'deduction', %s, %s)
+        """, (student_id, -cost, purchase_id, f"Purchased {item['item_name']} from RP Shop"))
+
+        conn.commit()
+        flash(f"Successfully redeemed {item['item_name']}! Request sent to administration.", "success")
+
+    except Exception as e:
+        conn.rollback()
+        flash("An error occurred during purchase. Please try again.", "danger")
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('my_purchases'))
+
+
+# 3. Student Purchases History
+@app.route('/shop/my-purchases')
+def my_purchases():
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+    
+    student_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM shop_purchases WHERE student_id = %s ORDER BY purchased_at DESC", (student_id,))
+    purchases = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('my_purchases.html', purchases=purchases)
+
+
+# 4. Admin Shop Requests Dashboard
+@app.route('/admin/shop/purchases')
+def admin_shop_purchases():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT sp.*, u.name as student_name, u.username as roll_no 
+        FROM shop_purchases sp
+        JOIN users u ON sp.student_id = u.id
+        ORDER BY sp.purchased_at DESC
+    """)
+    purchases = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('admin_shop.html', purchases=purchases)
+
+
+# 5. Admin Approve Purchase
+@app.route('/admin/shop/purchase/<int:purchase_id>/approve', methods=['POST'])
+def admin_approve_purchase(purchase_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("UPDATE shop_purchases SET status = 'approved' WHERE id = %s", (purchase_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash("Purchase request approved.", "success")
+    return redirect(url_for('admin_shop_purchases'))
+
+
+# 6. Admin Reject Purchase (with Refund)
+@app.route('/admin/shop/purchase/<int:purchase_id>/reject', methods=['POST'])
+def admin_reject_purchase(purchase_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'))
+    
+    admin_note = request.form.get('admin_note', 'Rejected by admin')
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("START TRANSACTION")
+
+        # Get purchase details for refund
+        cursor.execute("SELECT * FROM shop_purchases WHERE id = %s AND status = 'pending'", (purchase_id,))
+        purchase = cursor.fetchone()
+
+        if purchase:
+            # Update status
+            cursor.execute("UPDATE shop_purchases SET status = 'rejected', admin_note = %s WHERE id = %s", (admin_note, purchase_id))
+
+            # Refund RP points to student
+            cursor.execute("UPDATE student_profiles SET rp_points = rp_points + %s WHERE student_id = %s", (purchase['rp_spent'], purchase['student_id']))
+
+            # Log refund transaction
+            cursor.execute("""
+                INSERT INTO rp_transactions (student_id, points, transaction_type, reference_id, description)
+                VALUES (%s, %s, 'bonus', %s, %s)
+            """, (purchase['student_id'], purchase['rp_spent'], purchase_id, f"Refund for rejected: {purchase['item_name']}"))
+
+        conn.commit()
+        flash("Purchase request rejected and RP refunded.", "warning")
+    except Exception as e:
+        conn.rollback()
+        flash("Error rejecting purchase.", "danger")
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('admin_shop_purchases'))
 @app.route("/lms")
 def lms():
     return render_template("lms.html")

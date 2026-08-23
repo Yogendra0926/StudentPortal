@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <h2>My Redeemed Rewards</h2>
+        <a href="{{ url_for('rp_shop') }}" class="btn" style="background: #4f46e5; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600;">Go to Shop</a>
+    </div>
+
+    <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                    <th style="padding: 15px; text-align: left; color: #475569;">Item Name</th>
+                    <th style="padding: 15px; text-align: left; color: #475569;">RP Spent</th>
+                    <th style="padding: 15px; text-align: left; color: #475569;">Status</th>
+                    <th style="padding: 15px; text-align: left; color: #475569;">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if purchases %}
+                    {% for p in purchases %}
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 15px; font-weight: 600; color: #0f172a;">{{ p.item_name }}</td>
+                        <td style="padding: 15px; color: #d97706; font-weight: bold;">-{{ p.rp_spent }} RP</td>
+                        <td style="padding: 15px;">
+                            {% if p.status == 'pending' %}
+                                <span style="background: #fef3c7; color: #d97706; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Pending</span>
+                            {% elif p.status == 'approved' %}
+                                <span style="background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Approved</span>
+                            {% elif p.status == 'rejected' %}
+                                <span style="background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;" title="{{ p.admin_note }}">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 15px; color: #64748b; font-size: 0.85rem;">{{ p.purchased_at.strftime('%d %b %Y') }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 40px; color: #94a3b8;">You haven't redeemed any rewards yet.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

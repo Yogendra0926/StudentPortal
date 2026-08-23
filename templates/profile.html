@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .profile-container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    .profile-grid { display: grid; grid-template-columns: 350px 1fr; gap: 25px; }
+    @media (max-width: 768px) { .profile-grid { grid-template-columns: 1fr; } }
+
+    .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; overflow: hidden; margin-bottom: 20px; }
+    .card-header { background: #f8fafc; padding: 15px 20px; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #1e293b; }
+    .card-body { padding: 20px; }
+
+    /* Profile Card Styling */
+    .profile-user-card { text-align: center; padding: 30px 20px; }
+    .avatar-box { width: 100px; height: 100px; border-radius: 50%; background: #e0e7ff; color: #4338ca; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; margin: 0 auto 15px auto; overflow: hidden; border: 3px solid #4f46e5; }
+    .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
+    .rp-badge { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 8px 16px; border-radius: 20px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; margin-top: 15px; box-shadow: 0 4px 6px rgba(245, 158, 11, 0.2); }
+
+    /* Form Styles */
+    .form-group { margin-bottom: 15px; text-align: left; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 5px; }
+    .form-control { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; }
+    .form-control:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+    
+    .btn-primary { background: #4f46e5; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.2s; }
+    .btn-primary:hover { background: #4338ca; }
+
+    /* RP History Table */
+    .table { width: 100%; border-collapse: collapse; }
+    .table th, .table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+    .table th { background: #f8fafc; color: #475569; font-weight: 600; }
+    .points-tag { color: #10b981; font-weight: 700; }
+</style>
+
+<div class="profile-container">
+    <div class="profile-grid">
+        
+        <!-- Left Column: Summary Card -->
+        <div>
+            <div class="card profile-user-card">
+                <div class="avatar-box">
+                    {% if profile and profile.profile_photo %}
+                        <img src="{{ url_for('static', filename='uploads/' + profile.profile_photo) }}" alt="Profile Photo">
+                    {% else %}
+                        {{ user.name[0] | upper }}
+                    {% endif %}
+                </div>
+                <h3 style="margin: 0; color: #0f172a;">{{ user.name }}</h3>
+                <p style="color: #64748b; margin: 5px 0 0 0; font-size: 0.9rem;">{{ profile.course if profile and profile.course else 'Student' }}</p>
+                
+                <div class="rp-badge">
+                    <i class="fa-solid fa-trophy"></i> {{ profile.rp_points if profile else 0 }} RP
+                </div>
+            </div>
+
+            <!-- Quick Info Card -->
+            <div class="card">
+                <div class="card-header"><i class="fa-solid fa-address-card"></i> Account Info</div>
+                <div class="card-body" style="font-size: 0.9rem;">
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Phone:</strong> {{ profile.phone if profile and profile.phone else 'Not provided' }}</p>
+                    <p><strong>Branch:</strong> {{ profile.branch if profile and profile.branch else 'Not provided' }}</p>
+                    <p><strong>Semester:</strong> {{ profile.semester if profile and profile.semester else 'Not provided' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Edit Profile Form & History -->
+        <div>
+            <div class="card">
+                <div class="card-header"><i class="fa-solid fa-user-pen"></i> Edit Profile Information</div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="text" name="phone" class="form-control" value="{{ profile.phone if profile else '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Birth</label>
+                                <input type="date" name="dob" class="form-control" value="{{ profile.date_of_birth if profile else '' }}">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label>Course</label>
+                                <input type="text" name="course" class="form-control" value="{{ profile.course if profile else '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Branch</label>
+                                <input type="text" name="branch" class="form-control" value="{{ profile.branch if profile else '' }}">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label>Semester / Phase</label>
+                                <input type="text" name="semester" class="form-control" value="{{ profile.semester if profile else '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>University</label>
+                                <input type="text" name="university" class="form-control" value="{{ profile.university if profile else '' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Profile Photo</label>
+                            <input type="file" name="profile_photo" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Bio / About</label>
+                            <textarea name="bio" class="form-control" rows="2">{{ profile.bio if profile else '' }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Skills (comma separated)</label>
+                            <input type="text" name="skills" class="form-control" value="{{ profile.skills if profile else '' }}">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label>GitHub URL</label>
+                                <input type="url" name="github" class="form-control" value="{{ profile.github if profile else '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>LinkedIn URL</label>
+                                <input type="url" name="linkedin" class="form-control" value="{{ profile.linkedin if profile else '' }}">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="margin-top: 10px;">Save Profile</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- RP Transaction History Card -->
+            <div class="card">
+                <div class="card-header"><i class="fa-solid fa-clock-rotate-left"></i> Reward Points (RP) History</div>
+                <div class="card-body" style="padding: 0;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Points</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if rp_history %}
+                                {% for tx in rp_history %}
+                                <tr>
+                                    <td>{{ tx.description }}</td>
+                                    <td><span style="background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase;">{{ tx.transaction_type }}</span></td>
+                                    <td><span class="points-tag">+{{ tx.points }} RP</span></td>
+                                    <td style="color: #64748b; font-size: 0.8rem;">{{ tx.created_at.strftime('%d %b %Y') }}</td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: #94a3b8; padding: 20px;">No transaction history yet. Play games to earn RP!</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

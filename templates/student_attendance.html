@@ -2,12 +2,46 @@
 
 {% block content %}
 
+<style>
+    /* Phase Selector Tabs */
+    .phase-selector {
+        display: flex;
+        gap: 15px;
+        margin: 20px 0;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+    }
+    
+    .phase-tab {
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #555;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+    }
+    
+    .phase-tab:hover {
+        background: #e9ecef;
+        color: #333;
+    }
+    
+    .phase-tab.active {
+        background: #0d6efd;
+        color: white;
+        border-color: #0d6efd;
+        box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
+    }
+</style>
+
 <div class="attendance-container">
 
     <div class="attendance-header">
         <div>
             <h1><i class="fa-solid fa-user-graduate"></i> Attendance Dashboard</h1>
-            <p>Track your Phase-1 attendance and monitor your overall performance.</p>
+            <p>Track your {% if request.args.get('phase') == '2' %}Phase-2{% else %}Phase-1{% endif %} attendance and monitor your overall performance.</p>
         </div>
 
         <div class="attendance-circle">
@@ -16,10 +50,18 @@
         </div>
     </div>
 
+    <!-- Phase Selector Tabs (Flask/Jinja2 Logic) -->
+    <div class="phase-selector">
+        <a href="?phase=1" class="phase-tab {% if request.args.get('phase') != '2' %}active{% endif %}">
+            <i class="fa-solid fa-book"></i> Phase-1 
+        </a>
+        <a href="?phase=2" class="phase-tab {% if request.args.get('phase') == '2' %}active{% endif %}">
+            <i class="fa-solid fa-rocket"></i> Phase-2 (DSA & AI)
+        </a>
+    </div>
+
     <!-- Statistics -->
-
     <div class="stats-grid">
-
         <div class="stat-card blue">
             <i class="fa-solid fa-calendar-days"></i>
             <h4>Total Classes</h4>
@@ -43,219 +85,96 @@
             <h4>Overall</h4>
             <h2>{{ overall_percentage }}%</h2>
         </div>
-
     </div>
 
     <!-- Progress -->
-
     <div class="progress-card">
-
         <div class="progress-top">
-
-            <span>Attendance Progress</span>
-
+            <span>{% if request.args.get('phase') == '2' %}Phase-2{% else %}Phase-1{% endif %} Progress</span>
             <strong>{{ overall_percentage }}%</strong>
-
         </div>
-
         <div class="progress-bar">
-
-            <div class="progress-fill"
-                 style="width: {{ overall_percentage }}%">
-            </div>
-
+            <div class="progress-fill" style="width: {{ overall_percentage }}%"></div>
         </div>
-
     </div>
 
     <!-- Course Summary -->
-
     <div class="table-card">
-
         <div class="card-title">
-
             <i class="fa-solid fa-chart-column"></i>
-
             Course-wise Attendance Summary
-
         </div>
-
         <table>
-
             <thead>
-
                 <tr>
-
                     <th>Course Code</th>
-
                     <th>Present</th>
-
                     <th>Absent</th>
-
                     <th>Attendance</th>
-
                 </tr>
-
             </thead>
-
             <tbody>
-
             {% for code, stats in course_summary.items() %}
-
                 <tr>
-
                     <td>
-
-                        <span class="course-code">
-
-                            {{ code }}
-
-                        </span>
-
+                        <span class="course-code">{{ code }}</span>
                     </td>
-
-                    <td class="present">
-
-                        {{ stats.present }}
-
-                    </td>
-
-                    <td class="absent">
-
-                        {{ stats.absent }}
-
-                    </td>
-
+                    <td class="present">{{ stats.present }}</td>
+                    <td class="absent">{{ stats.absent }}</td>
                     <td>
-
                         {% if stats.percentage >= 75 %}
-
-                            <span class="status good">
-
-                                {{ stats.percentage }}%
-
-                            </span>
-
+                            <span class="status good">{{ stats.percentage }}%</span>
                         {% else %}
-
-                            <span class="status danger">
-
-                                {{ stats.percentage }}%
-
-                            </span>
-
+                            <span class="status danger">{{ stats.percentage }}%</span>
                         {% endif %}
-
                     </td>
-
                 </tr>
-
             {% endfor %}
-
             </tbody>
-
         </table>
-
     </div>
 
     <!-- Attendance History -->
-
     <div class="table-card">
-
         <div class="card-title">
-
             <i class="fa-solid fa-clock-rotate-left"></i>
-
             Attendance History
-
         </div>
-
         <table>
-
             <thead>
-
                 <tr>
-
                     <th>#</th>
-
                     <th>Course</th>
-
                     <th>Status</th>
-
                     <th>Faculty</th>
-
                     <th>Date</th>
-
                 </tr>
-
             </thead>
-
             <tbody>
-
             {% for log in logs %}
-
                 <tr>
-
                     <td>{{ loop.index }}</td>
-
                     <td>
-
-                        <span class="course-code">
-
-                            {{ log.course_code }}
-
-                        </span>
-
+                        <span class="course-code">{{ log.course_code }}</span>
                     </td>
-
                     <td>
-
                         {% if log.status == "P" %}
-
                             <span class="attendance present-badge">
-
-                                <i class="fa-solid fa-check"></i>
-
-                                Present
-
+                                <i class="fa-solid fa-check"></i> Present
                             </span>
-
                         {% else %}
-
                             <span class="attendance absent-badge">
-
-                                <i class="fa-solid fa-xmark"></i>
-
-                                Absent
-
+                                <i class="fa-solid fa-xmark"></i> Absent
                             </span>
-
                         {% endif %}
-
                     </td>
-
-                    <td>
-
-                        {{ log.marked_by }}
-
-                    </td>
-
-                    <td>
-
-                        {{ log.attendance_date }}
-
-                    </td>
-
+                    <td>{{ log.marked_by }}</td>
+                    <td>{{ log.attendance_date }}</td>
                 </tr>
-
             {% endfor %}
-
             </tbody>
-
         </table>
-
     </div>
-
 </div>
 
 {% endblock %}

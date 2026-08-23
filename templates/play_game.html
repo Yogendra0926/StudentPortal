@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .play-container { max-width: 700px; margin: 0 auto; padding: 20px; }
+    .quiz-card { background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); padding: 30px; }
+    .question-title { font-size: 1.2rem; font-weight: 600; color: #0f172a; margin-bottom: 20px; line-height: 1.4; }
+    
+    .option-label { display: block; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 15px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; font-weight: 500; color: #334155; }
+    .option-label:hover { background: #f1f5f9; border-color: #94a3b8; }
+    .option-label input { margin-right: 10px; }
+    
+    .btn-submit { background: #4f46e5; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 600; cursor: pointer; float: right; transition: 0.2s; }
+    .btn-submit:hover { background: #4338ca; }
+</style>
+
+<div class="play-container">
+    <div class="quiz-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px;">
+            <h2 style="margin: 0; font-size: 1.4rem; color: #1e293b;">{{ game.name }}</h2>
+            <span style="background: #e0e7ff; color: #4338ca; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">Secure Assessment</span>
+        </div>
+
+        <form method="POST" action="{{ url_for('submit_game', game_id=game.id) }}">
+            {% for q in questions %}
+            <div style="margin-bottom: 30px;">
+                <div class="question-title">Q{{ loop.index }}. {{ q.question_text }}</div>
+                
+                <label class="option-label">
+                    <input type="radio" name="question_{{ q.id }}" value="A" required> {{ q.option_a }}
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="question_{{ q.id }}" value="B"> {{ q.option_b }}
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="question_{{ q.id }}" value="C"> {{ q.option_c }}
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="question_{{ q.id }}" value="D"> {{ q.option_d }}
+                </label>
+            </div>
+            {% endfor %}
+
+            <div style="overflow: hidden; margin-top: 20px;">
+                <button type="submit" class="btn-submit">Submit Answers <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
