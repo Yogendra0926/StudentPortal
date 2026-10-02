@@ -1025,6 +1025,7 @@ def study_materials(course_code):
 
 # ... more of your routes down here ...
 
+
 @app.route("/internal_marks")
 def internal_marks():
 
@@ -1034,12 +1035,33 @@ def internal_marks():
 
     student_id = session['user_id']
 
+    # -----------------------------------------
+    # Get selected phase
+    # -----------------------------------------
+    selected_phase = request.args.get("phase", "phase1")
+
+    # Only allow valid phases
+    allowed_phases = {
+        "phase1": "phase1_marks",
+        "phase2": "phase2_marks"
+    }
+
+    # If invalid phase is supplied, default to Phase-1
+    if selected_phase not in allowed_phases:
+        selected_phase = "phase1"
+
+    table_name = allowed_phases[selected_phase]
+
+    # -----------------------------------------
     # Get selected evaluation component
+    # -----------------------------------------
     selected_type = request.args.get("type")
 
     marks = []
 
+    # -----------------------------------------
     # Allowed database columns
+    # -----------------------------------------
     allowed_columns = {
         "class_participation": "class_participation",
         "progressive_eval": "progressive_eval",
@@ -1048,6 +1070,9 @@ def internal_marks():
         "mid_term_2": "mid_term_2"
     }
 
+    # -----------------------------------------
+    # Fetch marks
+    # -----------------------------------------
     if selected_type and selected_type in allowed_columns:
 
         column = allowed_columns[selected_type]
@@ -1060,14 +1085,13 @@ def internal_marks():
 
         cursor = conn.cursor()
 
-        # IMPORTANT:
-        # Only show courses where the selected evaluation
-        # component actually exists.
+        # Only show courses where the selected
+        # evaluation component has marks uploaded.
         query = f"""
             SELECT
                 course_code,
                 {column} AS marks
-            FROM phase1_marks
+            FROM {table_name}
             WHERE student_id = %s
               AND {column} IS NOT NULL
             ORDER BY course_code
@@ -1080,12 +1104,16 @@ def internal_marks():
         cursor.close()
         conn.close()
 
+    # -----------------------------------------
+    # Send data to template
+    # -----------------------------------------
     return render_template(
         "internal_marks.html",
         marks=marks,
-        selected_type=selected_type
+        selected_type=selected_type,
+        selected_phase=selected_phase
     )
-from flask import render_template
+
 
 @app.route('/phase2')
 def phase2():

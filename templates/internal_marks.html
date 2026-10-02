@@ -1,470 +1,1308 @@
+
 {% extends "base.html" %}
 
 {% block title %}Internal Marks{% endblock %}
 
 {% block content %}
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+      rel="stylesheet">
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
 
 <style>
-    /* Wrapper & Background */
-    .assessment-wrapper {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        background-color: #fdfbf7; 
-        min-height: calc(100vh - 80px);
-        padding: 40px 20px;
-        color: #1f2937;
-        box-sizing: border-box;
-    }
-    
-    .assessment-wrapper * {
-        box-sizing: border-box;
+
+/* =========================================================
+   MAIN PAGE
+========================================================= */
+
+.assessment-wrapper {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #fdfbf7;
+    min-height: calc(100vh - 80px);
+    padding: 40px 20px;
+    color: #1f2937;
+}
+
+.assessment-wrapper * {
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   TOP CARD
+========================================================= */
+
+.bento-top-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 30px 20px 40px;
+    text-align: center;
+    max-width: 850px;
+    margin: 0 auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+}
+
+.bento-top-card h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1f4f59;
+    margin: 0 0 10px;
+}
+
+.bento-top-card h2 i {
+    color: #fbbf24;
+    font-size: 1.2rem;
+    margin: 0 5px;
+}
+
+.bento-top-card p {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 25px;
+}
+
+
+/* =========================================================
+   PHASE BUTTONS
+========================================================= */
+
+.phase-selector {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.phase-btn {
+    border: 2px solid #dbeafe;
+    background: #ffffff;
+    color: #2563eb;
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-decoration: none;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.phase-btn:hover {
+    background: #eff6ff;
+    transform: translateY(-2px);
+}
+
+.phase-btn.active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: white;
+    box-shadow: 0 6px 15px rgba(37,99,235,0.20);
+}
+
+
+/* =========================================================
+   DROPDOWN
+========================================================= */
+
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 350px;
+}
+
+.internal-select {
+    appearance: none;
+    -webkit-appearance: none;
+
+    background: #ffffff;
+
+    border: 2px solid #ffcec4;
+    border-radius: 12px;
+
+    padding: 12px 45px;
+
+    font-size: 1.05rem;
+    font-weight: 700;
+
+    color: #374151;
+
+    cursor: pointer;
+
+    box-shadow: 0 8px 25px rgba(255,99,71,0.25);
+
+    outline: none;
+
+    transition: all 0.3s ease;
+
+    text-transform: uppercase;
+
+    font-family: inherit;
+
+    width: 100%;
+
+    text-align: center;
+}
+
+.internal-select:focus {
+    border-color: #ff8a73;
+    box-shadow: 0 8px 30px rgba(255,99,71,0.4);
+}
+
+.dropdown-icon-left {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ff8a73;
+    pointer-events: none;
+}
+
+.dropdown-icon-right {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ff8a73;
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   RESULT LIVE BANNER
+   ONLY FOR PHASE-1 AFTER COMPONENT SELECTION
+========================================================= */
+
+.result-live-banner {
+    max-width: 850px;
+
+    margin: 25px auto 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    background: #ecfdf5;
+
+    border: 2px solid #86efac;
+
+    border-radius: 16px;
+
+    padding: 16px 22px;
+
+    box-shadow: 0 6px 20px rgba(34,197,94,0.12);
+
+    text-align: left;
+
+    animation: liveAppear 0.4s ease;
+}
+
+
+/* Pulsing green dot */
+
+.live-dot {
+    width: 13px;
+    height: 13px;
+
+    background: #22c55e;
+
+    border-radius: 50%;
+
+    flex-shrink: 0;
+
+    box-shadow:
+        0 0 0 5px rgba(34,197,94,0.15);
+
+    animation: livePulse 1.5s infinite;
+}
+
+
+.result-live-banner h3 {
+    margin: 0;
+
+    color: #15803d;
+
+    font-size: 1rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.4px;
+}
+
+
+.result-live-banner h3 i {
+    margin-right: 7px;
+}
+
+
+.result-live-banner p {
+    margin: 4px 0 0;
+
+    color: #166534;
+
+    font-size: 0.85rem;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes livePulse {
+
+    0% {
+        transform: scale(1);
+        opacity: 1;
     }
 
-    /* Top Header Card */
-    .bento-top-card {
-        background: #ffffff;
-        border-radius: 24px;
-        padding: 30px 20px 40px 20px;
-        text-align: center;
-        max-width: 800px;
-        margin: 0 auto;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-        position: relative;
+    50% {
+        transform: scale(1.25);
+        opacity: 0.65;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
+@keyframes liveAppear {
+
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   CONNECTOR
+========================================================= */
+
+.connector-line {
+    width: 2px;
+    height: 40px;
+    background: #e5e7eb;
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   MARKS GRID
+========================================================= */
+
+.marks-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(320px, 1fr));
+
+    gap: 30px;
+
+    max-width: 1000px;
+
+    margin: 20px auto 0;
+}
+
+
+/* =========================================================
+   MARK CARD
+========================================================= */
+
+.bento-mark-card {
+    background: #ffffff;
+
+    border-radius: 24px;
+
+    padding: 25px;
+
+    position: relative;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.04);
+
+    border-top: 15px solid;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.bento-mark-card:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,0.08);
+}
+
+
+/* =========================================================
+   TOP ICON
+========================================================= */
+
+.bento-top-icon {
+    position: absolute;
+
+    top: -22px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    background: #ffffff;
+
+    border-radius: 50%;
+
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 1rem;
+
+    border: 2px solid;
+}
+
+
+/* =========================================================
+   COURSE HEADER
+========================================================= */
+
+.bento-course-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+}
+
+.course-title {
+    font-size: 1.1rem;
+
+    font-weight: 800;
+
+    color: #111827;
+
+    line-height: 1.3;
+}
+
+.course-illustration {
+    width: 60px;
+    height: 60px;
+
+    background: #f3f4f6;
+
+    border-radius: 12px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 1.8rem;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   SCORE
+========================================================= */
+
+.bento-course-footer {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-end;
+}
+
+.score-wrapper {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.score-circle {
+    width: 60px;
+    height: 60px;
+
+    border-radius: 50%;
+
+    border: 4px solid;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 1.6rem;
+
+    font-weight: 800;
+}
+
+.score-label {
+    font-size: 0.8rem;
+
+    font-weight: 700;
+
+    color: #6b7280;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.badge-container {
+    text-align: right;
+}
+
+.badge-subtitle {
+    display: block;
+
+    font-size: 0.75rem;
+
+    font-weight: 600;
+
+    margin-bottom: 4px;
+}
+
+.status-badge {
+    display: inline-block;
+
+    padding: 6px 14px;
+
+    border-radius: 20px;
+
+    font-size: 0.85rem;
+
+    font-weight: 800;
+
+    border: 2px solid;
+}
+
+
+/* =========================================================
+   CARD COLORS
+========================================================= */
+
+.bento-mark-card:nth-child(3n+1) {
+    border-top-color: #6ee7b7;
+}
+
+.bento-mark-card:nth-child(3n+1)
+.bento-top-icon {
+    border-color: #6ee7b7;
+}
+
+.bento-mark-card:nth-child(3n+1)
+.score-circle {
+    border-color: #93c5fd;
+    color: #3b82f6;
+}
+
+.bento-mark-card:nth-child(3n+1)
+.course-illustration {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+
+.bento-mark-card:nth-child(3n+2) {
+    border-top-color: #fca5a5;
+}
+
+.bento-mark-card:nth-child(3n+2)
+.bento-top-icon {
+    border-color: #fca5a5;
+}
+
+.bento-mark-card:nth-child(3n+2)
+.score-circle {
+    border-color: #fcd34d;
+    color: #d97706;
+}
+
+.bento-mark-card:nth-child(3n+2)
+.course-illustration {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+
+.bento-mark-card:nth-child(3n+3) {
+    border-top-color: #c4b5fd;
+}
+
+.bento-mark-card:nth-child(3n+3)
+.bento-top-icon {
+    border-color: #c4b5fd;
+}
+
+.bento-mark-card:nth-child(3n+3)
+.score-circle {
+    border-color: #d8b4fe;
+    color: #9333ea;
+}
+
+.bento-mark-card:nth-child(3n+3)
+.course-illustration {
+    background: #f3e8ff;
+    color: #7e22ce;
+}
+
+
+/* =========================================================
+   BADGE COLORS
+========================================================= */
+
+.badge-excellent {
+    background: #fef08a;
+    border-color: #fde047;
+    color: #854d0e;
+}
+
+.badge-excellent-sub {
+    color: #854d0e;
+}
+
+.badge-good {
+    background: #e0f2fe;
+    border-color: #bae6fd;
+    color: #0369a1;
+}
+
+.badge-good-sub {
+    color: #0369a1;
+}
+
+.badge-needs-improvement {
+    background: #ffe4e6;
+    border-color: #fecdd3;
+    color: #be123c;
+}
+
+.badge-needs-sub {
+    color: #be123c;
+}
+
+.badge-pending {
+    background: #f3f4f6;
+    border-color: #e5e7eb;
+    color: #4b5563;
+}
+
+.badge-pending-sub {
+    color: #4b5563;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+    grid-column: 1 / -1;
+
+    background: #ffffff;
+
+    border-radius: 24px;
+
+    padding: 50px 20px;
+
+    text-align: center;
+
+    box-shadow:
+        0 4px 20px rgba(0,0,0,0.02);
+}
+
+.empty-state i {
+    font-size: 3rem;
+
+    color: #d1d5db;
+
+    margin-bottom: 15px;
+}
+
+.empty-state h3 {
+    margin: 0 0 10px;
+
+    color: #374151;
+
+    font-weight: 800;
+}
+
+.empty-state p {
+    margin: 0;
+
+    color: #6b7280;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .assessment-wrapper {
+        padding: 20px 15px;
+    }
+
+    .marks-grid {
+        grid-template-columns: 1fr;
+
+        gap: 25px;
     }
 
     .bento-top-card h2 {
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: #1f4f59;
-        margin: 0 0 10px 0;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .bento-top-card h2 i {
-        color: #fbbf24;
-        font-size: 1.2rem;
-        margin: 0 5px;
-    }
-
-    .bento-top-card p {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #111827;
-        margin: 0 0 25px 0;
-    }
-
-    /* Glowing Dropdown Container */
-    .dropdown-container {
-        position: relative;
-        display: inline-block;
-        z-index: 10;
-        width: 100%;
-        max-width: 350px;
+        font-size: 1.4rem;
     }
 
     .internal-select {
-        appearance: none;
-        -webkit-appearance: none;
-        background: #ffffff;
-        border: 2px solid #ffcec4;
-        border-radius: 12px;
-        padding: 12px 45px;
-        font-size: 1.05rem;
-        font-weight: 700;
-        color: #374151;
-        cursor: pointer;
-        box-shadow: 0 8px 25px rgba(255, 99, 71, 0.25);
-        outline: none;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        font-family: inherit;
-        width: 100%;
-        text-align: center;
-    }
-
-    .internal-select:focus {
-        border-color: #ff8a73;
-        box-shadow: 0 8px 30px rgba(255, 99, 71, 0.4);
-    }
-
-    .dropdown-icon-left {
-        position: absolute;
-        left: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #ff8a73;
-        font-size: 1.1rem;
-        pointer-events: none;
-    }
-
-    .dropdown-icon-right {
-        position: absolute;
-        right: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #ff8a73;
         font-size: 0.9rem;
-        pointer-events: none;
+
+        padding:
+            12px
+            35px
+            12px
+            40px;
     }
 
-    /* Connecting Line */
-    .connector-line {
-        width: 2px;
-        height: 40px;
-        background: #e5e7eb;
-        margin: 0 auto;
-        position: relative;
-        z-index: 1;
-    }
-    
-    .connector-line::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: -4px;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: #e5e7eb;
-    }
-
-    /* Grid for Cards */
-    .marks-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 30px;
-        max-width: 1000px;
-        margin: 20px auto 0 auto;
-    }
-
-    /* Mark Card Base Styles (Renamed to avoid style.css conflicts) */
-    .bento-mark-card {
-        background: #ffffff !important; /* Force white background to override global CSS */
-        border-radius: 24px;
-        padding: 25px;
-        position: relative;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-        display: flex;
+    .phase-selector {
         flex-direction: column;
-        justify-content: space-between;
-        border-top: 15px solid; 
-        transition: transform 0.2s ease;
-        overflow: visible;
-    }
 
-    .bento-mark-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .bento-top-icon {
-        position: absolute;
-        top: -22px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #ffffff;
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
-        display: flex;
         align-items: center;
-        justify-content: center;
-        font-size: 1rem;
-        border: 2px solid;
     }
 
-    /* Card Header Area (Renamed to avoid style.css conflicts) */
-    .bento-course-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 15px;
-        margin-bottom: 25px;
-        margin-top: 5px;
-        background: transparent !important; /* Forces no background block */
+    .phase-btn {
+        width: 200px;
     }
 
     .course-title {
-        font-size: 1.1rem;
-        font-weight: 800;
-        color: #111827 !important; /* Force dark text color so it is visible */
-        line-height: 1.3;
-        flex-grow: 1;
-        margin: 0;
-        padding: 0;
+        font-size: 1rem;
     }
 
     .course-illustration {
-        width: 60px;
-        height: 60px;
-        background: #f3f4f6;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.8rem;
-        flex-shrink: 0;
-    }
+        width: 50px;
+        height: 50px;
 
-    /* Score & Badge Area */
-    .bento-course-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-    }
-
-    .score-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        font-size: 1.4rem;
     }
 
     .score-circle {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        border: 4px solid;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.6rem;
-        font-weight: 800;
-    }
+        width: 50px;
+        height: 50px;
 
-    .score-label {
-        font-size: 0.8rem;
-        font-weight: 700;
-        color: #6b7280;
-        letter-spacing: 1px;
-    }
+        font-size: 1.3rem;
 
-    .badge-container {
-        text-align: right;
-    }
-
-    .badge-subtitle {
-        display: block;
-        font-size: 0.75rem;
-        font-weight: 600;
-        margin-bottom: 4px;
+        border-width: 3px;
     }
 
     .status-badge {
-        display: inline-block;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 800;
-        border: 2px solid;
+        padding: 5px 10px;
+
+        font-size: 0.75rem;
     }
 
-    /* COLOR THEMES */
-    .bento-mark-card:nth-child(3n+1) { border-top-color: #6ee7b7; }
-    .bento-mark-card:nth-child(3n+1) .bento-top-icon { border-color: #6ee7b7; }
-    .bento-mark-card:nth-child(3n+1) .score-circle { border-color: #93c5fd; color: #3b82f6; }
-    .bento-mark-card:nth-child(3n+1) .course-illustration { background: #e0f2fe; color: #0284c7; }
-
-    .bento-mark-card:nth-child(3n+2) { border-top-color: #fca5a5; }
-    .bento-mark-card:nth-child(3n+2) .bento-top-icon { border-color: #fca5a5; }
-    .bento-mark-card:nth-child(3n+2) .score-circle { border-color: #fcd34d; color: #d97706; }
-    .bento-mark-card:nth-child(3n+2) .course-illustration { background: #ffedd5; color: #c2410c; }
-
-    .bento-mark-card:nth-child(3n+3) { border-top-color: #c4b5fd; }
-    .bento-mark-card:nth-child(3n+3) .bento-top-icon { border-color: #c4b5fd; }
-    .bento-mark-card:nth-child(3n+3) .score-circle { border-color: #d8b4fe; color: #9333ea; }
-    .bento-mark-card:nth-child(3n+3) .course-illustration { background: #f3e8ff; color: #7e22ce; }
-
-    /* BADGE COLORS */
-    .badge-excellent { background: #fef08a; border-color: #fde047; color: #854d0e; }
-    .badge-excellent-sub { color: #854d0e; }
-    .badge-good { background: #e0f2fe; border-color: #bae6fd; color: #0369a1; }
-    .badge-good-sub { color: #0369a1; }
-    .badge-needs-improvement { background: #ffe4e6; border-color: #fecdd3; color: #be123c; }
-    .badge-needs-sub { color: #be123c; }
-    .badge-pending { background: #f3f4f6; border-color: #e5e7eb; color: #4b5563; }
-    .badge-pending-sub { color: #4b5563; }
-
-    /* Empty State */
-    .empty-state {
-        grid-column: 1 / -1;
-        background: #ffffff;
-        border-radius: 24px;
-        padding: 50px 20px;
-        text-align: center;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    .result-live-banner {
+        padding: 14px 16px;
     }
-    .empty-state i { font-size: 3rem; color: #d1d5db; margin-bottom: 15px; }
-    .empty-state h3 { margin: 0 0 10px 0; color: #374151; font-weight: 800; }
-    .empty-state p { margin: 0; color: #6b7280; font-weight: 500; }
 
-    /* MOBILE ADJUSTMENTS */
-    @media (max-width: 768px) {
-        .assessment-wrapper {
-            padding: 20px 15px;
-        }
-        .marks-grid { 
-            grid-template-columns: 1fr; /* Stacks to a single column */
-            gap: 25px;
-        }
-        .bento-top-card h2 { 
-            font-size: 1.4rem; 
-        }
-        .internal-select { 
-            font-size: 0.9rem; 
-            padding: 12px 35px 12px 40px; 
-        }
-        .course-title {
-            font-size: 1rem;
-        }
-        .course-illustration {
-            width: 50px;
-            height: 50px;
-            font-size: 1.4rem;
-        }
-        .score-circle {
-            width: 50px;
-            height: 50px;
-            font-size: 1.3rem;
-            border-width: 3px;
-        }
-        .status-badge {
-            padding: 5px 10px;
-            font-size: 0.75rem;
-        }
+    .result-live-banner h3 {
+        font-size: 0.9rem;
     }
+
+    .result-live-banner p {
+        font-size: 0.78rem;
+    }
+}
+
 </style>
+
 
 <div class="assessment-wrapper">
 
-    <div class="bento-top-card">
-        <h2>
-            <i class="fa-solid fa-sparkles"></i>
-            Phase-1 Assessment
-            <i class="fa-solid fa-sparkles"></i>
-        </h2>
-        
-        <p>Select the evaluation component below to view your marks</p>
 
-        <form method="GET" action="{{ url_for('internal_marks') }}">
+    <!-- =====================================================
+         TOP SECTION
+    ====================================================== -->
+
+    <div class="bento-top-card">
+
+
+        <h2>
+
+            <i class="fa-solid fa-sparkles"></i>
+
+            {% if selected_phase == "phase2" %}
+                Phase-2 Assessment
+            {% else %}
+                Phase-1 Assessment
+            {% endif %}
+
+            <i class="fa-solid fa-sparkles"></i>
+
+        </h2>
+
+
+        <p>
+            Select the phase and evaluation component below
+            to view your marks.
+        </p>
+
+
+        <!-- =================================================
+             PHASE SELECTOR
+        ================================================== -->
+
+        <div class="phase-selector">
+
+
+            <a
+                href="{{ url_for(
+                    'internal_marks',
+                    phase='phase1',
+                    type=selected_type
+                ) }}"
+                class="phase-btn
+                {% if selected_phase == 'phase1' %}
+                    active
+                {% endif %}"
+            >
+
+                <i class="fa-solid fa-layer-group"></i>
+
+                Phase-1
+
+            </a>
+
+
+            <a
+                href="{{ url_for(
+                    'internal_marks',
+                    phase='phase2',
+                    type=selected_type
+                ) }}"
+                class="phase-btn
+                {% if selected_phase == 'phase2' %}
+                    active
+                {% endif %}"
+            >
+
+                <i class="fa-solid fa-layer-group"></i>
+
+                Phase-2
+
+            </a>
+
+
+        </div>
+
+
+        <!-- =================================================
+             EVALUATION SELECTOR
+        ================================================== -->
+
+        <form
+            method="GET"
+            action="{{ url_for('internal_marks') }}"
+        >
+
+
+            <input
+                type="hidden"
+                name="phase"
+                value="{{ selected_phase }}"
+            >
+
+
             <div class="dropdown-container">
-                <i class="fa-solid fa-microphone dropdown-icon-left"></i>
-                <select class="internal-select" name="type" onchange="this.form.submit()">
-                    <option value="">-- Select Evaluation Head --</option>
-                    
-                    <option value="class_participation" {% if selected_type=="class_participation" %}selected{% endif %}>
+
+
+                <i class="fa-solid fa-microphone
+                          dropdown-icon-left">
+                </i>
+
+
+                <select
+                    class="internal-select"
+                    name="type"
+                    onchange="this.form.submit()"
+                >
+
+
+                    <option value="">
+                        -- Select Evaluation Head --
+                    </option>
+
+
+                    <option
+                        value="class_participation"
+                        {% if selected_type ==
+                              "class_participation" %}
+                            selected
+                        {% endif %}
+                    >
                         Class Participation
                     </option>
-                    
-                    <option value="progressive_eval" {% if selected_type=="progressive_eval" %}selected{% endif %}>
+
+
+                    <option
+                        value="progressive_eval"
+                        {% if selected_type ==
+                              "progressive_eval" %}
+                            selected
+                        {% endif %}
+                    >
                         Progressive Evaluation
                     </option>
-                    
-                    <option value="internal_viva" {% if selected_type=="internal_viva" %}selected{% endif %}>
+
+
+                    <option
+                        value="internal_viva"
+                        {% if selected_type ==
+                              "internal_viva" %}
+                            selected
+                        {% endif %}
+                    >
                         Internal Viva
                     </option>
-                    
-                    <option value="mid_term_1" {% if selected_type=="mid_term_1" %}selected{% endif %}>
+
+
+                    <option
+                        value="mid_term_1"
+                        {% if selected_type ==
+                              "mid_term_1" %}
+                            selected
+                        {% endif %}
+                    >
                         Mid Term-1
                     </option>
-                    
-                    <option value="mid_term_2" {% if selected_type=="mid_term_2" %}selected{% endif %}>
+
+
+                    <option
+                        value="mid_term_2"
+                        {% if selected_type ==
+                              "mid_term_2" %}
+                            selected
+                        {% endif %}
+                    >
                         Mid Term-2
                     </option>
+
+
                 </select>
-                <i class="fa-solid fa-chevron-down dropdown-icon-right"></i>
+
+
+                <i class="fa-solid fa-chevron-down
+                          dropdown-icon-right">
+                </i>
+
+
             </div>
+
+
         </form>
+
+
+        <!-- =================================================
+             IMPORTANT:
+             PHASE-1 + ANY SELECTED COMPONENT
+             = RESULT IS LIVE NOW
+        ================================================== -->
+
+        {% if selected_phase == "phase1" and selected_type %}
+
+
+            <div class="result-live-banner">
+
+
+                <div class="live-dot"></div>
+
+
+                <div>
+
+
+                    <h3>
+
+                        <i class="fa-solid fa-bullhorn"></i>
+
+                        RESULT IS LIVE NOW!
+
+                    </h3>
+
+
+                    <p>
+
+                        Your
+
+                        {% if selected_type ==
+                              "class_participation" %}
+
+                            Class Participation
+
+                        {% elif selected_type ==
+                              "progressive_eval" %}
+
+                            Progressive Evaluation
+
+                        {% elif selected_type ==
+                              "internal_viva" %}
+
+                            Internal Viva
+
+                        {% elif selected_type ==
+                              "mid_term_1" %}
+
+                            Mid Term-1
+
+                        {% elif selected_type ==
+                              "mid_term_2" %}
+
+                            Mid Term-2
+
+                        {% endif %}
+
+                        result is live now.
+
+                    </p>
+
+
+                </div>
+
+
+            </div>
+
+
+        {% endif %}
+
+
     </div>
+
+
+    <!-- =====================================================
+         RESULT SECTION
+    ====================================================== -->
 
     {% if selected_type %}
-    
-    <div class="connector-line"></div>
 
-    <div class="marks-grid">
-        
-        {% if marks %}
-            {% for row in marks %}
-            
-            <div class="bento-mark-card">
-                
-                <div class="bento-top-icon">
-                    {% if loop.index % 2 == 0 %}⭐{% else %}🤝{% endif %}
-                </div>
 
-                <div class="bento-course-header">
-                    <div class="course-title">
-                        {{ row.course_code }}
-                    </div>
-                    <div class="course-illustration">
-                        {% if loop.index % 2 == 0 %}
-                            <i class="fa-solid fa-rocket"></i>
-                        {% else %}
-                            <i class="fa-solid fa-laptop-code"></i>
-                        {% endif %}
-                    </div>
-                </div>
+        <div class="connector-line"></div>
 
-                <div class="bento-course-footer">
-                    
-                    <div class="score-wrapper">
-                        <div class="score-circle">
-                            {% if row.marks is not none %}
-                                {{ row.marks }}
+
+        <div class="marks-grid">
+
+
+            {% if marks %}
+
+
+                {% for row in marks %}
+
+
+                    <div class="bento-mark-card">
+
+
+                        <!-- TOP ICON -->
+
+                        <div class="bento-top-icon">
+
+                            {% if loop.index % 2 == 0 %}
+
+                                ⭐
+
                             {% else %}
-                                -
+
+                                🤝
+
                             {% endif %}
+
                         </div>
-                        <span class="score-label">MARKS</span>
+
+
+                        <!-- COURSE -->
+
+                        <div class="bento-course-header">
+
+
+                            <div class="course-title">
+
+                                {{ row.course_code }}
+
+                            </div>
+
+
+                            <div class="course-illustration">
+
+
+                                {% if selected_phase == "phase2" %}
+
+
+                                    {% if row.course_code ==
+                                          "CSD0201" %}
+
+                                        <i class="fa-solid fa-briefcase"></i>
+
+                                    {% elif row.course_code ==
+                                            "CSE0212[T]" %}
+
+                                        <i class="fa-solid fa-brain"></i>
+
+                                    {% else %}
+
+                                        <i class="fa-solid fa-book"></i>
+
+                                    {% endif %}
+
+
+                                {% else %}
+
+
+                                    {% if loop.index % 2 == 0 %}
+
+                                        <i class="fa-solid fa-rocket"></i>
+
+                                    {% else %}
+
+                                        <i class="fa-solid fa-laptop-code"></i>
+
+                                    {% endif %}
+
+
+                                {% endif %}
+
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- SCORE -->
+
+                        <div class="bento-course-footer">
+
+
+                            <div class="score-wrapper">
+
+
+                                <div class="score-circle">
+
+                                    {% if row.marks is not none %}
+
+                                        {{ row.marks }}
+
+                                    {% else %}
+
+                                        -
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <span class="score-label">
+
+                                    MARKS
+
+                                </span>
+
+
+                            </div>
+
+
+                            <!-- STATUS -->
+
+                            <div class="badge-container">
+
+
+                                {% if row.marks is none %}
+
+
+                                    <span
+                                        class="badge-subtitle
+                                               badge-pending-sub"
+                                    >
+                                        Not Uploaded
+                                    </span>
+
+
+                                    <span
+                                        class="status-badge
+                                               badge-pending"
+                                    >
+                                        Pending ⏳
+                                    </span>
+
+
+                                {% elif row.marks >= 18 %}
+
+
+                                    <span
+                                        class="badge-subtitle
+                                               badge-excellent-sub"
+                                    >
+                                        Well Done!
+                                    </span>
+
+
+                                    <span
+                                        class="status-badge
+                                               badge-excellent"
+                                    >
+                                        🪄 EXCELLENT
+                                    </span>
+
+
+                                {% elif row.marks >= 12 %}
+
+
+                                    <span
+                                        class="badge-subtitle
+                                               badge-good-sub"
+                                    >
+                                        Good Work!
+                                    </span>
+
+
+                                    <span
+                                        class="status-badge
+                                               badge-good"
+                                    >
+                                        👍 GOOD
+                                    </span>
+
+
+                                {% else %}
+
+
+                                    <span
+                                        class="badge-subtitle
+                                               badge-needs-sub"
+                                    >
+                                        Keep Trying!
+                                    </span>
+
+
+                                    <span
+                                        class="status-badge
+                                               badge-needs-improvement"
+                                    >
+                                        Needs Work ⚠️
+                                    </span>
+
+
+                                {% endif %}
+
+
+                            </div>
+
+
+                        </div>
+
+
                     </div>
 
-                    <div class="badge-container">
-                        {% if row.marks is none %}
-                            <span class="badge-subtitle badge-pending-sub">Not Uploaded</span>
-                            <span class="status-badge badge-pending">Pending ⏳</span>
 
-                        {% elif row.marks >= 18 %}
-                            <span class="badge-subtitle badge-excellent-sub">Well Done!</span>
-                            <span class="status-badge badge-excellent">🪄 EXCELLENT</span>
+                {% endfor %}
 
-                        {% elif row.marks >= 12 %}
-                            <span class="badge-subtitle badge-good-sub">Good Work!</span>
-                            <span class="status-badge badge-good">👍 GOOD</span>
 
-                        {% else %}
-                            <span class="badge-subtitle badge-needs-sub">Keep Trying!</span>
-                            <span class="status-badge badge-needs-improvement">Needs Work ⚠️</span>
-                        {% endif %}
-                    </div>
-                    
+            {% else %}
+
+
+                <div class="empty-state">
+
+
+                    <i class="fa-regular fa-folder-open"></i>
+
+
+                    <h3>
+                        No Marks Available
+                    </h3>
+
+
+                    <p>
+                        Your faculty has not uploaded marks
+                        for this evaluation component yet.
+                    </p>
+
+
                 </div>
-            </div>
-            {% endfor %}
-            
-        {% else %}
-            
-            <div class="empty-state">
-                <i class="fa-regular fa-folder-open"></i>
-                <h3>No Marks Available</h3>
-                <p>Your faculty has not uploaded marks yet.</p>
-            </div>
-            
-        {% endif %}
-        
-    </div>
+
+
+            {% endif %}
+
+
+        </div>
+
 
     {% else %}
-    
-    <div class="connector-line"></div>
-    <div class="marks-grid">
-        <div class="empty-state">
-            <i class="fa-solid fa-magnifying-glass-chart"></i>
-            <h3>Waiting for Selection</h3>
-            <p>Choose an evaluation component above to display your bento cards.</p>
+
+
+        <div class="connector-line"></div>
+
+
+        <div class="marks-grid">
+
+
+            <div class="empty-state">
+
+
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+
+
+                <h3>
+                    Waiting for Selection
+                </h3>
+
+
+                <p>
+                    Choose an evaluation component above
+                    to display your marks.
+                </p>
+
+
+            </div>
+
+
         </div>
-    </div>
-    
+
+
     {% endif %}
 
+
 </div>
+
 
 {% endblock %}
