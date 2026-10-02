@@ -957,6 +957,14 @@ def Ai_course():
         return redirect(url_for('login'))
 
     return render_template("Ai.html")
+@app.route("/lms/placement-readiness")
+def placement_course():
+    return render_template("placement_course.html")
+
+
+@app.route("/lms/deep-learning")
+def deep_learning_course():
+    return render_template("deep_learning_course.html")
 @app.route('/announcements')
 def announcements():
     if 'user_id' not in session or session['role'] != 'student':

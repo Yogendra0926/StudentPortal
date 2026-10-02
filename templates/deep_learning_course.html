@@ -1,0 +1,1655 @@
+```html
+{% extends "base.html" %}
+
+{% block title %}Deep Learning{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+
+/* =========================================================
+   DEEP LEARNING COURSE PAGE
+   ========================================================= */
+
+.course-page {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px 60px;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.course-hero {
+    min-height: 270px;
+    padding: 45px 50px;
+
+    border-radius: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: linear-gradient(135deg, #172554, #2563eb);
+
+    color: white;
+
+    box-shadow: 0 15px 40px rgba(37, 99, 235, 0.20);
+
+    position: relative;
+    overflow: hidden;
+}
+
+.course-hero::before {
+    content: "";
+
+    position: absolute;
+
+    width: 280px;
+    height: 280px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    right: 100px;
+    top: -140px;
+}
+
+.course-hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 200px;
+    height: 200px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.06);
+
+    right: -50px;
+    bottom: -90px;
+}
+
+.course-hero > div {
+    position: relative;
+    z-index: 2;
+
+    max-width: 760px;
+}
+
+.course-code {
+    display: inline-block;
+
+    padding: 7px 14px;
+
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.16);
+
+    color: white;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 15px;
+}
+
+.course-hero h1 {
+    margin: 0 0 12px;
+
+    font-size: 40px;
+
+    font-weight: 800;
+
+    line-height: 1.2;
+}
+
+.course-hero p {
+    margin: 0;
+
+    max-width: 700px;
+
+    color: rgba(255, 255, 255, 0.90);
+
+    font-size: 16px;
+
+    line-height: 1.7;
+}
+
+.course-hero > i {
+    position: relative;
+    z-index: 2;
+
+    font-size: 100px;
+
+    color: rgba(255, 255, 255, 0.92);
+
+    margin-right: 35px;
+}
+
+
+/* =========================================================
+   COURSE INFORMATION
+   ========================================================= */
+
+.course-info {
+    margin-top: 25px;
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;
+}
+
+.course-info > div {
+    background: white;
+
+    padding: 22px;
+
+    border-radius: 16px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    border: 1px solid #e5e7eb;
+
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+
+    transition: all 0.25s ease;
+}
+
+.course-info > div:hover {
+    transform: translateY(-4px);
+
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.10);
+}
+
+.course-info i {
+    width: 45px;
+    height: 45px;
+
+    min-width: 45px;
+
+    border-radius: 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 18px;
+}
+
+.course-info strong {
+    display: block;
+
+    font-size: 13px;
+
+    color: #64748b;
+}
+
+.course-info span {
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   SECTION HEADINGS
+   ========================================================= */
+
+.course-content {
+    margin-top: 40px;
+}
+
+.section-heading {
+    margin-bottom: 22px;
+}
+
+.section-heading h2 {
+    margin: 0 0 7px;
+
+    color: #0f172a;
+
+    font-size: 27px;
+
+    font-weight: 800;
+}
+
+.section-heading p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   MODULE GRID
+   ========================================================= */
+
+.module-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 22px;
+}
+
+.module-card {
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 18px;
+
+    border: 1px solid #e5e7eb;
+
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05);
+
+    transition: all 0.25s ease;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.module-card::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 4px;
+    height: 100%;
+
+    background: #2563eb;
+}
+
+.module-card:hover {
+    transform: translateY(-6px);
+
+    box-shadow: 0 16px 35px rgba(37, 99, 235, 0.12);
+}
+
+.module-card i {
+    width: 54px;
+    height: 54px;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 22px;
+
+    margin-bottom: 17px;
+}
+
+.module-card h3 {
+    margin: 0 0 9px;
+
+    color: #111827;
+
+    font-size: 19px;
+
+    font-weight: 750;
+}
+
+.module-card p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   SYLLABUS SECTION
+   ========================================================= */
+
+.syllabus-section {
+    margin-top: 50px;
+}
+
+.syllabus-header {
+    margin-bottom: 25px;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+.syllabus-header h2 {
+    margin: 0 0 7px;
+
+    color: #0f172a;
+
+    font-size: 28px;
+
+    font-weight: 800;
+}
+
+.syllabus-header p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 14px;
+}
+
+
+/* Placement badge */
+
+.placement-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 9px 14px;
+
+    border-radius: 10px;
+
+    background: #ecfdf5;
+
+    color: #047857;
+
+    border: 1px solid #a7f3d0;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* Unit grid */
+
+.syllabus-grid {
+    display: grid;
+
+    grid-template-columns: 1fr;
+
+    gap: 18px;
+}
+
+
+/* Unit card */
+
+.unit-card {
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 18px;
+
+    padding: 25px 28px;
+
+    box-shadow: 0 7px 24px rgba(15, 23, 42, 0.05);
+
+    transition: all 0.25s ease;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.unit-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.10);
+}
+
+
+/* Unit number */
+
+.unit-number {
+    position: absolute;
+
+    right: 22px;
+    top: 18px;
+
+    font-size: 42px;
+
+    font-weight: 900;
+
+    color: #f1f5f9;
+
+    line-height: 1;
+}
+
+
+/* Unit heading */
+
+.unit-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    position: relative;
+
+    z-index: 2;
+}
+
+.unit-icon {
+    width: 48px;
+    height: 48px;
+
+    min-width: 48px;
+
+    border-radius: 13px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 19px;
+}
+
+.unit-title h3 {
+    margin: 0;
+
+    color: #111827;
+
+    font-size: 19px;
+
+    font-weight: 800;
+}
+
+.unit-title span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #64748b;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+/* Topics */
+
+.unit-topics {
+    margin: 20px 0 0;
+
+    padding: 0;
+
+    list-style: none;
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 10px 25px;
+}
+
+.unit-topics li {
+    position: relative;
+
+    padding-left: 22px;
+
+    color: #475569;
+
+    font-size: 14px;
+
+    line-height: 1.55;
+}
+
+.unit-topics li::before {
+    content: "\f058";
+
+    font-family: "Font Awesome 6 Free";
+
+    font-weight: 900;
+
+    position: absolute;
+
+    left: 0;
+    top: 2px;
+
+    color: #2563eb;
+
+    font-size: 13px;
+}
+
+
+/* Interview focus */
+
+.unit-focus {
+    margin-top: 20px;
+
+    padding: 12px 15px;
+
+    border-radius: 10px;
+
+    background: #f8fafc;
+
+    border-left: 3px solid #2563eb;
+
+    color: #475569;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+.unit-focus strong {
+    color: #1e40af;
+}
+
+
+/* =========================================================
+   PLACEMENT PREPARATION BOX
+   ========================================================= */
+
+.placement-section {
+    margin-top: 35px;
+
+    padding: 28px;
+
+    border-radius: 18px;
+
+    background: linear-gradient(
+        135deg,
+        #eff6ff,
+        #f8fafc
+    );
+
+    border: 1px solid #dbeafe;
+}
+
+.placement-section h3 {
+    margin: 0 0 8px;
+
+    color: #1e3a8a;
+
+    font-size: 20px;
+}
+
+.placement-section > p {
+    margin: 0 0 20px;
+
+    color: #475569;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+.placement-points {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 15px;
+}
+
+.placement-point {
+    background: white;
+
+    padding: 16px;
+
+    border-radius: 12px;
+
+    border: 1px solid #dbeafe;
+}
+
+.placement-point i {
+    color: #2563eb;
+
+    margin-right: 7px;
+}
+
+.placement-point strong {
+    color: #1e293b;
+
+    font-size: 13px;
+}
+
+.placement-point p {
+    margin: 6px 0 0;
+
+    color: #64748b;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
+
+.back-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-top: 40px;
+
+    padding: 12px 21px;
+
+    border-radius: 10px;
+
+    background: #0f172a;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition: all 0.25s ease;
+}
+
+.back-btn:hover {
+    background: #2563eb;
+
+    transform: translateX(-4px);
+
+    color: white;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .course-hero {
+        padding: 38px;
+    }
+
+    .course-hero h1 {
+        font-size: 33px;
+    }
+
+    .course-hero > i {
+        font-size: 75px;
+
+        margin-right: 5px;
+    }
+
+    .course-info {
+        grid-template-columns: 1fr;
+    }
+
+    .module-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .placement-points {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .course-page {
+        margin: 15px auto;
+
+        padding: 0 12px 40px;
+    }
+
+    .course-hero {
+        min-height: auto;
+
+        padding: 30px 25px;
+
+        border-radius: 18px;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 25px;
+    }
+
+    .course-hero h1 {
+        font-size: 28px;
+    }
+
+    .course-hero p {
+        font-size: 14px;
+    }
+
+    .course-hero > i {
+        align-self: flex-end;
+
+        font-size: 65px;
+
+        margin: 0;
+    }
+
+    .course-info {
+        gap: 12px;
+    }
+
+    .course-info > div {
+        padding: 18px;
+    }
+
+    .module-card {
+        padding: 24px;
+    }
+
+    .syllabus-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .syllabus-header h2 {
+        font-size: 24px;
+    }
+
+    .unit-card {
+        padding: 22px;
+    }
+
+    .unit-topics {
+        grid-template-columns: 1fr;
+    }
+
+    .unit-number {
+        font-size: 32px;
+    }
+
+    .placement-section {
+        padding: 22px;
+    }
+
+    .back-btn {
+        width: 100%;
+
+        justify-content: center;
+    }
+}
+
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+@media (prefers-color-scheme: dark) {
+
+    .course-info > div,
+    .module-card,
+    .unit-card {
+        background: #111827;
+
+        border-color: #1f2937;
+    }
+
+    .course-info span,
+    .module-card h3,
+    .course-content h2,
+    .syllabus-header h2,
+    .unit-title h3 {
+        color: #f8fafc;
+    }
+
+    .course-info strong,
+    .module-card p,
+    .syllabus-header p,
+    .unit-title span,
+    .unit-topics li {
+        color: #94a3b8;
+    }
+
+    .course-info i,
+    .module-card i,
+    .unit-icon {
+        background: #172554;
+
+        color: #60a5fa;
+    }
+
+    .unit-focus {
+        background: #172033;
+
+        color: #cbd5e1;
+    }
+
+    .placement-section {
+        background: #172033;
+
+        border-color: #1e3a8a;
+    }
+
+    .placement-point {
+        background: #111827;
+
+        border-color: #1e3a8a;
+    }
+
+    .placement-point strong {
+        color: #e2e8f0;
+    }
+
+    .placement-point p {
+        color: #94a3b8;
+    }
+
+    .placement-badge {
+        background: #052e1b;
+
+        color: #6ee7b7;
+
+        border-color: #065f46;
+    }
+
+    .unit-number {
+        color: #1e293b;
+    }
+
+    .back-btn {
+        background: #2563eb;
+    }
+}
+
+</style>
+
+
+<!-- =========================================================
+     COURSE PAGE
+     ========================================================= -->
+
+<div class="course-page">
+
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <div class="course-hero">
+
+        <div>
+
+            <span class="course-code">
+                CSE0212[T]
+            </span>
+
+            <h1>
+                Deep Learning
+            </h1>
+
+            <p>
+                Learn neural networks, CNNs, RNNs and modern
+                deep learning concepts through theory and practical examples.
+            </p>
+
+        </div>
+
+        <i class="fa-solid fa-brain"></i>
+
+    </div>
+
+
+    <!-- =====================================================
+         COURSE INFORMATION
+         ===================================================== -->
+
+    <div class="course-info">
+
+        <div>
+
+            <i class="fa-solid fa-user"></i>
+
+            <div>
+                <strong>Instructor</strong>
+
+                <span>
+                    Yogendra Jain
+                </span>
+            </div>
+
+        </div>
+
+
+        <div>
+
+            <i class="fa-solid fa-calendar"></i>
+
+            <div>
+                <strong>Phase</strong>
+
+                <span>
+                    Phase-2
+                </span>
+            </div>
+
+        </div>
+
+
+        <div>
+
+            <i class="fa-solid fa-star"></i>
+
+            <div>
+                <strong>Credits</strong>
+
+                <span>
+                    3
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         COURSE MODULES
+         ===================================================== -->
+
+    <div class="course-content">
+
+        <div class="section-heading">
+
+            <h2>
+                Course Modules
+            </h2>
+
+            <p>
+                Core areas covered throughout the Deep Learning course.
+            </p>
+
+        </div>
+
+
+        <div class="module-grid">
+
+
+            <!-- ANN -->
+
+            <div class="module-card">
+
+                <i class="fa-solid fa-network-wired"></i>
+
+                <h3>
+                    Artificial Neural Networks
+                </h3>
+
+                <p>
+                    ANN architecture, neurons, activation
+                    functions, forward propagation and training.
+                </p>
+
+            </div>
+
+
+            <!-- CNN -->
+
+            <div class="module-card">
+
+                <i class="fa-solid fa-image"></i>
+
+                <h3>
+                    Convolutional Neural Networks
+                </h3>
+
+                <p>
+                    CNN layers, convolution, pooling,
+                    feature extraction and image classification.
+                </p>
+
+            </div>
+
+
+            <!-- RNN -->
+
+            <div class="module-card">
+
+                <i class="fa-solid fa-arrows-rotate"></i>
+
+                <h3>
+                    RNN &amp; LSTM
+                </h3>
+
+                <p>
+                    Sequential data, recurrent networks,
+                    vanishing gradients and LSTM architecture.
+                </p>
+
+            </div>
+
+
+            <!-- Training -->
+
+            <div class="module-card">
+
+                <i class="fa-solid fa-chart-line"></i>
+
+                <h3>
+                    Deep Learning Training
+                </h3>
+
+                <p>
+                    Loss functions, optimizers, backpropagation,
+                    regularization and model training.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SYLLABUS
+         ===================================================== -->
+
+    <div class="syllabus-section">
+
+
+        <div class="syllabus-header">
+
+            <div>
+
+                <h2>
+                    <i class="fa-solid fa-book-open"></i>
+                    Deep Learning Syllabus
+                </h2>
+
+                <p>
+                    Five-unit learning roadmap designed for
+                    academic preparation, interviews and placements.
+                </p>
+
+            </div>
+
+
+            <div class="placement-badge">
+
+                <i class="fa-solid fa-briefcase"></i>
+
+                Placement Oriented
+
+            </div>
+
+        </div>
+
+
+        <div class="syllabus-grid">
+
+
+            <!-- =================================================
+                 UNIT 1
+                 ================================================= -->
+
+            <div class="unit-card">
+
+                <span class="unit-number">
+                    01
+                </span>
+
+                <div class="unit-title">
+
+                    <div class="unit-icon">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Unit 1 — Neural Network Foundations
+                        </h3>
+
+                        <span>
+                            ANN Fundamentals &amp; Mathematical Basics
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <ul class="unit-topics">
+
+                    <li>
+                        Introduction to Deep Learning
+                    </li>
+
+                    <li>
+                        Artificial Neural Network architecture
+                    </li>
+
+                    <li>
+                        Neurons, weights and biases
+                    </li>
+
+                    <li>
+                        Activation functions
+                    </li>
+
+                    <li>
+                        Forward propagation
+                    </li>
+
+                    <li>
+                        Loss and cost functions
+                    </li>
+
+                    <li>
+                        Gradient descent
+                    </li>
+
+                    <li>
+                        Basic matrix operations for neural networks
+                    </li>
+
+                </ul>
+
+
+                <div class="unit-focus">
+
+                    <strong>
+                        Placement Focus:
+                    </strong>
+
+                    Be prepared to explain neurons, activation
+                    functions, forward propagation, loss functions
+                    and gradient descent with simple examples.
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 UNIT 2
+                 ================================================= -->
+
+            <div class="unit-card">
+
+                <span class="unit-number">
+                    02
+                </span>
+
+                <div class="unit-title">
+
+                    <div class="unit-icon">
+                        <i class="fa-solid fa-gears"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Unit 2 — Training &amp; Optimization
+                        </h3>
+
+                        <span>
+                            Backpropagation, Optimization &amp; Regularization
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <ul class="unit-topics">
+
+                    <li>
+                        Backpropagation algorithm
+                    </li>
+
+                    <li>
+                        Chain rule and gradients
+                    </li>
+
+                    <li>
+                        Learning rate
+                    </li>
+
+                    <li>
+                        Batch, mini-batch and stochastic gradient descent
+                    </li>
+
+                    <li>
+                        Adam, RMSProp and Momentum
+                    </li>
+
+                    <li>
+                        Overfitting and underfitting
+                    </li>
+
+                    <li>
+                        Dropout and regularization
+                    </li>
+
+                    <li>
+                        Batch normalization
+                    </li>
+
+                </ul>
+
+
+                <div class="unit-focus">
+
+                    <strong>
+                        Placement Focus:
+                    </strong>
+
+                    Understand why models overfit, how
+                    backpropagation works and how optimizers
+                    improve neural-network training.
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 UNIT 3
+                 ================================================= -->
+
+            <div class="unit-card">
+
+                <span class="unit-number">
+                    03
+                </span>
+
+                <div class="unit-title">
+
+                    <div class="unit-icon">
+                        <i class="fa-solid fa-image"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Unit 3 — Convolutional Neural Networks
+                        </h3>
+
+                        <span>
+                            Computer Vision &amp; Image Processing
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <ul class="unit-topics">
+
+                    <li>
+                        CNN architecture
+                    </li>
+
+                    <li>
+                        Convolution operation
+                    </li>
+
+                    <li>
+                        Filters and feature maps
+                    </li>
+
+                    <li>
+                        Stride and padding
+                    </li>
+
+                    <li>
+                        Pooling layers
+                    </li>
+
+                    <li>
+                        ReLU and other activations
+                    </li>
+
+                    <li>
+                        CNN output-size calculations
+                    </li>
+
+                    <li>
+                        Image classification
+                    </li>
+
+                </ul>
+
+
+                <div class="unit-focus">
+
+                    <strong>
+                        Placement Focus:
+                    </strong>
+
+                    Practice CNN numerical problems involving
+                    convolution output size, padding, stride,
+                    pooling and parameter calculations.
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 UNIT 4
+                 ================================================= -->
+
+            <div class="unit-card">
+
+                <span class="unit-number">
+                    04
+                </span>
+
+                <div class="unit-title">
+
+                    <div class="unit-icon">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Unit 4 — RNN, LSTM &amp; Sequential Learning
+                        </h3>
+
+                        <span>
+                            Sequence Modeling &amp; Natural Language Processing
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <ul class="unit-topics">
+
+                    <li>
+                        Sequential data and sequence modeling
+                    </li>
+
+                    <li>
+                        Recurrent Neural Networks
+                    </li>
+
+                    <li>
+                        Hidden states
+                    </li>
+
+                    <li>
+                        Backpropagation Through Time
+                    </li>
+
+                    <li>
+                        Vanishing and exploding gradients
+                    </li>
+
+                    <li>
+                        LSTM architecture
+                    </li>
+
+                    <li>
+                        Forget, input and output gates
+                    </li>
+
+                    <li>
+                        GRU and sequence applications
+                    </li>
+
+                </ul>
+
+
+                <div class="unit-focus">
+
+                    <strong>
+                        Placement Focus:
+                    </strong>
+
+                    Know why basic RNNs struggle with long sequences
+                    and how LSTM gates help preserve important information.
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 UNIT 5
+                 ================================================= -->
+
+            <div class="unit-card">
+
+                <span class="unit-number">
+                    05
+                </span>
+
+                <div class="unit-title">
+
+                    <div class="unit-icon">
+                        <i class="fa-solid fa-rocket"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Unit 5 — Modern Deep Learning
+                        </h3>
+
+                        <span>
+                            Transfer Learning, Deployment &amp; Practical AI
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <ul class="unit-topics">
+
+                    <li>
+                        Transfer learning
+                    </li>
+
+                    <li>
+                        Pre-trained neural networks
+                    </li>
+
+                    <li>
+                        Fine-tuning
+                    </li>
+
+                    <li>
+                        Data augmentation
+                    </li>
+
+                    <li>
+                        Autoencoders
+                    </li>
+
+                    <li>
+                        Introduction to attention mechanisms
+                    </li>
+
+                    <li>
+                        Model evaluation and error analysis
+                    </li>
+
+                    <li>
+                        Deep learning model deployment concepts
+                    </li>
+
+                </ul>
+
+
+                <div class="unit-focus">
+
+                    <strong>
+                        Placement Focus:
+                    </strong>
+
+                    Understand transfer learning, fine-tuning,
+                    model evaluation and how a trained deep-learning
+                    model can be integrated into a real application.
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =====================================================
+             PLACEMENT PREPARATION
+             ===================================================== -->
+
+        <div class="placement-section">
+
+            <h3>
+                <i class="fa-solid fa-bullseye"></i>
+                Placement Preparation Focus
+            </h3>
+
+            <p>
+                Along with theory, students should be able to solve
+                numerical problems, explain architectures and discuss
+                practical deep-learning scenarios during technical interviews.
+            </p>
+
+
+            <div class="placement-points">
+
+
+                <div class="placement-point">
+
+                    <strong>
+                        <i class="fa-solid fa-calculator"></i>
+                        Numericals
+                    </strong>
+
+                    <p>
+                        CNN output size, parameters,
+                        gradient descent and matrix operations.
+                    </p>
+
+                </div>
+
+
+                <div class="placement-point">
+
+                    <strong>
+                        <i class="fa-solid fa-code"></i>
+                        Coding
+                    </strong>
+
+                    <p>
+                        Build basic ANN/CNN models using
+                        Python and TensorFlow/PyTorch concepts.
+                    </p>
+
+                </div>
+
+
+                <div class="placement-point">
+
+                    <strong>
+                        <i class="fa-solid fa-comments"></i>
+                        Interviews
+                    </strong>
+
+                    <p>
+                        Explain ANN vs CNN, RNN vs LSTM,
+                        overfitting, optimizers and transfer learning.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         BACK BUTTON
+         ===================================================== -->
+
+    <a href="{{ url_for('lms') }}"
+       class="back-btn">
+
+        <i class="fa-solid fa-arrow-left"></i>
+
+        Back to LMS
+
+    </a>
+
+
+</div>
+
+{% endblock %}
+```

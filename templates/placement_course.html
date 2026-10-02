@@ -1,0 +1,794 @@
+```html
+{% extends "base.html" %}
+
+{% block title %}Placement Readiness Program{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+
+/* =========================================================
+   PLACEMENT COURSE PAGE
+   ========================================================= */
+
+.course-page {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px 50px;
+}
+
+
+/* =========================================================
+   HERO SECTION
+   ========================================================= */
+
+.course-hero {
+    min-height: 270px;
+    padding: 45px 50px;
+
+    border-radius: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: linear-gradient(135deg, #172554, #2563eb);
+
+    color: white;
+
+    box-shadow: 0 15px 40px rgba(37, 99, 235, 0.20);
+
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* Decorative background circles */
+
+.course-hero::before {
+    content: "";
+
+    position: absolute;
+
+    width: 280px;
+    height: 280px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    right: 100px;
+    top: -140px;
+}
+
+
+.course-hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 200px;
+    height: 200px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.06);
+
+    right: -50px;
+    bottom: -90px;
+}
+
+
+/* Hero content */
+
+.course-hero > div {
+    position: relative;
+
+    z-index: 2;
+
+    max-width: 760px;
+}
+
+
+/* Course code */
+
+.course-code {
+    display: inline-block;
+
+    padding: 7px 14px;
+
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.16);
+
+    color: white;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 15px;
+}
+
+
+/* Hero heading */
+
+.course-hero h1 {
+    margin: 0 0 12px;
+
+    font-size: 40px;
+
+    font-weight: 800;
+
+    line-height: 1.2;
+}
+
+
+/* Hero description */
+
+.course-hero p {
+    margin: 0;
+
+    max-width: 700px;
+
+    color: rgba(255, 255, 255, 0.90);
+
+    font-size: 16px;
+
+    line-height: 1.7;
+}
+
+
+/* Hero icon */
+
+.course-hero > i {
+    position: relative;
+
+    z-index: 2;
+
+    font-size: 100px;
+
+    color: rgba(255, 255, 255, 0.92);
+
+    margin-right: 35px;
+}
+
+
+/* =========================================================
+   COURSE INFORMATION
+   ========================================================= */
+
+.course-info {
+    margin-top: 25px;
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;
+}
+
+
+.course-info > div {
+    background: white;
+
+    padding: 22px;
+
+    border-radius: 16px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    border: 1px solid #e5e7eb;
+
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+
+    transition: all 0.25s ease;
+}
+
+
+.course-info > div:hover {
+    transform: translateY(-4px);
+
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.10);
+}
+
+
+/* Info icons */
+
+.course-info i {
+    width: 45px;
+    height: 45px;
+
+    min-width: 45px;
+
+    border-radius: 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 18px;
+}
+
+
+/* Info labels */
+
+.course-info strong {
+    display: block;
+
+    font-size: 13px;
+
+    color: #64748b;
+}
+
+
+/* Info values */
+
+.course-info span {
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   COURSE MODULE SECTION
+   ========================================================= */
+
+.course-content {
+    margin-top: 38px;
+}
+
+
+.course-content h2 {
+    margin: 0 0 22px;
+
+    color: #0f172a;
+
+    font-size: 26px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   MODULE GRID
+   ========================================================= */
+
+.module-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 22px;
+}
+
+
+/* Module card */
+
+.module-card {
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 18px;
+
+    border: 1px solid #e5e7eb;
+
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05);
+
+    transition: all 0.25s ease;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+
+/* Left accent */
+
+.module-card::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 4px;
+    height: 100%;
+
+    background: #2563eb;
+}
+
+
+.module-card:hover {
+    transform: translateY(-6px);
+
+    box-shadow: 0 16px 35px rgba(37, 99, 235, 0.12);
+}
+
+
+/* Module icon */
+
+.module-card i {
+    width: 54px;
+    height: 54px;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 22px;
+
+    margin-bottom: 17px;
+}
+
+
+/* Module title */
+
+.module-card h3 {
+    margin: 0 0 9px;
+
+    color: #111827;
+
+    font-size: 19px;
+
+    font-weight: 750;
+}
+
+
+/* Module description */
+
+.module-card p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   BACK TO LMS BUTTON
+   ========================================================= */
+
+.back-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-top: 38px;
+
+    padding: 12px 21px;
+
+    border-radius: 10px;
+
+    background: #0f172a;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition: all 0.25s ease;
+}
+
+
+.back-btn:hover {
+    background: #2563eb;
+
+    transform: translateX(-4px);
+
+    color: white;
+}
+
+
+/* =========================================================
+   TABLET RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .course-page {
+        padding: 0 18px 40px;
+    }
+
+
+    .course-hero {
+        padding: 38px;
+
+        min-height: 250px;
+    }
+
+
+    .course-hero h1 {
+        font-size: 33px;
+    }
+
+
+    .course-hero > i {
+        font-size: 75px;
+
+        margin-right: 5px;
+    }
+
+
+    .course-info {
+        grid-template-columns: 1fr;
+    }
+
+
+    .module-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =========================================================
+   MOBILE RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .course-page {
+        margin: 15px auto;
+
+        padding: 0 12px 40px;
+    }
+
+
+    .course-hero {
+        min-height: auto;
+
+        padding: 30px 25px;
+
+        border-radius: 18px;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 25px;
+    }
+
+
+    .course-hero h1 {
+        font-size: 28px;
+    }
+
+
+    .course-hero p {
+        font-size: 14px;
+
+        line-height: 1.6;
+    }
+
+
+    .course-hero > i {
+        align-self: flex-end;
+
+        font-size: 65px;
+
+        margin: 0;
+    }
+
+
+    .course-info {
+        gap: 12px;
+    }
+
+
+    .course-info > div {
+        padding: 18px;
+    }
+
+
+    .module-card {
+        padding: 24px;
+    }
+
+
+    .course-content h2 {
+        font-size: 23px;
+    }
+
+
+    .back-btn {
+        width: 100%;
+
+        justify-content: center;
+    }
+}
+
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+@media (prefers-color-scheme: dark) {
+
+    .course-info > div,
+    .module-card {
+        background: #111827;
+
+        border-color: #1f2937;
+    }
+
+
+    .course-info span,
+    .module-card h3,
+    .course-content h2 {
+        color: #f8fafc;
+    }
+
+
+    .course-info strong,
+    .module-card p {
+        color: #94a3b8;
+    }
+
+
+    .course-info i,
+    .module-card i {
+        background: #172554;
+
+        color: #60a5fa;
+    }
+
+
+    .back-btn {
+        background: #2563eb;
+    }
+}
+
+</style>
+
+
+<!-- =========================================================
+     COURSE PAGE
+     ========================================================= -->
+
+<div class="course-page">
+
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <div class="course-hero">
+
+        <div>
+
+            <span class="course-code">
+                CSD0201
+            </span>
+
+            <h1>
+                Placement Readiness Program
+            </h1>
+
+            <p>
+                Prepare yourself for placements with aptitude,
+                coding, communication, interview preparation and
+                career-oriented learning.
+            </p>
+
+        </div>
+
+
+        <i class="fa-solid fa-briefcase"></i>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         COURSE INFORMATION
+         ===================================================== -->
+
+    <div class="course-info">
+
+
+        <!-- Instructor -->
+
+        <div>
+
+            <i class="fa-solid fa-user"></i>
+
+            <div>
+                <strong>Instructor</strong>
+
+                <span>
+                    Yogendra Jain
+                </span>
+            </div>
+
+        </div>
+
+
+        <!-- Phase -->
+
+        <div>
+
+            <i class="fa-solid fa-calendar"></i>
+
+            <div>
+                <strong>Phase</strong>
+
+                <span>
+                    Phase-2
+                </span>
+            </div>
+
+        </div>
+
+
+        <!-- Credits -->
+
+        <div>
+
+            <i class="fa-solid fa-star"></i>
+
+            <div>
+                <strong>Credits</strong>
+
+                <span>
+                    3
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         COURSE MODULES
+         ===================================================== -->
+
+    <div class="course-content">
+
+        <h2>
+            Course Modules
+        </h2>
+
+
+        <div class="module-grid">
+
+
+            <!-- Aptitude -->
+
+            <div class="module-card">
+
+                <i class="fa-solid fa-calculator"></i>
+
+                <h3>
+                    Aptitude
+                </h3>
+
+                <p>
+                    Quantitative aptitude, logical reasoning
+                    and verbal ability.
+                </p>
+
+            </div>
+
+
+
+            <!-- Coding -->
+
+            <div class="module-card">
+
+                <i class="fa-solid fa-code"></i>
+
+                <h3>
+                    Coding Practice
+                </h3>
+
+                <p>
+                    Programming problems and technical
+                    coding preparation.
+                </p>
+
+            </div>
+
+
+
+            <!-- Communication -->
+
+            <div class="module-card">
+
+                <i class="fa-solid fa-comments"></i>
+
+                <h3>
+                    Communication
+                </h3>
+
+                <p>
+                    Communication skills and professional
+                    interaction.
+                </p>
+
+            </div>
+
+
+
+            <!-- Interview -->
+
+            <div class="module-card">
+
+                <i class="fa-solid fa-user-tie"></i>
+
+                <h3>
+                    Interview Preparation
+                </h3>
+
+                <p>
+                    Technical and HR interview preparation.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         BACK BUTTON
+         ===================================================== -->
+
+    <a href="{{ url_for('lms') }}"
+       class="back-btn">
+
+        <i class="fa-solid fa-arrow-left"></i>
+
+        Back to LMS
+
+    </a>
+
+
+</div>
+
+{% endblock %}
+```
