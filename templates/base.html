@@ -352,10 +352,24 @@
                     <a href="{{ url_for('rp_shop') }}" class="{{ 'active' if request.endpoint=='rp_shop' or request.endpoint=='my_purchases' else '' }}">
                         <i class="fa-solid fa-store"></i> RP Shop
                     </a>
+                    <a href="{{ url_for('tournaments') }}"
+   class="{{ 'active' if request.endpoint=='tournaments' else '' }}">
+
+    <i class="fa-solid fa-trophy"></i>
+    Tournaments
+
+</a>
                 {% else %}
                     <a href="{{ url_for('admin_portal') }}" class="active">
                         <i class="fa-solid fa-bars-progress"></i> Dashboard
                     </a>
+                    <a href="{{ url_for('admin_tournaments') }}"
+   class="{{ 'active' if request.endpoint=='admin_tournaments' else '' }}">
+
+    <i class="fa-solid fa-trophy"></i>
+    Tournaments
+
+</a>
                 {% endif %}
             </div>
         </div>

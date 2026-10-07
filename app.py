@@ -6,6 +6,7 @@ import pymysql.cursors
 from dotenv import load_dotenv
 import requests
 from flask import request, jsonify
+from zoneinfo import ZoneInfo
 
 
 load_dotenv()
@@ -163,13 +164,17 @@ def home():
 
     cursor = conn.cursor()
 
-    # Attendance Statistics
+
+    # =====================================================
+    # 1. PHASE-1 ATTENDANCE
+    # =====================================================
+
     cursor.execute("""
         SELECT
             COUNT(*) AS total,
-            SUM(status='P') AS present
+            SUM(status = 'P') AS present
         FROM attendance_phase1
-        WHERE student_id=%s
+        WHERE student_id = %s
     """, (student_id,))
 
     attendance_data = cursor.fetchone()
@@ -177,36 +182,190 @@ def home():
     total = attendance_data["total"] or 0
     present = attendance_data["present"] or 0
 
-    attendance = round((present / total) * 100) if total > 0 else 0
+    attendance = (
+        round((present / total) * 100)
+        if total > 0
+        else 0
+    )
 
-    # Total Assignments
+
+    # =====================================================
+    # 2. PHASE-2 ATTENDANCE
+    # Used for Tournament Eligibility
+    # =====================================================
+
+    cursor.execute("""
+        SELECT
+            COUNT(*) AS total,
+            SUM(status = 'P') AS present
+        FROM phase2_attendance
+        WHERE student_id = %s
+    """, (student_id,))
+
+    phase2_attendance_data = cursor.fetchone()
+
+    phase2_total = phase2_attendance_data["total"] or 0
+    phase2_present = phase2_attendance_data["present"] or 0
+
+    phase2_attendance = (
+        round((phase2_present / phase2_total) * 100)
+        if phase2_total > 0
+        else 0
+    )
+
+
+    # =====================================================
+    # 3. TOTAL ASSIGNMENTS
+    # =====================================================
+
     cursor.execute("""
         SELECT COUNT(*) AS total
         FROM assignments
     """)
 
-    assignments = cursor.fetchone()["total"]
+    assignments = cursor.fetchone()["total"] or 0
 
-    # Internal Marks Subjects
+
+    # =====================================================
+    # 4. INTERNAL MARKS
+    # =====================================================
+
     cursor.execute("""
         SELECT COUNT(*) AS total
         FROM phase1_marks
-        WHERE student_id=%s
+        WHERE student_id = %s
     """, (student_id,))
 
-    marks = cursor.fetchone()["total"]
+    marks = cursor.fetchone()["total"] or 0
+
+
+    # =====================================================
+    # 5. TOURNAMENTS ENROLLED
+    # =====================================================
+
+    cursor.execute("""
+        SELECT COUNT(*) AS total_enrolled
+        FROM tournament_registrations
+        WHERE student_id = %s
+          AND registration_status = 'Registered'
+    """, (student_id,))
+
+    tournament_enrolled_data = cursor.fetchone()
+
+    total_tournaments = (
+        tournament_enrolled_data["total_enrolled"]
+        or 0
+    )
+
+
+    # =====================================================
+    # 6. TOURNAMENTS WON
+    # =====================================================
+
+    cursor.execute("""
+        SELECT COUNT(*) AS total_won
+        FROM tournament_registrations
+        WHERE student_id = %s
+          AND registration_status = 'Registered'
+          AND result = 'Winner'
+    """, (student_id,))
+
+    tournament_won_data = cursor.fetchone()
+
+    tournaments_won = (
+        tournament_won_data["total_won"]
+        or 0
+    )
+
+
+    # =====================================================
+    # 7. TOURNAMENT WIN RATE
+    # =====================================================
+
+    if total_tournaments > 0:
+
+        tournament_win_rate = round(
+            (tournaments_won / total_tournaments) * 100,
+            1
+        )
+
+    else:
+
+        tournament_win_rate = 0
+
+
+    # =====================================================
+    # 8. UPCOMING TOURNAMENT
+    #
+    # Only show tournaments whose:
+    # - tournament date has not passed
+    # - registration deadline has not passed
+    #
+    # TIME_FORMAT is used because MySQL TIME fields can
+    # arrive in Python as datetime.timedelta.
+    # =====================================================
+
+    cursor.execute("""
+        SELECT
+            t.*,
+
+            TIME_FORMAT(
+                t.start_time,
+                '%%h:%%i %%p'
+            ) AS formatted_start_time,
+
+            DATE_FORMAT(
+                t.registration_deadline,
+                '%%d %%b %%Y, %%h:%%i %%p'
+            ) AS formatted_registration_deadline
+
+        FROM tournaments t
+
+        WHERE t.tournament_date >= CURDATE()
+
+          AND t.registration_deadline > NOW()
+
+        ORDER BY
+            t.tournament_date ASC,
+            t.start_time ASC
+
+        LIMIT 1
+    """)
+
+    upcoming_tournaments = cursor.fetchall()
+
+
+    # =====================================================
+    # 9. CLOSE DATABASE
+    # =====================================================
 
     cursor.close()
     conn.close()
 
+
+    # =====================================================
+    # 10. RENDER DASHBOARD
+    # =====================================================
+
     return render_template(
         "home.html",
+
+        # Existing dashboard values
         attendance=attendance,
         assignments=assignments,
-        marks=marks
-    )
+        marks=marks,
 
-from flask import request # Make sure request is imported at the top of your file
+        # Phase-2 attendance
+        phase2_attendance=phase2_attendance,
+
+        # Tournament statistics
+        total_tournaments=total_tournaments,
+        tournaments_won=tournaments_won,
+        tournament_win_rate=tournament_win_rate,
+
+        # Upcoming tournament
+        upcoming_tournaments=upcoming_tournaments
+    )
 
 @app.route('/attendance')
 def student_attendance():
@@ -264,7 +423,367 @@ def student_attendance():
                            total_classes=total_classes, total_present=total_present,
                            total_absent=total_absent, overall_percentage=overall_percentage,
                            course_summary=course_summary, logs=logs)
+# =========================================================
+# TOURNAMENT MODULE
+# =========================================================
 
+@app.route('/tournaments')
+def tournaments():
+
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    student_id = session['user_id']
+
+    conn = get_db_connection()
+
+    if conn is None:
+        flash("Database Connection Failed!", "danger")
+        return redirect(url_for('home'))
+
+    cursor = conn.cursor()
+
+    try:
+
+        # -------------------------------------------------
+        # Calculate student's Phase-2 attendance
+        # -------------------------------------------------
+
+        cursor.execute("""
+            SELECT
+                COUNT(*) AS total_classes,
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN UPPER(status) = 'P'
+                            THEN 1
+                            ELSE 0
+                        END
+                    ), 0
+                ) AS present_classes
+            FROM phase2_attendance
+            WHERE student_id = %s
+        """, (student_id,))
+
+        attendance_data = cursor.fetchone()
+
+        total_classes = attendance_data['total_classes'] or 0
+        present_classes = attendance_data['present_classes'] or 0
+
+        if total_classes > 0:
+            attendance_percentage = round(
+                (present_classes / total_classes) * 100,
+                2
+            )
+        else:
+            attendance_percentage = 0
+
+
+        # -------------------------------------------------
+        # Fetch tournaments
+        # -------------------------------------------------
+
+        cursor.execute("""
+    SELECT
+        t.*,
+
+        DATE_FORMAT(t.start_time, '%%h:%%i %%p')
+            AS formatted_start_time,
+
+        CASE
+            WHEN t.registration_deadline > %s
+            THEN 1
+            ELSE 0
+        END AS registration_open,
+
+        CASE
+            WHEN tr.registration_id IS NOT NULL
+            THEN 1
+            ELSE 0
+        END AS already_registered
+
+    FROM tournaments t
+
+    LEFT JOIN tournament_registrations tr
+        ON t.tournament_id = tr.tournament_id
+        AND tr.student_id = %s
+        AND tr.registration_status = 'Registered'
+
+    WHERE t.status IN ('Upcoming', 'Ongoing')
+
+    ORDER BY
+        t.tournament_date ASC,
+        t.start_time ASC
+""", (
+    datetime.now(),
+    student_id
+))
+
+        tournament_list = cursor.fetchall()
+
+        # Add attendance to every tournament
+        for tournament in tournament_list:
+            tournament['attendance_percentage'] = attendance_percentage
+
+
+    except Exception as e:
+
+        print("Tournament Error:", e)
+
+        flash(
+            "Unable to load tournaments.",
+            "danger"
+        )
+
+        tournament_list = []
+
+    finally:
+
+        cursor.close()
+        conn.close()
+
+
+    return render_template(
+        'tournament.html',
+        tournaments=tournament_list
+    )
+@app.route(
+    '/tournament/<int:tournament_id>/register',
+    methods=['POST']
+)
+def register_tournament(tournament_id):
+
+    if 'user_id' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+
+    student_id = session['user_id']
+
+    conn = get_db_connection()
+
+    if conn is None:
+        flash(
+            "Database Connection Failed!",
+            "danger"
+        )
+        return redirect(url_for('tournaments'))
+
+    cursor = conn.cursor()
+
+    try:
+
+        # -------------------------------------------------
+        # 1. Get tournament
+        # -------------------------------------------------
+
+        cursor.execute("""
+            SELECT *
+            FROM tournaments
+            WHERE tournament_id = %s
+        """, (tournament_id,))
+
+        tournament = cursor.fetchone()
+
+        if not tournament:
+
+            flash(
+                "Tournament not found.",
+                "danger"
+            )
+
+            return redirect(url_for('tournaments'))
+
+
+        # -------------------------------------------------
+        # 2. Check tournament status
+        # -------------------------------------------------
+
+        if tournament['status'] not in ['Upcoming', 'Ongoing']:
+
+            flash(
+                "This tournament is not open for registration.",
+                "warning"
+            )
+
+            return redirect(url_for('tournaments'))
+
+
+        # -------------------------------------------------
+        # 3. Check registration deadline
+        # -------------------------------------------------
+
+        current_time = datetime.now()
+
+        if current_time > tournament['registration_deadline']:
+
+            flash(
+                "Registration deadline has expired.",
+                "danger"
+            )
+
+            return redirect(url_for('tournaments'))
+
+
+        # -------------------------------------------------
+        # 4. Check duplicate registration
+        # -------------------------------------------------
+
+        cursor.execute("""
+            SELECT registration_id
+            FROM tournament_registrations
+            WHERE tournament_id = %s
+              AND student_id = %s
+              AND registration_status = 'Registered'
+        """, (
+            tournament_id,
+            student_id
+        ))
+
+        existing_registration = cursor.fetchone()
+
+        if existing_registration:
+
+            flash(
+                "You are already registered for this tournament.",
+                "info"
+            )
+
+            return redirect(url_for('tournaments'))
+
+
+        # -------------------------------------------------
+        # 5. Calculate Phase-2 Attendance
+        # -------------------------------------------------
+
+        cursor.execute("""
+            SELECT
+                COUNT(*) AS total_classes,
+
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN UPPER(status) = 'P'
+                            THEN 1
+                            ELSE 0
+                        END
+                    ), 0
+                ) AS present_classes
+
+            FROM phase2_attendance
+
+            WHERE student_id = %s
+        """, (student_id,))
+
+        attendance_data = cursor.fetchone()
+
+        total_classes = attendance_data['total_classes'] or 0
+        present_classes = attendance_data['present_classes'] or 0
+
+
+        # -------------------------------------------------
+        # 6. Calculate percentage
+        # -------------------------------------------------
+
+        if total_classes > 0:
+
+            attendance_percentage = round(
+                (present_classes / total_classes) * 100,
+                2
+            )
+
+        else:
+
+            attendance_percentage = 0
+
+
+        # -------------------------------------------------
+        # 7. Check 80% requirement
+        # -------------------------------------------------
+
+        if attendance_percentage < float(
+            tournament['min_attendance']
+        ):
+
+            flash(
+                f"Registration failed. "
+                f"Your Phase-2 attendance is "
+                f"{attendance_percentage}%. "
+                f"Minimum required attendance is "
+                f"{tournament['min_attendance']}%.",
+                "danger"
+            )
+
+            return redirect(url_for('tournaments'))
+
+
+        # -------------------------------------------------
+        # 8. Register Student
+        # -------------------------------------------------
+
+        cursor.execute("""
+            INSERT INTO tournament_registrations
+            (
+                tournament_id,
+                student_id,
+                attendance_percentage,
+                registration_status
+            )
+
+            VALUES
+            (
+                %s,
+                %s,
+                %s,
+                'Registered'
+            )
+        """, (
+            tournament_id,
+            student_id,
+            attendance_percentage
+        ))
+
+
+        conn.commit()
+
+
+        flash(
+            f"Successfully registered for "
+            f"{tournament['title']}!",
+            "success"
+        )
+
+
+    except pymysql.IntegrityError:
+
+        conn.rollback()
+
+        flash(
+            "You are already registered for this tournament.",
+            "warning"
+        )
+
+
+    except Exception as e:
+
+        conn.rollback()
+
+        print(
+            "Tournament Registration Error:",
+            e
+        )
+
+        flash(
+            "Something went wrong while registering.",
+            "danger"
+        )
+
+
+    finally:
+
+        cursor.close()
+        conn.close()
+
+
+    return redirect(url_for('tournaments'))
 @app.route('/assignments', methods=['GET', 'POST'])
 def student_assignments():
     if 'user_id' not in session or session['role'] != 'student':
@@ -607,11 +1126,85 @@ def profile():
 
     cursor.execute("SELECT * FROM rp_transactions WHERE student_id = %s ORDER BY created_at DESC", (student_id,))
     rp_history = cursor.fetchall()
+    # -------------------------------------------------
+# TOURNAMENT STATISTICS
+# -------------------------------------------------
+
+# Total tournaments enrolled
+    cursor.execute("""
+        SELECT COUNT(*) AS total_enrolled
+        FROM tournament_registrations
+        WHERE student_id = %s
+        AND registration_status = 'Registered'
+    """, (student_id,))
+
+    tournament_stats = cursor.fetchone()
+
+    total_tournaments = tournament_stats['total_enrolled'] or 0
+
+
+    # Total tournaments won
+    cursor.execute("""
+        SELECT COUNT(*) AS total_won
+        FROM tournament_registrations
+        WHERE student_id = %s
+        AND registration_status = 'Registered'
+        AND result = 'Winner'
+    """, (student_id,))
+
+    win_data = cursor.fetchone()
+
+    tournaments_won = win_data['total_won'] or 0
+
+
+    # Win percentage
+    if total_tournaments > 0:
+        tournament_win_rate = round(
+            (tournaments_won / total_tournaments) * 100,
+            1
+        )
+    else:
+        tournament_win_rate = 0
+
+
+    # Recent tournament history
+    cursor.execute("""
+        SELECT
+            t.tournament_id,
+            t.title,
+            t.tournament_date,
+            t.venue,
+            tr.attendance_percentage,
+            tr.result,
+            tr.registered_at
+
+        FROM tournament_registrations tr
+
+        INNER JOIN tournaments t
+            ON tr.tournament_id = t.tournament_id
+
+        WHERE tr.student_id = %s
+        AND tr.registration_status = 'Registered'
+
+        ORDER BY tr.registered_at DESC
+    """, (student_id,))
+
+    tournament_history = cursor.fetchall()
 
     cursor.close()
     conn.close()
 
-    return render_template('profile.html', user=user, profile=profile_data, rp_history=rp_history)
+    return render_template(
+    'profile.html',
+    user=user,
+    profile=profile_data,
+    rp_history=rp_history,
+
+    total_tournaments=total_tournaments,
+    tournaments_won=tournaments_won,
+    tournament_win_rate=tournament_win_rate,
+    tournament_history=tournament_history
+)
 
 
 # 2. Game Center Dashboard
@@ -867,6 +1460,165 @@ def admin_shop_purchases():
 
     return render_template('admin_shop.html', purchases=purchases)
 
+@app.route(
+    '/admin/tournaments',
+    methods=['GET', 'POST']
+)
+def admin_tournaments():
+
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+
+    if conn is None:
+
+        flash(
+            "Database Connection Failed!",
+            "danger"
+        )
+
+        return redirect(url_for('admin_portal'))
+
+    cursor = conn.cursor()
+
+    try:
+
+        if request.method == 'POST':
+
+            title = request.form.get('title')
+            description = request.form.get('description')
+            tournament_format = request.form.get('tournament_format')
+            venue = request.form.get('venue')
+            tournament_date = request.form.get('tournament_date')
+            start_time = request.form.get('start_time')
+            registration_deadline = request.form.get(
+                'registration_deadline'
+            )
+
+            min_attendance = request.form.get(
+                'min_attendance',
+                '80'
+            )
+
+
+            # Validate required fields
+
+            if not title or not description:
+                flash(
+                    "Title and description are required.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for('admin_tournaments')
+                )
+
+
+            # Convert deadline from HTML datetime-local
+
+            deadline_datetime = datetime.strptime(
+                registration_deadline,
+                '%Y-%m-%dT%H:%M'
+            )
+
+
+            # Insert tournament
+
+            cursor.execute("""
+                INSERT INTO tournaments
+                (
+                    title,
+                    description,
+                    tournament_format,
+                    venue,
+                    tournament_date,
+                    start_time,
+                    registration_deadline,
+                    min_attendance,
+                    status,
+                    created_by
+                )
+
+                VALUES
+                (
+                    %s, %s, %s, %s, %s,
+                    %s, %s, %s, 'Upcoming', %s
+                )
+            """, (
+                title,
+                description,
+                tournament_format,
+                venue,
+                tournament_date,
+                start_time,
+                deadline_datetime,
+                min_attendance,
+                session['user_id']
+            ))
+
+
+            conn.commit()
+
+
+            flash(
+                "Tournament created successfully!",
+                "success"
+            )
+
+            return redirect(
+                url_for('admin_tournaments')
+            )
+
+
+        # Fetch tournaments for admin
+
+        cursor.execute("""
+    SELECT
+        t.*,
+        u.name AS admin_name,
+        DATE_FORMAT(t.start_time, '%%h:%%i %%p') AS formatted_start_time
+
+    FROM tournaments t
+
+    LEFT JOIN users u
+        ON t.created_by = u.id
+
+    ORDER BY
+        t.tournament_date ASC,
+        t.start_time ASC
+""")
+
+        tournaments_list = cursor.fetchall()
+
+
+    except Exception as e:
+
+        conn.rollback()
+
+        print(
+            "Admin Tournament Error:",
+            e
+        )
+
+        flash(
+            "Unable to process tournament.",
+            "danger"
+        )
+
+        tournaments_list = []
+
+
+    finally:
+
+        cursor.close()
+        conn.close()
+
+
+    return render_template(
+        'admin_tournaments.html',
+        tournaments=tournaments_list
+    )
 
 # 5. Admin Approve Purchase
 @app.route('/admin/shop/purchase/<int:purchase_id>/approve', methods=['POST'])

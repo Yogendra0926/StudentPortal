@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+.admin-tournament-page {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.admin-header {
+    margin-bottom: 25px;
+}
+
+.admin-header h1 {
+    color: #2b3674;
+    margin-bottom: 5px;
+}
+
+.admin-header p {
+    color: #718096;
+}
+
+.tournament-form {
+    background: white;
+    padding: 28px;
+    border-radius: 22px;
+    box-shadow: 0 8px 25px rgba(112,144,176,0.12);
+    margin-bottom: 30px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #2b3674;
+    margin-bottom: 7px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px;
+    font-family: inherit;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #8b5cf6;
+}
+
+.form-group textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.create-btn {
+    margin-top: 20px;
+    border: none;
+    padding: 13px 25px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #00c6ff, #8b5cf6);
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.admin-table-wrapper {
+    background: white;
+    padding: 25px;
+    border-radius: 22px;
+    box-shadow: 0 8px 25px rgba(112,144,176,0.12);
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th {
+    text-align: left;
+    padding: 13px;
+    color: #718096;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.admin-table td {
+    padding: 14px 13px;
+    border-top: 1px solid #edf0f7;
+    color: #2b3674;
+    font-size: 0.88rem;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-upcoming {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.badge-ongoing {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.badge-completed {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+@media(max-width:700px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full {
+        grid-column: auto;
+    }
+}
+
+</style>
+
+
+<div class="admin-tournament-page">
+
+    <div class="admin-header">
+
+        <h1>
+            <i class="fa-solid fa-trophy"></i>
+            Tournament Management
+        </h1>
+
+        <p>
+            Create and manage student tournaments.
+        </p>
+
+    </div>
+
+
+    <!-- CREATE TOURNAMENT -->
+
+    <form
+        method="POST"
+        class="tournament-form"
+    >
+
+        <div class="form-grid">
+
+            <div class="form-group full">
+
+                <label>Tournament Title</label>
+
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="Example: Coding War 2026"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group full">
+
+                <label>About Tournament</label>
+
+                <textarea
+                    name="description"
+                    placeholder="Enter tournament details..."
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Format</label>
+
+                <input
+                    type="text"
+                    name="tournament_format"
+                    placeholder="Example: Python Case Studies"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Venue</label>
+
+                <input
+                    type="text"
+                    name="venue"
+                    placeholder="Example: Computer Lab 1"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Tournament Date</label>
+
+                <input
+                    type="date"
+                    name="tournament_date"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Start Time</label>
+
+                <input
+                    type="time"
+                    name="start_time"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Registration Deadline</label>
+
+                <input
+                    type="datetime-local"
+                    name="registration_deadline"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Minimum Attendance (%)</label>
+
+                <input
+                    type="number"
+                    name="min_attendance"
+                    value="80"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="create-btn"
+        >
+
+            <i class="fa-solid fa-plus"></i>
+
+            Create Tournament
+
+        </button>
+
+    </form>
+
+
+    <!-- EXISTING TOURNAMENTS -->
+
+    <div class="admin-table-wrapper">
+
+        <h2 style="color:#2b3674;">
+            Existing Tournaments
+        </h2>
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Title</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Deadline</th>
+                    <th>Attendance</th>
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for tournament in tournaments %}
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            {{ tournament.title }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        {{ tournament.tournament_date.strftime('%d %b %Y') }}
+                    </td>
+
+                    <td>
+                        {{ tournament.formatted_start_time }}
+                    </td>
+
+                    <td>
+                        {{ tournament.registration_deadline.strftime('%d %b %Y %I:%M %p') }}
+                    </td>
+
+                    <td>
+                        {{ tournament.min_attendance }}%
+                    </td>
+
+                    <td>
+
+                        <span class="badge
+                        {% if tournament.status == 'Upcoming' %}
+                            badge-upcoming
+                        {% elif tournament.status == 'Ongoing' %}
+                            badge-ongoing
+                        {% else %}
+                            badge-completed
+                        {% endif %}
+                        ">
+
+                            {{ tournament.status }}
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td colspan="6" style="text-align:center;">
+                        No tournaments created yet.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

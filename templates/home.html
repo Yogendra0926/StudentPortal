@@ -1,471 +1,2570 @@
 {% extends "base.html" %}
 
-{% block title %}Home Dashboard{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-    /* Dashboard Base Styles */
-    .dashboard-wrapper {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        padding: 30px 20px;
-        background-color: #f8fafc;
-        min-height: calc(100vh - 80px); /* Adjust based on your navbar */
-        color: #0f172a;
-        box-sizing: border-box;
-    }
 
-    .dashboard-wrapper * {
-        box-sizing: border-box;
-    }
+/* =========================================================
+   PREMIUM DASHBOARD
+========================================================= */
 
-    /* Main Grid Layout */
-    .dashboard-grid {
-        display: grid;
-        grid-template-columns: 1.2fr 1fr;
-        gap: 24px;
-        max-width: 1400px;
-        margin: 0 auto;
-    }
+.dashboard-page {
 
-    /* Common Card Styles */
-    .dash-card {
-        background: #ffffff;
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
-        border: 1px solid #f1f5f9;
-    }
+    --primary: #4f46e5;
+    --primary-dark: #312e81;
+    --secondary: #7c3aed;
 
-    .section-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+    --blue: #0ea5e9;
+    --green: #10b981;
+    --orange: #f59e0b;
+    --red: #ef4444;
 
-    /* =========================================
-       LEFT COLUMN 
-       ========================================= */
-    .left-col {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-    }
+    --dark: #111827;
+    --text: #1e293b;
+    --muted: #718096;
 
-    /* Hero Section */
-    .hero-section {
-        padding: 20px 10px;
-    }
+    --bg: #f5f7fb;
+    --card: #ffffff;
+    --border: #e8edf5;
 
-    .hero-section h1 {
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: #0f172a;
-        margin: 0 0 8px 0;
-        line-height: 1.2;
-    }
+    min-height: calc(100vh - 70px);
 
-    .gradient-text {
-        background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
+    padding: 28px 25px 55px;
 
-    .hero-subtitle {
-        color: #64748b;
-        font-size: 1.05rem;
-        font-weight: 500;
-        margin-bottom: 24px;
-    }
+    background:
+        radial-gradient(
+            circle at 5% 0%,
+            rgba(99,102,241,0.07),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 95% 20%,
+            rgba(14,165,233,0.06),
+            transparent 25%
+        ),
+        #f5f7fb;
 
-    /* Time & Phase Pills */
-    .hero-info-pills {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
+    font-family:
+        "Plus Jakarta Sans",
+        "Inter",
+        Arial,
+        sans-serif;
 
-    .info-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: #f1f5f9;
-        color: #475569;
-        padding: 8px 16px;
-        border-radius: 30px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
-
-    /* Announcements List */
-    .announcement-list {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .announcement-item {
-        display: flex;
-        gap: 16px;
-        padding: 16px;
-        border-radius: 16px;
-        background: #f8fafc;
-        transition: transform 0.2s;
-    }
-
-    .announcement-item:hover {
-        transform: translateX(5px);
-        background: #f1f5f9;
-    }
-
-    .announcement-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        background: #e0e7ff;
-        color: #4f46e5;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        flex-shrink: 0;
-    }
-
-    .announcement-content h3 {
-        margin: 0 0 6px 0;
-        font-size: 1rem;
-        font-weight: 700;
-        color: #1e293b;
-    }
-
-    .announcement-content p {
-        margin: 0;
-        font-size: 0.85rem;
-        color: #64748b;
-        line-height: 1.5;
-    }
-
-    /* Progress Bar */
-    .progress-track {
-        background: #f1f5f9;
-        border-radius: 20px;
-        height: 12px;
-        width: 100%;
-        overflow: hidden;
-        margin-top: 10px;
-    }
-
-    .progress-fill {
-        background: linear-gradient(90deg, #10b981, #34d399);
-        height: 100%;
-        border-radius: 20px;
-        transition: width 1s ease-in-out;
-    }
-
-    /* =========================================
-       RIGHT COLUMN 
-       ========================================= */
-    .right-col {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-    }
-
-    /* 4-Card Stats Grid */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-    }
-
-    .stat-card {
-        background: #ffffff;
-        padding: 20px;
-        border-radius: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-        border: 1px solid #f1f5f9;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .stat-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-    }
-
-    .stat-green { background: #dcfce7; color: #16a34a; }
-    .stat-blue { background: #e0f2fe; color: #0284c7; }
-    .stat-purple { background: #f3e8ff; color: #9333ea; }
-    .stat-red { background: #ffe4e6; color: #e11d48; }
-
-    .stat-card h2 {
-        margin: 0;
-        font-size: 2rem;
-        font-weight: 800;
-        color: #0f172a;
-    }
-
-    .stat-card p {
-        margin: 0;
-        font-size: 0.85rem;
-        color: #64748b;
-        font-weight: 600;
-    }
-
-    .stat-subtext {
-        font-size: 0.75rem;
-        margin-top: auto;
-    }
-
-    /* Quick Access Buttons */
-    .quick-access-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    }
-
-    .qa-btn {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 16px;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        color: #334155;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.95rem;
-        transition: all 0.2s;
-    }
-
-    .qa-btn i {
-        color: #3b82f6;
-        font-size: 1.1rem;
-    }
-
-    .qa-btn:hover {
-        background: #eff6ff;
-        border-color: #bfdbfe;
-        color: #1d4ed8;
-        transform: translateY(-2px);
-    }
-
-    /* Motivation Quote Banner */
-    .quote-banner {
-        background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-        border-radius: 20px;
-        padding: 24px;
-        position: relative;
-        overflow: hidden;
-        border: 1px solid #c7d2fe;
-    }
-
-    .quote-banner h3 {
-        color: #4338ca;
-        margin: 0 0 10px 0;
-        font-size: 1.1rem;
-    }
-
-    .quote-banner p {
-        color: #4f46e5;
-        margin: 0;
-        font-size: 0.9rem;
-        line-height: 1.5;
-        font-weight: 500;
-    }
-
-    .quote-icon {
-        position: absolute;
-        right: -10px;
-        bottom: -20px;
-        font-size: 6rem;
-        color: rgba(99, 102, 241, 0.1);
-    }
-
-    /* =========================================
-       RESPONSIVE DESIGN (Mobile) 
-       ========================================= */
-    @media (max-width: 992px) {
-        .dashboard-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .hero-section h1 {
-            font-size: 2rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .stats-grid {
-            grid-template-columns: 1fr 1fr; /* Keep 2 columns on small phones, or change to 1fr if it's too squished */
-        }
-        
-        .quick-access-grid {
-            grid-template-columns: 1fr; /* Stack quick access on phones */
-        }
-    }
-</style>
-
-<div class="dashboard-wrapper">
-    <div class="dashboard-grid">
-
-        <div class="left-col">
-            
-            <div class="hero-section">
-                <h1>Welcome Back,<br>
-                    <span class="gradient-text">{{ session.name }}</span>
-                </h1>
-                <p class="hero-subtitle">Glad to see you again! Let's make today productive. 👋</p>
-                
-                <div class="hero-info-pills">
-                    <div class="info-pill">
-                        <i class="fa-regular fa-calendar"></i>
-                        <span id="todayDate"></span>
-                    </div>
-                    <div class="info-pill">
-                        <i class="fa-regular fa-clock"></i>
-                        <span id="clock"></span>
-                    </div>
-                    <div class="info-pill" style="background: #eef2ff; color: #4f46e5;">
-                        <i class="fa-solid fa-layer-group"></i>
-                        <span>Phase - 1</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dash-card">
-                <div class="section-title">
-                    <i class="fa-solid fa-bullhorn" style="color: #8b5cf6;"></i>
-                    Announcements
-                </div>
-                
-                <div class="announcement-list">
-                    <div class="announcement-item">
-                        <div class="announcement-icon" style="background: #fff1f2; color: #e11d48;">
-                            <i class="fa-solid fa-fire"></i>
-                        </div>
-                        <div class="announcement-content">
-                            <h3>Data Analytics using Python</h3>
-                            <p>📅 18 July 2026 | 🕓 4:00 PM - 6:30 PM | ⭐ Credit: 1</p>
-                        </div>
-                    </div>
-                    </div>
-            </div>
-
-            <div class="dash-card">
-                <div class="section-title">
-                    <i class="fa-solid fa-chart-line" style="color: #10b981;"></i>
-                    Attendance Progress
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                    <span style="font-size: 0.9rem; font-weight: 600; color: #475569;">Overall Status</span>
-                    <span style="font-size: 0.9rem; font-weight: 800; color: #10b981;">{{ attendance }}%</span>
-                </div>
-                <div class="progress-track">
-                    <div class="progress-fill" style="width: {{ attendance }}%"></div>
-                </div>
-            </div>
-
-        </div> <div class="right-col">
-
-            <div class="stats-grid">
-                
-                <div class="stat-card">
-                    <div class="stat-icon stat-green">
-                        <i class="fa-solid fa-arrow-trend-up"></i>
-                    </div>
-                    <h2>{{ attendance }}%</h2>
-                    <p>Overall Progress</p>
-                    <span class="stat-subtext" style="color: #16a34a;">Keep it up! 🚀</span>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon stat-blue">
-                        <i class="fa-solid fa-book-open"></i>
-                    </div>
-                    <h2>{{ assignments }}</h2>
-                    <p>Assignments</p>
-                    <span class="stat-subtext" style="color: #0284c7;">Pending tasks</span>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon stat-purple">
-                        <i class="fa-solid fa-clipboard-check"></i>
-                    </div>
-                    <h2>{{ marks }}</h2>
-                    <p>Internal Marks</p>
-                    <span class="stat-subtext" style="color: #9333ea;">Latest results</span>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon stat-red">
-                        <i class="fa-regular fa-bell"></i>
-                    </div>
-                    <h2>4</h2>
-                    <p>Announcements</p>
-                    <span class="stat-subtext" style="color: #e11d48;">Check updates</span>
-                </div>
-
-            </div>
-
-            <div class="dash-card">
-                <div class="section-title">
-                    <i class="fa-solid fa-bolt" style="color: #eab308;"></i>
-                    Quick Access
-                </div>
-                
-                <div class="quick-access-grid">
-                    <a href="{{ url_for('student_attendance') }}" class="qa-btn">
-                        <i class="fa-solid fa-chart-pie"></i> Attendance
-                    </a>
-                    <a href="{{ url_for('student_assignments') }}" class="qa-btn">
-                        <i class="fa-solid fa-file-signature"></i> Assignments
-                    </a>
-                    <a href="{{ url_for('internal_marks') }}" class="qa-btn">
-                        <i class="fa-solid fa-square-poll-vertical"></i> Internal Marks
-                    </a>
-                    <a href="{{ url_for('announcements') }}" class="qa-btn">
-                        <i class="fa-solid fa-bullhorn"></i> Announcements
-                    </a>
-                </div>
-            </div>
-
-            <div class="quote-banner">
-                <h3>Your journey matters.</h3>
-                <p>Success is the sum of small efforts repeated every day. Stay focused, stay consistent, stay unstoppable.</p>
-                <i class="fa-solid fa-quote-right quote-icon"></i>
-            </div>
-
-        </div> </div>
-</div>
-
-<script>
-function updateClock(){
-    let now = new Date();
-    
-    // Formatting time
-    let timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    document.getElementById("clock").innerHTML = timeString;
-    
-    // Formatting date neatly
-    let options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-    document.getElementById("todayDate").innerHTML = now.toLocaleDateString(undefined, options);
+    color: var(--text);
 }
 
-setInterval(updateClock, 1000);
-updateClock();
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.dashboard-container {
+
+    max-width: 1380px;
+
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.dashboard-hero {
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 28px 32px;
+
+    margin-bottom: 24px;
+
+    border-radius: 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff 0%,
+            #f8faff 60%,
+            #eef2ff 100%
+        );
+
+    border: 1px solid var(--border);
+
+    box-shadow:
+        0 10px 35px rgba(15,23,42,0.045);
+
+    animation: fadeUp 0.55s ease both;
+}
+
+
+.dashboard-hero::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    right: -70px;
+    top: -120px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(79,70,229,0.14),
+            rgba(14,165,233,0.06)
+        );
+
+    animation: heroFloat 7s ease-in-out infinite;
+}
+
+
+.dashboard-hero::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 130px;
+    height: 130px;
+
+    right: 190px;
+    bottom: -90px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(124,58,237,0.06);
+
+    animation: heroFloat 9s ease-in-out infinite reverse;
+}
+
+
+.hero-content {
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+.hero-title {
+
+    margin: 0;
+
+    font-size: clamp(2rem, 4vw, 2.65rem);
+
+    line-height: 1.08;
+
+    font-weight: 900;
+
+    letter-spacing: -1.5px;
+
+    color: #111827;
+}
+
+
+.hero-name {
+
+    display: inline-block;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0ea5e9,
+            #4f46e5,
+            #7c3aed
+        );
+
+    -webkit-background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+
+    background-clip: text;
+
+    animation: gradientMove 5s ease infinite;
+
+    background-size: 200% 200%;
+}
+
+
+.hero-subtitle {
+
+    margin: 10px 0 20px;
+
+    color: #64748b;
+
+    font-size: 0.82rem;
+
+    font-weight: 500;
+}
+
+
+.hero-pills {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 9px;
+}
+
+
+.hero-pill {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 8px 12px;
+
+    border-radius: 25px;
+
+    background: white;
+
+    border: 1px solid #e7ebf3;
+
+    color: #475569;
+
+    font-size: 0.67rem;
+
+    font-weight: 800;
+
+    box-shadow:
+        0 4px 12px rgba(15,23,42,0.035);
+}
+
+
+.hero-pill i {
+
+    color: var(--primary);
+}
+
+
+/* =========================================================
+   MAIN DASHBOARD GRID
+========================================================= */
+
+.dashboard-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.45fr)
+        minmax(360px, 0.85fr);
+
+    gap: 22px;
+
+    align-items: start;
+}
+
+
+.left-column,
+.right-column {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
+}
+
+
+/* =========================================================
+   COMMON CARD
+========================================================= */
+
+.dashboard-card {
+
+    background: var(--card);
+
+    border: 1px solid var(--border);
+
+    border-radius: 21px;
+
+    box-shadow:
+        0 8px 28px rgba(15,23,42,0.045);
+
+    padding: 21px;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.dashboard-card:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 35px rgba(15,23,42,0.065);
+}
+
+
+.section-heading {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 17px;
+}
+
+
+.section-heading-icon {
+
+    width: 38px;
+    height: 38px;
+
+    border-radius: 11px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eef2ff;
+
+    color: var(--primary);
+
+    font-size: 0.9rem;
+}
+
+
+.section-heading h2 {
+
+    margin: 0;
+
+    color: #1e293b;
+
+    font-size: 0.88rem;
+
+    font-weight: 900;
+}
+
+
+.section-heading p {
+
+    margin: 2px 0 0;
+
+    color: #94a3b8;
+
+    font-size: 0.62rem;
+}
+
+
+/* =========================================================
+   TOURNAMENT SPOTLIGHT
+========================================================= */
+
+.tournament-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 25px;
+
+    border-radius: 24px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #10172f 0%,
+            #312e81 43%,
+            #4f46e5 75%,
+            #4338ca 100%
+        );
+
+    box-shadow:
+        0 18px 42px rgba(67,56,202,0.22);
+
+    animation:
+        fadeUp 0.65s ease both,
+        tournamentGlow 5s ease-in-out infinite;
+}
+
+
+.tournament-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 240px;
+    height: 240px;
+
+    right: -90px;
+    top: -150px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.09);
+
+    animation: heroFloat 8s ease-in-out infinite;
+}
+
+
+.tournament-card::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 160px;
+    height: 160px;
+
+    right: 90px;
+    bottom: -125px;
+
+    border-radius: 50%;
+
+    background: rgba(14,165,233,0.12);
+}
+
+
+.tournament-content {
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+.tournament-header {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+
+.tournament-brand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.tournament-icon {
+
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: rgba(255,255,255,0.13);
+
+    border: 1px solid rgba(255,255,255,0.13);
+
+    font-size: 1.15rem;
+
+    animation: trophyFloat 3s ease-in-out infinite;
+}
+
+
+.tournament-label {
+
+    margin: 0;
+
+    font-size: 0.9rem;
+
+    font-weight: 900;
+}
+
+
+.tournament-caption {
+
+    margin: 3px 0 0;
+
+    color: rgba(255,255,255,0.62);
+
+    font-size: 0.62rem;
+}
+
+
+.tournament-status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    color: #6ee7b7;
+
+    background: rgba(16,185,129,0.15);
+
+    border: 1px solid rgba(110,231,183,0.18);
+
+    font-size: 0.61rem;
+
+    font-weight: 900;
+
+    white-space: nowrap;
+}
+
+
+.status-dot {
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #34d399;
+
+    box-shadow:
+        0 0 0 4px rgba(52,211,153,0.10);
+
+    animation: pulseDot 1.8s infinite;
+}
+
+
+.tournament-title {
+
+    margin: 23px 0 6px;
+
+    font-size: 1.45rem;
+
+    line-height: 1.15;
+
+    font-weight: 900;
+
+    letter-spacing: -0.5px;
+}
+
+
+.tournament-description {
+
+    max-width: 850px;
+
+    margin: 0 0 19px;
+
+    color: rgba(255,255,255,0.68);
+
+    font-size: 0.69rem;
+
+    line-height: 1.6;
+}
+
+
+/* TOURNAMENT INFO */
+
+.tournament-info {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 9px;
+}
+
+
+.tournament-info-box {
+
+    padding: 12px;
+
+    border-radius: 13px;
+
+    background: rgba(255,255,255,0.08);
+
+    border: 1px solid rgba(255,255,255,0.09);
+
+    backdrop-filter: blur(8px);
+
+    transition: 0.2s ease;
+}
+
+
+.tournament-info-box:hover {
+
+    background: rgba(255,255,255,0.13);
+
+    transform: translateY(-2px);
+}
+
+
+.tournament-info-label {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: rgba(255,255,255,0.48);
+
+    font-size: 0.57rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+
+    font-weight: 900;
+}
+
+
+.tournament-info-value {
+
+    display: block;
+
+    color: white;
+
+    font-size: 0.7rem;
+
+    font-weight: 800;
+}
+
+
+.tournament-footer {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-top: 19px;
+}
+
+
+.tournament-attendance {
+
+    color: rgba(255,255,255,0.70);
+
+    font-size: 0.66rem;
+
+    font-weight: 600;
+}
+
+
+.tournament-attendance strong {
+
+    color: #6ee7b7;
+
+    font-weight: 900;
+}
+
+
+.tournament-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 10px 15px;
+
+    border-radius: 11px;
+
+    background: white;
+
+    color: #4338ca;
+
+    text-decoration: none;
+
+    font-size: 0.68rem;
+
+    font-weight: 900;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.tournament-button:hover {
+
+    transform: translateY(-2px);
+
+    color: #312e81;
+
+    box-shadow:
+        0 9px 18px rgba(0,0,0,0.15);
+}
+
+
+/* =========================================================
+   EMPTY TOURNAMENT
+========================================================= */
+
+.tournament-empty {
+
+    padding: 25px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #f5f3ff
+        );
+
+    border: 1px solid #ddd6fe;
+}
+
+
+.tournament-empty-content {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+}
+
+
+.tournament-empty-icon {
+
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    border-radius: 14px;
+
+    background: white;
+
+    color: #6366f1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    box-shadow:
+        0 5px 15px rgba(99,102,241,0.10);
+}
+
+
+.tournament-empty h3 {
+
+    margin: 0 0 4px;
+
+    color: #3730a3;
+
+    font-size: 0.85rem;
+}
+
+
+.tournament-empty p {
+
+    margin: 0;
+
+    color: #6366f1;
+
+    font-size: 0.65rem;
+}
+
+
+/* =========================================================
+   ANNOUNCEMENTS
+========================================================= */
+
+.announcement-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 14px;
+
+    border-radius: 15px;
+
+    background: #f8fafc;
+
+    border: 1px solid #edf1f6;
+
+    transition: 0.22s ease;
+}
+
+
+.announcement-item:hover {
+
+    transform: translateX(4px);
+
+    background: #f6f8fc;
+}
+
+
+.announcement-icon {
+
+    width: 43px;
+    height: 43px;
+
+    flex-shrink: 0;
+
+    border-radius: 13px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #fff1f2;
+
+    color: #e11d48;
+}
+
+
+.announcement-title {
+
+    margin: 0 0 5px;
+
+    color: #334155;
+
+    font-size: 0.75rem;
+
+    font-weight: 900;
+}
+
+
+.announcement-meta {
+
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 0.63rem;
+}
+
+
+/* =========================================================
+   ATTENDANCE
+========================================================= */
+
+.attendance-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 10px;
+}
+
+
+.attendance-label {
+
+    color: #475569;
+
+    font-size: 0.72rem;
+
+    font-weight: 800;
+}
+
+
+.attendance-value {
+
+    color: #10b981;
+
+    font-size: 0.82rem;
+
+    font-weight: 900;
+}
+
+
+.progress-container {
+
+    width: 100%;
+
+    height: 10px;
+
+    padding: 2px;
+
+    border-radius: 20px;
+
+    background: #edf2f7;
+
+    overflow: hidden;
+}
+
+
+.progress-bar {
+
+    height: 100%;
+
+    width: {{ attendance|default(0) }}%;
+
+    max-width: 100%;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #10b981,
+            #34d399
+        );
+
+    animation:
+        progressGrow 1.3s ease both;
+}
+
+
+.attendance-footer {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-top: 9px;
+
+    color: #94a3b8;
+
+    font-size: 0.59rem;
+}
+
+
+.attendance-footer strong {
+
+    color: #10b981;
+}
+
+
+/* =========================================================
+   RIGHT STATS
+========================================================= */
+
+.stats-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 13px;
+}
+
+
+.stat-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    min-height: 145px;
+
+    padding: 18px;
+
+    border-radius: 19px;
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    box-shadow:
+        0 8px 23px rgba(15,23,42,0.04);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.stat-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 15px 30px rgba(15,23,42,0.08);
+}
+
+
+.stat-card::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 85px;
+    height: 85px;
+
+    right: -32px;
+    top: -32px;
+
+    border-radius: 50%;
+
+    background: rgba(99,102,241,0.045);
+}
+
+
+.stat-icon {
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 1rem;
+
+    margin-bottom: 13px;
+}
+
+
+.stat-green {
+
+    background: #dcfce7;
+
+    color: #16a34a;
+}
+
+
+.stat-blue {
+
+    background: #e0f2fe;
+
+    color: #0284c7;
+}
+
+
+.stat-purple {
+
+    background: #f3e8ff;
+
+    color: #9333ea;
+}
+
+
+.stat-red {
+
+    background: #ffe4e6;
+
+    color: #e11d48;
+}
+
+
+.stat-value {
+
+    margin: 0;
+
+    color: #111827;
+
+    font-size: 1.55rem;
+
+    font-weight: 900;
+}
+
+
+.stat-label {
+
+    margin-top: 4px;
+
+    color: #64748b;
+
+    font-size: 0.65rem;
+
+    font-weight: 700;
+}
+
+
+.stat-note {
+
+    margin-top: 7px;
+
+    font-size: 0.58rem;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   TOURNAMENT STATS
+========================================================= */
+
+.tournament-stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 9px;
+}
+
+
+.tournament-mini {
+
+    padding: 13px;
+
+    border-radius: 13px;
+
+    background: #f8fafc;
+
+    border: 1px solid #edf1f7;
+
+    transition: 0.2s;
+}
+
+
+.tournament-mini:hover {
+
+    transform: translateY(-2px);
+
+    background: #f5f7ff;
+}
+
+
+.tournament-mini-label {
+
+    color: #94a3b8;
+
+    font-size: 0.56rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.4px;
+
+    font-weight: 900;
+}
+
+
+.tournament-mini-value {
+
+    margin-top: 4px;
+
+    color: #293451;
+
+    font-size: 1rem;
+
+    font-weight: 900;
+}
+
+
+.explore-button {
+
+    width: 100%;
+
+    margin-top: 11px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 11px;
+
+    border-radius: 11px;
+
+    text-decoration: none;
+
+    background: #eef2ff;
+
+    border: 1px solid #ddd6fe;
+
+    color: #4f46e5;
+
+    font-size: 0.66rem;
+
+    font-weight: 900;
+
+    transition: 0.2s;
+}
+
+
+.explore-button:hover {
+
+    background: #e0e7ff;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   QUICK ACCESS
+========================================================= */
+
+.quick-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 9px;
+}
+
+
+.quick-button {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e5eaf1;
+
+    color: #334155;
+
+    text-decoration: none;
+
+    font-size: 0.63rem;
+
+    font-weight: 800;
+
+    transition: 0.22s ease;
+}
+
+
+.quick-button i {
+
+    width: 25px;
+
+    color: #3b82f6;
+
+    font-size: 0.85rem;
+}
+
+
+.quick-button:hover {
+
+    transform: translateY(-3px);
+
+    background: white;
+
+    border-color: #c7d2fe;
+
+    color: #4338ca;
+
+    box-shadow:
+        0 7px 17px rgba(15,23,42,0.06);
+}
+
+
+.quick-button.tournament i {
+
+    color: #f59e0b;
+}
+
+
+/* =========================================================
+   MOTIVATION
+========================================================= */
+
+.quote-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 22px;
+
+    border-radius: 21px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #e0e7ff
+        );
+
+    border: 1px solid #c7d2fe;
+}
+
+
+.quote-card h3 {
+
+    margin: 0 0 7px;
+
+    color: #4338ca;
+
+    font-size: 0.82rem;
+
+    font-weight: 900;
+}
+
+
+.quote-card p {
+
+    max-width: 80%;
+
+    margin: 0;
+
+    color: #4f46e5;
+
+    font-size: 0.63rem;
+
+    line-height: 1.55;
+
+    font-weight: 600;
+}
+
+
+.quote-icon {
+
+    position: absolute;
+
+    right: -4px;
+
+    bottom: -25px;
+
+    color: rgba(99,102,241,0.11);
+
+    font-size: 5.5rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .dashboard-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .right-column {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        align-items: start;
+
+    }
+
+    .right-column .dashboard-card:last-child {
+
+        grid-column: 1 / -1;
+
+    }
+
+}
+
+
+@media (max-width: 760px) {
+
+    .dashboard-page {
+
+        padding: 18px 14px 40px;
+
+    }
+
+    .dashboard-hero {
+
+        padding: 23px;
+
+    }
+
+    .dashboard-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .right-column {
+
+        display: flex;
+
+        flex-direction: column;
+
+    }
+
+    .tournament-info {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .tournament-footer {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+}
+
+
+@media (max-width: 520px) {
+
+    .stats-grid {
+
+        grid-template-columns: 1fr 1fr;
+
+    }
+
+    .tournament-stats {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .quick-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .hero-title {
+
+        font-size: 1.9rem;
+
+    }
+
+    .hero-pills {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes fadeUp {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(18px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+
+@keyframes heroFloat {
+
+    0%, 100% {
+
+        transform:
+            translate(0, 0);
+
+    }
+
+    50% {
+
+        transform:
+            translate(-12px, 15px);
+
+    }
+
+}
+
+
+@keyframes gradientMove {
+
+    0%, 100% {
+
+        background-position:
+            0% 50%;
+
+    }
+
+    50% {
+
+        background-position:
+            100% 50%;
+
+    }
+
+}
+
+
+@keyframes progressGrow {
+
+    from {
+
+        width: 0;
+
+    }
+
+}
+
+
+@keyframes pulseDot {
+
+    0%, 100% {
+
+        box-shadow:
+            0 0 0 3px
+            rgba(52,211,153,0.08);
+
+    }
+
+    50% {
+
+        box-shadow:
+            0 0 0 6px
+            rgba(52,211,153,0.03);
+
+    }
+
+}
+
+
+@keyframes trophyFloat {
+
+    0%, 100% {
+
+        transform:
+            translateY(0);
+
+    }
+
+    50% {
+
+        transform:
+            translateY(-4px);
+
+    }
+
+}
+
+
+@keyframes tournamentGlow {
+
+    0%, 100% {
+
+        box-shadow:
+            0 18px 42px
+            rgba(67,56,202,0.20);
+
+    }
+
+    50% {
+
+        box-shadow:
+            0 22px 48px
+            rgba(67,56,202,0.28);
+
+    }
+
+}
+
+</style>
+
+
+<div class="dashboard-page">
+
+<div class="dashboard-container">
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="dashboard-hero">
+
+        <div class="hero-content">
+
+            <h1 class="hero-title">
+
+                Welcome Back,
+
+                <br>
+
+                <span class="hero-name">
+                    {{ session.name }}
+                </span>
+
+            </h1>
+
+
+            <p class="hero-subtitle">
+
+                Glad to see you again! Let's make today productive. 👋
+
+            </p>
+
+
+            <div class="hero-pills">
+
+                <div class="hero-pill">
+
+                    <i class="fa-regular fa-calendar"></i>
+
+                    <span id="todayDate"></span>
+
+                </div>
+
+
+                <div class="hero-pill">
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    <span id="clock"></span>
+
+                </div>
+
+
+                <div
+                    class="hero-pill"
+                    style="
+                        background:#eef2ff;
+                        color:#4f46e5;
+                        border-color:#ddd6fe;
+                    "
+                >
+
+                    <i class="fa-solid fa-layer-group"></i>
+
+                    Phase - 1
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         MAIN GRID
+    ====================================================== -->
+
+    <div class="dashboard-grid">
+
+
+        <!-- =================================================
+             LEFT COLUMN
+        ================================================== -->
+
+        <div class="left-column">
+
+
+            <!-- =================================================
+                 TOURNAMENT
+            ================================================== -->
+
+            {% if upcoming_tournaments|default([]) %}
+
+                {% set tournament = upcoming_tournaments[0] %}
+
+
+                <section class="tournament-card">
+
+                    <div class="tournament-content">
+
+
+                        <div class="tournament-header">
+
+
+                            <div class="tournament-brand">
+
+                                <div class="tournament-icon">
+
+                                    <i class="fa-solid fa-trophy"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <h2 class="tournament-label">
+                                        Tournament Spotlight
+                                    </h2>
+
+                                    <p class="tournament-caption">
+                                        Compete • Participate • Achieve
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <span class="tournament-status">
+
+                                <span class="status-dot"></span>
+
+                                Upcoming
+
+                            </span>
+
+                        </div>
+
+
+
+                        <h1 class="tournament-title">
+
+                            {{ tournament.title }}
+
+                        </h1>
+
+
+                        <p class="tournament-description">
+
+                            {{ tournament.description|default(
+                                'An exciting tournament awaits you. Check the tournament details and register before the registration deadline.'
+                            )|truncate(180) }}
+
+                        </p>
+
+
+
+                        <div class="tournament-info">
+
+
+                            <!-- DATE -->
+
+                            <div class="tournament-info-box">
+
+                                <span class="tournament-info-label">
+                                    Date
+                                </span>
+
+                                <span class="tournament-info-value">
+
+                                    {% if tournament.tournament_date %}
+
+                                        {{ tournament.tournament_date.strftime('%d %b %Y') }}
+
+                                    {% else %}
+
+                                        TBA
+
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
+
+
+                            <!-- TIME -->
+
+                            <div class="tournament-info-box">
+
+                                <span class="tournament-info-label">
+                                    Time
+                                </span>
+
+                                <span class="tournament-info-value">
+
+                                    {{ tournament.formatted_start_time|default('TBA') }}
+
+                                </span>
+
+                            </div>
+
+
+
+                            <!-- VENUE -->
+
+                            <div class="tournament-info-box">
+
+                                <span class="tournament-info-label">
+                                    Venue
+                                </span>
+
+                                <span class="tournament-info-value">
+
+                                    {{ tournament.venue|default('TBA') }}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="tournament-footer">
+
+
+                            <div class="tournament-attendance">
+
+                                <i class="fa-solid fa-chart-simple"></i>
+
+                                Your Phase-2 Attendance:
+
+                                <strong>
+
+                                    {{ phase2_attendance|default(0) }}%
+
+                                </strong>
+
+                            </div>
+
+
+                            <a
+                                href="{{ url_for('tournaments') }}"
+                                class="tournament-button"
+                            >
+
+                                View Tournament
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+            {% else %}
+
+
+                <section class="tournament-empty">
+
+                    <div class="tournament-empty-content">
+
+                        <div class="tournament-empty-icon">
+
+                            <i class="fa-solid fa-trophy"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h3>
+                                Tournament Arena
+                            </h3>
+
+                            <p>
+                                No upcoming tournament is available right now.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+            {% endif %}
+
+
+
+            <!-- =================================================
+                 ANNOUNCEMENTS
+            ================================================== -->
+
+            <section class="dashboard-card">
+
+                <div class="section-heading">
+
+                    <div
+                        class="section-heading-icon"
+                        style="
+                            background:#f3e8ff;
+                            color:#8b5cf6;
+                        "
+                    >
+
+                        <i class="fa-solid fa-bullhorn"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h2>
+                            Announcements
+                        </h2>
+
+                        <p>
+                            Latest university updates
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="announcement-item">
+
+
+                    <div class="announcement-icon">
+
+                        <i class="fa-solid fa-fire"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h3 class="announcement-title">
+
+                            Data Analytics using Python
+
+                        </h3>
+
+
+                        <p class="announcement-meta">
+
+                            📅 18 July 2026
+                            &nbsp; • &nbsp;
+                            🕓 4:00 PM - 6:30 PM
+                            &nbsp; • &nbsp;
+                            ⭐ Credit: 1
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 ATTENDANCE
+            ================================================== -->
+
+            <section class="dashboard-card">
+
+                <div class="section-heading">
+
+                    <div
+                        class="section-heading-icon"
+                        style="
+                            background:#dcfce7;
+                            color:#10b981;
+                        "
+                    >
+
+                        <i class="fa-solid fa-chart-line"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h2>
+                            Attendance Progress
+                        </h2>
+
+                        <p>
+                            Your academic attendance
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="attendance-header">
+
+                    <span class="attendance-label">
+                        Overall Status
+                    </span>
+
+
+                    <span class="attendance-value">
+
+                        {{ attendance|default(0) }}%
+
+                    </span>
+
+                </div>
+
+
+                <div class="progress-container">
+
+                    <div
+                        class="progress-bar"
+                        style="
+                            width:{{ attendance|default(0) }}%;
+                        "
+                    ></div>
+
+                </div>
+
+
+                <div class="attendance-footer">
+
+                    <span>
+                        Tournament eligibility
+                    </span>
+
+
+                    <strong>
+
+                        80% Required
+
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             RIGHT COLUMN
+        ================================================== -->
+
+        <div class="right-column">
+
+
+            <!-- =================================================
+                 STAT CARDS
+            ================================================== -->
+
+            <div class="stats-grid">
+
+
+                <!-- ATTENDANCE -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon stat-green">
+
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+
+                    </div>
+
+
+                    <h2 class="stat-value">
+
+                        {{ attendance|default(0) }}%
+
+                    </h2>
+
+
+                    <div class="stat-label">
+
+                        Overall Progress
+
+                    </div>
+
+
+                    <div
+                        class="stat-note"
+                        style="color:#16a34a;"
+                    >
+
+                        {% if attendance|default(0) >= 80 %}
+
+                            Excellent standing 🚀
+
+                        {% else %}
+
+                            Improve attendance
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ASSIGNMENTS -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon stat-blue">
+
+                        <i class="fa-solid fa-book-open"></i>
+
+                    </div>
+
+
+                    <h2 class="stat-value">
+
+                        {{ assignments|default(0) }}
+
+                    </h2>
+
+
+                    <div class="stat-label">
+                        Assignments
+                    </div>
+
+
+                    <div
+                        class="stat-note"
+                        style="color:#0284c7;"
+                    >
+                        Pending tasks
+                    </div>
+
+                </div>
+
+
+
+                <!-- MARKS -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon stat-purple">
+
+                        <i class="fa-solid fa-clipboard-check"></i>
+
+                    </div>
+
+
+                    <h2 class="stat-value">
+
+                        {{ marks|default(0) }}
+
+                    </h2>
+
+
+                    <div class="stat-label">
+                        Internal Marks
+                    </div>
+
+
+                    <div
+                        class="stat-note"
+                        style="color:#9333ea;"
+                    >
+                        Latest results
+                    </div>
+
+                </div>
+
+
+
+                <!-- ANNOUNCEMENTS -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon stat-red">
+
+                        <i class="fa-regular fa-bell"></i>
+
+                    </div>
+
+
+                    <h2 class="stat-value">
+                        4
+                    </h2>
+
+
+                    <div class="stat-label">
+                        Announcements
+                    </div>
+
+
+                    <div
+                        class="stat-note"
+                        style="color:#e11d48;"
+                    >
+                        Check updates
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 TOURNAMENT STATS
+            ================================================== -->
+
+            <section class="dashboard-card">
+
+
+                <div class="section-heading">
+
+                    <div
+                        class="section-heading-icon"
+                        style="
+                            background:#fff7ed;
+                            color:#f59e0b;
+                        "
+                    >
+
+                        <i class="fa-solid fa-ranking-star"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h2>
+                            Tournament Stats
+                        </h2>
+
+                        <p>
+                            Your competitive journey
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="tournament-stats">
+
+
+                    <div class="tournament-mini">
+
+                        <div class="tournament-mini-label">
+                            Enrolled
+                        </div>
+
+                        <div class="tournament-mini-value">
+
+                            {{ total_tournaments|default(0) }}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="tournament-mini">
+
+                        <div class="tournament-mini-label">
+                            Won
+                        </div>
+
+                        <div class="tournament-mini-value">
+
+                            {{ tournaments_won|default(0) }}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="tournament-mini">
+
+                        <div class="tournament-mini-label">
+                            Win Rate
+                        </div>
+
+                        <div class="tournament-mini-value">
+
+                            {{ tournament_win_rate|default(0) }}%
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <a
+                    href="{{ url_for('tournaments') }}"
+                    class="explore-button"
+                >
+
+                    <i class="fa-solid fa-trophy"></i>
+
+                    Explore Tournaments
+
+                    <i
+                        class="fa-solid fa-arrow-right"
+                        style="margin-left:auto;"
+                    ></i>
+
+                </a>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 QUICK ACCESS
+            ================================================== -->
+
+            <section class="dashboard-card">
+
+
+                <div class="section-heading">
+
+                    <div
+                        class="section-heading-icon"
+                        style="
+                            background:#fef9c3;
+                            color:#eab308;
+                        "
+                    >
+
+                        <i class="fa-solid fa-bolt"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h2>
+                            Quick Access
+                        </h2>
+
+                        <p>
+                            Frequently used sections
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="quick-grid">
+
+
+                    <a
+                        href="{{ url_for('student_attendance') }}"
+                        class="quick-button"
+                    >
+
+                        <i class="fa-solid fa-chart-pie"></i>
+
+                        Attendance
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('student_assignments') }}"
+                        class="quick-button"
+                    >
+
+                        <i class="fa-solid fa-file-signature"></i>
+
+                        Assignments
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('internal_marks') }}"
+                        class="quick-button"
+                    >
+
+                        <i class="fa-solid fa-square-poll-vertical"></i>
+
+                        Internal Marks
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('announcements') }}"
+                        class="quick-button"
+                    >
+
+                        <i class="fa-solid fa-bullhorn"></i>
+
+                        Announcements
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('tournaments') }}"
+                        class="quick-button tournament"
+                    >
+
+                        <i class="fa-solid fa-trophy"></i>
+
+                        Tournaments
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('profile') }}"
+                        class="quick-button"
+                    >
+
+                        <i
+                            class="fa-solid fa-user"
+                            style="color:#8b5cf6;"
+                        ></i>
+
+                        My Profile
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 MOTIVATION
+            ================================================== -->
+
+            <section class="quote-card">
+
+                <h3>
+                    Your journey matters.
+                </h3>
+
+
+                <p>
+
+                    Success is the sum of small efforts repeated
+                    every day. Stay focused, stay consistent,
+                    stay unstoppable.
+
+                </p>
+
+
+                <i
+                    class="fa-solid fa-quote-right quote-icon"
+                ></i>
+
+            </section>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     LIVE DATE & CLOCK
+========================================================= -->
+
+<script>
+
+function updateDashboardClock() {
+
+    const now = new Date();
+
+
+    const timeElement =
+        document.getElementById("clock");
+
+    const dateElement =
+        document.getElementById("todayDate");
+
+
+    if (timeElement) {
+
+        timeElement.textContent =
+            now.toLocaleTimeString(
+                [],
+                {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit"
+                }
+            );
+
+    }
+
+
+    if (dateElement) {
+
+        dateElement.textContent =
+            now.toLocaleDateString(
+                undefined,
+                {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+
+    }
+
+}
+
+
+updateDashboardClock();
+
+setInterval(
+    updateDashboardClock,
+    1000
+);
+
 </script>
+
 
 {% endblock %}
