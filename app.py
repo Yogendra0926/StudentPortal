@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 import pymysql
 import pymysql.cursors
@@ -7,6 +6,7 @@ from dotenv import load_dotenv
 import requests
 from flask import request, jsonify
 from zoneinfo import ZoneInfo
+from datetime import datetime, date
 
 
 load_dotenv()
@@ -426,7 +426,6 @@ def student_attendance():
 # =========================================================
 # TOURNAMENT MODULE
 # =========================================================
-
 @app.route('/tournaments')
 def tournaments():
 
@@ -784,50 +783,149 @@ def register_tournament(tournament_id):
 
 
     return redirect(url_for('tournaments'))
-@app.route('/assignments', methods=['GET', 'POST'])
+@app.route('/student/assignments', methods=['GET', 'POST'])
 def student_assignments():
-    if 'user_id' not in session or session['role'] != 'student':
+    if 'user_id' not in session or session.get('role') != 'student':
         return redirect(url_for('login'))
-        
+
     student_id = session['user_id']
+
     conn = get_db_connection()
     if conn is None:
         flash("Database Connection Failed!", "danger")
         return redirect(url_for("login"))
-    cursor = conn.cursor()
-    
-    if request.method == 'POST' and 'file' in request.files:
-        file = request.files['file']
-        assignment_id = request.form['assignment_id']
-        if file and file.filename != '':
-            filename = f"Student_{student_id}_Assign_{assignment_id}_{int(datetime.now().timestamp())}.pdf"
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            
-            cursor.execute("""
-                INSERT INTO assignment_submissions (assignment_id, student_id, submission_link)
-                VALUES (%s, %s, %s)
-            """, (assignment_id, student_id, f"uploads/{filename}"))
-            conn.commit()
-            flash("Assignment submitted successfully!", "success")
-            return redirect(url_for('student_assignments'))
 
-    # Fetch assignments and student's submission status
-    cursor.execute("""
-        SELECT a.*, s.submission_id, s.submission_link, s.marks_awarded, s.submitted_at
-        FROM assignments a
-        LEFT JOIN assignment_submissions s ON a.id = s.assignment_id AND s.student_id = %s
-        ORDER BY a.deadline ASC
-    """, (student_id,))
-    assignments = cursor.fetchall()
-    
-    cursor.close()
-    conn.close()
+    cursor = conn.cursor()
+
+    try:
+        # Handle assignment PDF upload
+        if request.method == 'POST' and 'file' in request.files:
+            file = request.files['file']
+            assignment_id = request.form.get('assignment_id')
+
+            if not assignment_id:
+                flash("Invalid assignment.", "danger")
+                return redirect(url_for('student_assignments'))
+
+            if not file or file.filename == '':
+                flash("Please select a PDF file.", "warning")
+                return redirect(url_for('student_assignments'))
+
+            if not file.filename.lower().endswith('.pdf'):
+                flash("Only PDF files are allowed.", "danger")
+                return redirect(url_for('student_assignments'))
+
+            # Verify the assignment exists and its deadline has not passed
+            cursor.execute("""
+                SELECT id, deadline
+                FROM assignments
+                WHERE id = %s
+            """, (assignment_id,))
+
+            assignment = cursor.fetchone()
+
+            if not assignment:
+                flash("Assignment not found.", "warning")
+                return redirect(url_for('student_assignments'))
+
+            deadline = assignment['deadline']
+
+            if deadline and deadline < datetime.now():
+                flash("The submission deadline has passed.", "danger")
+                return redirect(url_for('student_assignments'))
+
+            # Prevent a second submission if one already exists
+            cursor.execute("""
+                SELECT submission_id
+                FROM assignment_submissions
+                WHERE assignment_id = %s AND student_id = %s
+                LIMIT 1
+            """, (assignment_id, student_id))
+
+            existing_submission = cursor.fetchone()
+
+            if existing_submission:
+                flash("You have already submitted this assignment.", "warning")
+                return redirect(url_for('student_assignments'))
+
+            filename = (
+                f"Student_{student_id}_Assign_{assignment_id}_"
+                f"{int(datetime.now().timestamp())}.pdf"
+            )
+
+            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+            file_path = os.path.join(
+                app.config['UPLOAD_FOLDER'],
+                filename
+            )
+
+            file.save(file_path)
+
+            try:
+                cursor.execute("""
+                    INSERT INTO assignment_submissions
+                        (assignment_id, student_id, submission_link)
+                    VALUES (%s, %s, %s)
+                """, (
+                    assignment_id,
+                    student_id,
+                    f"uploads/{filename}"
+                ))
+
+                conn.commit()
+                flash("Assignment submitted successfully!", "success")
+
+            except Exception:
+                conn.rollback()
+
+                # Remove the saved file if the database insert failed
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                app.logger.exception("Failed to save assignment submission")
+                flash("Could not save your submission.", "danger")
+            return redirect(url_for('student_assignments'))
+        # Fetch every assignment and only this student's latest submission
+        cursor.execute("""
+    SELECT
+        a.*,
+        s.submission_id,
+        s.submission_link,
+        s.marks_awarded,
+        s.submitted_at
+    FROM assignments AS a
+    LEFT JOIN (
+        SELECT
+            assignment_id,
+            student_id,
+            MAX(submission_id) AS latest_submission_id
+        FROM assignment_submissions
+        WHERE student_id = %s
+        GROUP BY assignment_id, student_id
+    ) AS latest
+        ON latest.assignment_id = a.id
+    LEFT JOIN assignment_submissions AS s
+        ON s.submission_id = latest.latest_submission_id
+    ORDER BY a.deadline ASC
+""", (student_id,))
+
+        assignments = cursor.fetchall()
+
+    except Exception:
+        conn.rollback()
+        app.logger.exception("Error loading student assignments")
+        flash("Could not load assignments. Please try again.", "danger")
+        assignments = []
+
+    finally:
+        cursor.close()
+        conn.close()
+
     return render_template(
-    "student_assignments.html",
-    assignments=assignments,
-    now=datetime.now()
-)
+        "student_assignments.html",
+        assignments=assignments,
+        now=datetime.now()
+    )
 @app.route("/chatbot", methods=["GET", "POST"])
 def chatbot():
 
@@ -1882,64 +1980,200 @@ def serve_file(filename):
 from datetime import datetime
 from flask import render_template, request, redirect, url_for, session, flash
 
+
+
+
+
 @app.route('/admin', methods=['GET'])
 def admin_portal():
+
     if 'user_id' not in session or session.get('role') != 'admin':
         return redirect(url_for('login'))
-        
+
     conn = get_db_connection()
+
     if conn is None:
         flash("Database Connection Failed!", "danger")
         return redirect(url_for("login"))
-    
-    # Use DictCursor if available so template properties (e.g. student.id, student.name) work seamlessly
-    cursor = conn.cursor()
-    
-    try:
-        # Fetch students for attendance tab
-        cursor.execute("SELECT id, name FROM users WHERE role = 'student'")
-        students = cursor.fetchall()
-        
-        # Fetch assignments for review tab
-        cursor.execute("SELECT * FROM assignments ORDER BY created_at DESC")
-        assignments = cursor.fetchall()
-        
-        # Selected assignment submissions for grading
-        selected_assign_id = request.args.get('assign_id')
-        submissions = []
-        if selected_assign_id:
-            cursor.execute("""
-                SELECT s.*, u.name, a.max_marks 
-                FROM assignment_submissions s
-                JOIN users u ON s.student_id = u.id
-                JOIN assignments a ON s.assignment_id = a.id
-                WHERE s.assignment_id = %s
-            """, (selected_assign_id,))
-            submissions = cursor.fetchall()
-            
-        # Fetch quizzes for the Manage Quizzes tab
-        cursor.execute("SELECT * FROM quizzes ORDER BY created_at DESC")
-        admin_quizzes = cursor.fetchall()
 
-    except Exception as e:
-        flash(f"An error occurred while fetching data: {str(e)}", "danger")
-        students, assignments, submissions, admin_quizzes = [], [], [], []
+    cursor = conn.cursor()
+
+    students = []
+    assignments = []
+    submissions = []
+    admin_quizzes = []
+    phase2_students = []
+    assignment_courses = []
+
+    phase2_courses = [
+        "CSD0201",
+        "CSE0212[T]",
+        "CSE0212[P]",
+        "CSE0213[T]",
+        "CSE0213[P]",
+        "CSL0203[T]",
+        "CSL0203[P]",
+        "AP0201"
+    ]
+
+    selected_assign_id = request.args.get('assign_id')
+    selected_phase2_course = request.args.get(
+        'phase2_course_code', ''
+    )
+    selected_phase2_date = request.args.get(
+        'phase2_date', datetime.now().strftime('%Y-%m-%d')
+    )
+
+    current_date = datetime.now().strftime('%Y-%m-%d')
+
+    try:
+        # PHASE-2 ATTENDANCE
+        if request.args.get('attendance_tab') == 'phase2_attendance':
+
+            if selected_phase2_course not in phase2_courses:
+                flash("Please select a valid Phase-2 course.", "warning")
+
+            else:
+                try:
+                    date.fromisoformat(selected_phase2_date)
+                except (ValueError, TypeError):
+                    selected_phase2_date = current_date
+
+                cursor.execute("""
+                    SELECT
+                        u.id,
+                        u.name,
+                        COALESCE(pa.status, 'A') AS status
+                    FROM users AS u
+                    LEFT JOIN phase2_attendance AS pa
+                        ON pa.student_id = u.id
+                        AND pa.course_code = %s
+                        AND pa.attendance_date = %s
+                    WHERE u.role = 'student'
+                    ORDER BY u.name
+                """, (
+                    selected_phase2_course,
+                    selected_phase2_date
+                ))
+
+                phase2_students = cursor.fetchall()
+
+        # PHASE-1 STUDENTS
+        try:
+            cursor.execute("""
+                SELECT id, name
+                FROM users
+                WHERE role = 'student'
+                ORDER BY name
+            """)
+            students = cursor.fetchall()
+
+        except Exception:
+            app.logger.exception("Failed to load Phase-1 students")
+
+        # ASSIGNMENT COURSES: PHASE-1 + PHASE-2
+        # Start with all configured Phase-2 courses so they
+        # appear even before attendance is recorded.
+        assignment_courses = list(phase2_courses)
+
+        try:
+            cursor.execute("""
+                SELECT course_code
+                FROM attendance_phase1
+                WHERE course_code IS NOT NULL
+                  AND course_code != ''
+
+                UNION
+
+                SELECT course_code
+                FROM phase2_attendance
+                WHERE course_code IS NOT NULL
+                  AND course_code != ''
+
+                ORDER BY course_code
+            """)
+
+            attendance_courses = [
+                row['course_code']
+                for row in cursor.fetchall()
+            ]
+
+            # Merge and remove duplicates
+            assignment_courses = sorted(
+                set(assignment_courses + attendance_courses)
+            )
+
+        except Exception:
+            app.logger.exception(
+                "Failed to load attendance course codes"
+            )
+
+        # EXISTING ASSIGNMENTS
+        try:
+            cursor.execute("""
+                SELECT *
+                FROM assignments
+                ORDER BY created_at DESC
+            """)
+            assignments = cursor.fetchall()
+
+        except Exception:
+            app.logger.exception("Failed to load assignments")
+
+        # EXISTING SUBMISSIONS
+        if selected_assign_id:
+            try:
+                cursor.execute("""
+                    SELECT s.*, u.name, a.max_marks
+                    FROM assignment_submissions AS s
+                    JOIN users AS u ON s.student_id = u.id
+                    JOIN assignments AS a ON s.assignment_id = a.id
+                    WHERE s.assignment_id = %s
+                """, (selected_assign_id,))
+
+                submissions = cursor.fetchall()
+
+            except Exception:
+                app.logger.exception("Failed to load submissions")
+
+        # EXISTING QUIZZES
+        try:
+            cursor.execute("""
+                SELECT *
+                FROM quizzes
+                ORDER BY created_at DESC
+            """)
+            admin_quizzes = cursor.fetchall()
+
+        except Exception:
+            app.logger.exception("Failed to load quizzes")
+
+    except Exception:
+        app.logger.exception("Error loading admin portal")
+        flash(
+            "Could not load admin portal data. "
+            "Check the Flask terminal for details.",
+            "danger"
+        )
+
     finally:
         cursor.close()
         conn.close()
-    
-    # Pass current_date explicitly to prevent Jinja evaluation issues, and pass datetime module safely
-    current_date = datetime.now().strftime('%Y-%m-%d')
-    
+
     return render_template(
-        'admin_portal.html', 
-        students=students, 
-        assignments=assignments, 
-        submissions=submissions, 
-        selected_assign_id=selected_assign_id, 
-        admin_quizzes=admin_quizzes, 
+        'admin_portal.html',
+        students=students,
+        assignments=assignments,
+        submissions=submissions,
+        selected_assign_id=selected_assign_id,
+        admin_quizzes=admin_quizzes,
         datetime=datetime,
-        current_date=current_date
+        current_date=current_date,
+        phase2_courses=phase2_courses,
+        phase2_students=phase2_students,
+        selected_phase2_course=selected_phase2_course,
+        selected_phase2_date=selected_phase2_date,
+        assignment_courses=assignment_courses
     )
 
 @app.route('/admin/save_attendance', methods=['POST'])
@@ -1973,6 +2207,161 @@ def save_attendance():
     flash("Daily Attendance saved successfully!", "success")
     return redirect(url_for('admin_portal'))
 
+
+@app.route('/admin/phase2-attendance/save', methods=['POST'])
+def save_phase2_attendance():
+
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    course_code = request.form.get('course_code', '').strip()
+    attendance_date = request.form.get('attendance_date', '').strip()
+
+    allowed_courses = {
+        "CSD0201",
+        "CSE0212[T]",
+        "CSE0212[P]",
+        "CSE0213[T]",
+        "CSE0213[P]",
+        "CSL0203[T]",
+        "CSL0203[P]",
+        "AP0201"
+    }
+
+    if course_code not in allowed_courses:
+        flash("Invalid Phase-2 course selected.", "danger")
+        return redirect(url_for('admin_portal'))
+
+    try:
+        date.fromisoformat(attendance_date)
+    except (ValueError, TypeError):
+        flash("Invalid attendance date.", "danger")
+        return redirect(url_for('admin_portal'))
+
+    conn = get_db_connection()
+
+    if conn is None:
+        flash("Database connection failed!", "danger")
+        return redirect(url_for('admin_portal'))
+
+    cursor = conn.cursor()
+
+    try:
+        # Verify the actual database being used.
+        cursor.execute("SELECT DATABASE() AS db_name")
+        db_info = cursor.fetchone()
+        app.logger.info("Attendance database: %s", db_info)
+
+        # Explicitly use the database shown in MySQL Workbench.
+        cursor.execute("""
+            SELECT id
+            FROM student_portal.users
+            WHERE role = 'student'
+        """)
+        students = cursor.fetchall()
+
+        if not students:
+            flash("No students found in student_portal.users.", "warning")
+            return redirect(url_for(
+                'admin_portal',
+                attendance_tab='phase2_attendance',
+                phase2_course_code=course_code,
+                phase2_date=attendance_date
+            ))
+
+        marked_by = session.get('name', 'Admin')
+        inserted = 0
+        updated = 0
+
+        for student in students:
+            student_id = student['id']
+
+            status = (
+                'P'
+                if request.form.get(f'present_{student_id}') == '1'
+                else 'A'
+            )
+
+            cursor.execute("""
+                SELECT attendance_id
+                FROM student_portal.phase2_attendance
+                WHERE student_id = %s
+                  AND course_code = %s
+                  AND attendance_date = %s
+                LIMIT 1
+            """, (student_id, course_code, attendance_date))
+
+            existing = cursor.fetchone()
+
+            if existing:
+                cursor.execute("""
+                    UPDATE student_portal.phase2_attendance
+                    SET status = %s,
+                        marked_by = %s
+                    WHERE attendance_id = %s
+                """, (
+                    status,
+                    marked_by,
+                    existing['attendance_id']
+                ))
+                updated += 1
+
+            else:
+                cursor.execute("""
+                    INSERT INTO student_portal.phase2_attendance
+                    (student_id, course_code, status,
+                     marked_by, attendance_date)
+                    VALUES (%s, %s, %s, %s, %s)
+                """, (
+                    student_id,
+                    course_code,
+                    status,
+                    marked_by,
+                    attendance_date
+                ))
+                inserted += 1
+
+        conn.commit()
+
+        # Verify the records after committing.
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM student_portal.phase2_attendance
+            WHERE course_code = %s
+              AND attendance_date = %s
+        """, (course_code, attendance_date))
+
+        result = cursor.fetchone()
+        total = result['total']
+
+        app.logger.info(
+            "Phase-2 attendance: course=%s date=%s inserted=%s "
+            "updated=%s verified_records=%s",
+            course_code, attendance_date, inserted, updated, total
+        )
+
+        flash(
+            f"Attendance saved. New records: {inserted}, "
+            f"updated: {updated}, verified records: {total}.",
+            "success"
+        )
+
+    except Exception:
+        conn.rollback()
+        app.logger.exception("Phase-2 attendance save failed")
+        flash("Attendance save failed. Check the Flask terminal.", "danger")
+
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for(
+        'admin_portal',
+        attendance_tab='phase2_attendance',
+        phase2_course_code=course_code,
+        phase2_date=attendance_date
+    ))
+
 @app.route('/admin/create_assignment', methods=['POST'])
 def create_assignment():
     if 'user_id' not in session or session['role'] != 'admin':
@@ -1999,7 +2388,45 @@ def create_assignment():
     
     flash("New Assignment published!", "success")
     return redirect(url_for('admin_portal'))
+@app.route('/assignment/<int:assignment_id>/task')
+def view_assignment_task(assignment_id):
+    if 'user_id' not in session or session.get('role') != 'student':
+        return redirect(url_for('login'))
 
+    conn = get_db_connection()
+
+    if conn is None:
+        flash("Database Connection Failed!", "danger")
+        return redirect(url_for('student_assignments'))
+
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT id, title, course_code, description, max_marks, deadline
+            FROM assignments
+            WHERE id = %s
+        """, (assignment_id,))
+
+        assignment = cursor.fetchone()
+
+        if not assignment:
+            flash("Assignment not found.", "warning")
+            return redirect(url_for('student_assignments'))
+
+        return render_template(
+            'assignment_task.html',
+            assignment=assignment
+        )
+
+    except Exception:
+        app.logger.exception("Unable to load assignment task")
+        flash("Could not load assignment details.", "danger")
+        return redirect(url_for('student_assignments'))
+
+    finally:
+        cursor.close()
+        conn.close()
 @app.route('/admin/grade_submission', methods=['POST'])
 def grade_submission():
     if 'user_id' not in session or session['role'] != 'admin':

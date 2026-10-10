@@ -78,10 +78,17 @@
 
             </div>
 
-            <div class="description">
+                        <div class="description">
+                {{ assign.description or 'No instructions provided.' }}
+            </div>
 
-                {{ assign.description }}
-
+            <!-- View Task Button -->
+            <div class="task-action">
+                <a href="{{ url_for('view_assignment_task', assignment_id=assign.id) }}"
+                   class="view-btn">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    View Full Task
+                </a>
             </div>
 
             {% if assign.submission_id %}
