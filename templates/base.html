@@ -321,6 +321,12 @@
                     <a href="{{ url_for('home') }}" class="{{ 'active' if request.endpoint=='home' }}">
                         <i class="fa-solid fa-house"></i> Dashboard
                     </a>
+                    
+<a href="{{ url_for('fine') }}" class="nav-link">
+    <i class="fas fa-file-invoice-dollar"></i>
+    <span>Fines & Dues</span>
+</a>
+
                     <a href="{{ url_for('profile') }}" class="{{ 'active' if request.endpoint=='profile' else '' }}">
                         <i class="fa-regular fa-id-badge"></i> Student Profile
                     </a>
@@ -371,6 +377,9 @@
     <i class="fa-solid fa-trophy"></i>
     Tournaments
 
+</a>
+<a href="{{ url_for('admin_phase_coins') }}">
+    🪙 Phase Coins Management
 </a>
                 {% endif %}
             </div>

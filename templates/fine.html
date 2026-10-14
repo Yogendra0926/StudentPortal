@@ -1,0 +1,445 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Fines | Student Portal</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 28px 16px;
+            background: #f4f7fb;
+            color: #1e293b;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .muted {
+            color: #64748b;
+            margin: 0;
+        }
+
+        .back {
+            text-decoration: none;
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        .back:hover {
+            text-decoration: underline;
+        }
+
+        .wallet {
+            background: linear-gradient(135deg, #0f766e, #115e59);
+            color: white;
+            padding: 26px;
+            border-radius: 16px;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 22px #0f766e18;
+        }
+
+        .wallet-label {
+            margin: 0 0 10px;
+            opacity: .9;
+            font-size: 15px;
+        }
+
+        .wallet-balance {
+            font-size: 36px;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .wallet-note {
+            margin: 10px 0 0;
+            font-size: 13px;
+            opacity: .9;
+        }
+
+        .summary {
+            background: linear-gradient(135deg, #1d4ed8, #4338ca);
+            color: white;
+            padding: 26px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 22px #1e40af18;
+        }
+
+        .summary p {
+            margin: 0 0 12px;
+            opacity: .9;
+        }
+
+        .amount {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .summary small {
+            display: block;
+            margin-top: 12px;
+            opacity: .9;
+        }
+
+        .section-title {
+            margin: 0 0 16px;
+            font-size: 21px;
+        }
+
+        .fine-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 13px;
+            padding: 20px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 3px 12px #0f172a06;
+        }
+
+        .fine-info {
+            min-width: 0;
+        }
+
+        .fine-card h3 {
+            margin: 0 0 9px;
+            font-size: 17px;
+        }
+
+        .description {
+            color: #64748b;
+            line-height: 1.5;
+            margin: 0 0 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .date {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .right {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .fine-amount {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .pending {
+            color: #b45309;
+            background: #fef3c7;
+        }
+
+        .paid {
+            color: #15803d;
+            background: #dcfce7;
+        }
+
+        .waived {
+            color: #475569;
+            background: #e2e8f0;
+        }
+
+        .pay-button {
+            display: block;
+            width: 100%;
+            margin-top: 12px;
+            padding: 11px 15px;
+            border: none;
+            border-radius: 8px;
+            background: #0f766e;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s;
+        }
+
+        .pay-button:hover {
+            background: #115e59;
+        }
+
+        .pay-button:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        .insufficient {
+            margin: 9px 0 0;
+            font-size: 12px;
+            color: #b45309;
+        }
+
+        .empty {
+            text-align: center;
+            background: white;
+            border: 1px solid #dcfce7;
+            border-radius: 16px;
+            padding: 45px 20px;
+        }
+
+        .check {
+            font-size: 45px;
+            margin-bottom: 12px;
+        }
+
+        .empty h2 {
+            color: #15803d;
+            margin: 0 0 10px;
+        }
+
+        .empty p {
+            color: #64748b;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .flash-message {
+            padding: 12px 15px;
+            margin-bottom: 14px;
+            border-radius: 8px;
+            background: #e0f2fe;
+            color: #075985;
+            overflow-wrap: anywhere;
+        }
+
+        .flash-message.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .flash-message.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .flash-message.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .footer-note {
+            margin-top: 20px;
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 550px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .wallet-balance,
+            .amount {
+                font-size: 30px;
+            }
+
+            .fine-card {
+                align-items: flex-start;
+                padding: 16px;
+                gap: 12px;
+            }
+
+            .fine-amount {
+                font-size: 18px;
+            }
+
+            .right {
+                min-width: 112px;
+            }
+
+            .pay-button {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .fine-card {
+                flex-direction: column;
+            }
+
+            .right {
+                width: 100%;
+                text-align: left;
+            }
+
+            .pay-button {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="header">
+        <div>
+            <h1>My Fines</h1>
+            <p class="muted">
+                Manage your outstanding dues using Phase Coins.
+            </p>
+        </div>
+
+        <a class="back" href="{{ url_for('home') }}">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash-message {{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+    <!-- Phase Coins wallet -->
+    <div class="wallet">
+        <p class="wallet-label">Your Phase Coins Balance</p>
+
+        <div class="wallet-balance">
+            🪙 {{ wallet_balance|default(0) }} Coins
+        </div>
+
+        <p class="wallet-note">
+            1 Phase Coin = ₹1
+        </p>
+    </div>
+
+    <!-- Outstanding dues -->
+    <div class="summary">
+        <p>Total Outstanding Dues</p>
+
+        <div class="amount">
+            ₹{{ "%.2f"|format(total_due|default(0)) }}
+        </div>
+
+        <small>
+            {{ pending_count|default(0) }} pending fine(s)
+        </small>
+    </div>
+
+    <h2 class="section-title">Fine Details</h2>
+
+    {% if fines %}
+        {% for fine in fines %}
+        <div class="fine-card">
+
+            <div class="fine-info">
+                <h3>{{ fine.fine_type }}</h3>
+
+                <p class="description">
+                    {{ fine.description or 'No description provided.' }}
+                </p>
+
+                <span class="date">
+                    Imposed on:
+                    {{ fine.imposed_date.strftime('%d %b %Y')
+                       if fine.imposed_date else 'N/A' }}
+                </span>
+            </div>
+
+            <div class="right">
+                <div class="fine-amount">
+                    ₹{{ "%.2f"|format(fine.amount) }}
+                </div>
+
+                <span class="status {{ fine.status|lower }}">
+                    {{ fine.status|title }}
+                </span>
+
+                {% if fine.status|lower == 'pending' %}
+
+                    {% if wallet_balance|default(0)|int >= fine.amount|int
+                          and fine.amount|int > 0 %}
+
+                        <form method="POST"
+                              action="{{ url_for(
+                                  'pay_fine_with_coins',
+                                  fine_id=fine.id
+                              ) }}"
+                              onsubmit="return confirm(
+                                  'Pay this fine using Phase Coins?'
+                              );">
+
+                            <button type="submit" class="pay-button">
+                                Pay with Coins 🪙
+                            </button>
+                        </form>
+
+                    {% else %}
+                        <p class="insufficient">
+                            Insufficient coins
+                        </p>
+                    {% endif %}
+
+                {% endif %}
+            </div>
+
+        </div>
+        {% endfor %}
+
+        <p class="footer-note">
+            Each fine is paid separately. Coins are deducted only after
+            the server successfully processes your payment.
+        </p>
+
+    {% else %}
+        <div class="empty">
+            <div class="check">✓</div>
+            <h2>No Dues — All Clear!</h2>
+            <p>
+                You currently have no fines imposed against your account.
+                Keep up the good work!
+            </p>
+        </div>
+    {% endif %}
+
+</div>
+</body>
+</html>

@@ -9,6 +9,8 @@ from zoneinfo import ZoneInfo
 from datetime import datetime, date
 
 
+
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -18,6 +20,16 @@ app.secret_key = os.getenv("SECRET_KEY")
 
 # Keep your original upload folder for other features
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads')
+
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "").strip()
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "").strip()
+
+razorpay_client = (
+    razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+    if RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET
+    else None
+)
+
 
 # Create both directories if they don't exist
 os.makedirs(app.config['STUDY_MATERIALS_FOLDER'], exist_ok=True)
@@ -1076,6 +1088,435 @@ def chatbot():
         return jsonify({
             "error": "Something went wrong."
         }), 500
+
+from flask import render_template, session, redirect, url_for, flash
+from decimal import Decimal
+
+
+# =========================================================
+# xS + RAZORPAY TEST PAYMENT INTEGRATION
+# Uses existing PyMySQL get_db_connection()
+# =========================================================
+
+def payment_json_error(message, status_code=400):
+    return jsonify({"success": False, "error": message}), status_code
+
+
+from flask import request, redirect, url_for, session, flash
+from decimal import Decimal
+
+from decimal import Decimal
+from flask import render_template, redirect, url_for, session, flash
+
+
+@app.route('/fine')
+def fine():
+    # Allow only logged-in students
+    if 'user_id' not in session or session.get('role') != 'student':
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+    conn = get_db_connection()
+
+    if conn is None:
+        flash("Database connection failed.", "danger")
+        return redirect(url_for('home'))
+
+    cursor = conn.cursor()
+
+    try:
+        # Fetch all fines belonging to this student
+        cursor.execute("""
+            SELECT id, fine_type, description, amount,
+                   imposed_date, status
+            FROM fines
+            WHERE user_id = %s
+            ORDER BY imposed_date DESC, id DESC
+        """, (user_id,))
+
+        fines = cursor.fetchall()
+
+        # Calculate outstanding dues from pending fines only
+        total_due = sum(
+            (
+                Decimal(str(item['amount']))
+                for item in fines
+                if str(item['status']).strip().lower() == 'pending'
+            ),
+            Decimal('0.00')
+        )
+
+        pending_count = sum(
+            1 for item in fines
+            if str(item['status']).strip().lower() == 'pending'
+        )
+
+        # Fetch Phase Coins balance
+        cursor.execute("""
+            SELECT balance
+            FROM phase_coin_wallets
+            WHERE user_id = %s
+        """, (user_id,))
+
+        wallet = cursor.fetchone()
+        wallet_balance = wallet['balance'] if wallet else 0
+
+        return render_template(
+            'fine.html',
+            fines=fines,
+            total_due=total_due,
+            pending_count=pending_count,
+            wallet_balance=wallet_balance
+        )
+
+    except Exception:
+        app.logger.exception("Unable to load student fines")
+        flash("Unable to load your fines. Please try again.", "danger")
+        return redirect(url_for('home'))
+
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/fine/<int:fine_id>/pay-with-coins', methods=['POST'])
+def pay_fine_with_coins(fine_id):
+    if (
+        'user_id' not in session
+        or session.get('role') != 'student'
+    ):
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+
+    conn = get_db_connection()
+
+    if conn is None:
+        flash("Database connection failed.", "danger")
+        return redirect(url_for('fine'))
+
+    cursor = conn.cursor()
+
+    try:
+        # Start transaction
+        conn.begin()
+
+        # 1. Find and lock the requested fine
+        cursor.execute("""
+            SELECT id, user_id, amount, status
+            FROM fines
+            WHERE id = %s
+            FOR UPDATE
+        """, (fine_id,))
+
+        fine_record = cursor.fetchone()
+
+        if not fine_record:
+            conn.rollback()
+            flash("Fine ID does not exist in the database.", "danger")
+            return redirect(url_for('fine'))
+
+        # 2. Verify the fine belongs to the logged-in student
+        if int(fine_record['user_id']) != int(user_id):
+            conn.rollback()
+            flash(
+                "This fine does not belong to your account.",
+                "danger"
+            )
+            return redirect(url_for('fine'))
+
+        # 3. Ensure the fine is pending
+        if str(fine_record['status']).strip().lower() != 'pending':
+            conn.rollback()
+            flash("This fine is not pending payment.", "warning")
+            return redirect(url_for('fine'))
+
+        # 4. Calculate required Phase Coins
+        amount = Decimal(str(fine_record['amount']))
+
+        if (
+            not amount.is_finite()
+            or amount <= 0
+            or amount != amount.to_integral_value()
+        ):
+            conn.rollback()
+            flash(
+                "The fine must have a positive whole-rupee amount.",
+                "danger"
+            )
+            return redirect(url_for('fine'))
+
+        coins_required = int(amount)
+
+        # 5. Lock the student's wallet
+        cursor.execute("""
+            SELECT balance
+            FROM phase_coin_wallets
+            WHERE user_id = %s
+            FOR UPDATE
+        """, (user_id,))
+
+        wallet = cursor.fetchone()
+
+        if not wallet:
+            conn.rollback()
+            flash(
+                "Your Phase Coins wallet was not found.",
+                "danger"
+            )
+            return redirect(url_for('fine'))
+
+        if int(wallet['balance']) < coins_required:
+            conn.rollback()
+            flash(
+                f"Insufficient Phase Coins. You need {coins_required} coins.",
+                "warning"
+            )
+            return redirect(url_for('fine'))
+
+        # 6. Deduct coins safely
+        cursor.execute("""
+            UPDATE phase_coin_wallets
+            SET balance = balance - %s
+            WHERE user_id = %s
+              AND balance >= %s
+        """, (coins_required, user_id, coins_required))
+
+        if cursor.rowcount != 1:
+            conn.rollback()
+            flash(
+                "Unable to deduct coins. Please try again.",
+                "danger"
+            )
+            return redirect(url_for('fine'))
+
+        # 7. Record the debit in transaction history
+        cursor.execute("""
+            INSERT INTO phase_coin_transactions
+                (
+                    user_id,
+                    transaction_type,
+                    amount,
+                    description,
+                    reference_type,
+                    reference_id
+                )
+            VALUES (%s, 'debit', %s, %s, 'fine', %s)
+        """, (
+            user_id,
+            coins_required,
+            f"Payment for fine #{fine_id}",
+            fine_id
+        ))
+
+        # 8. Update status using the exact ENUM value
+        cursor.execute("""
+            UPDATE fines
+            SET status = 'Paid'
+            WHERE id = %s
+              AND user_id = %s
+              AND status = 'Pending'
+        """, (fine_id, user_id))
+
+        if cursor.rowcount != 1:
+            conn.rollback()
+            flash(
+                "Fine status changed. Please refresh and try again.",
+                "warning"
+            )
+            return redirect(url_for('fine'))
+
+        # 9. Commit all changes together
+        conn.commit()
+
+        flash(
+            f"Fine paid successfully using {coins_required} Phase Coins!",
+            "success"
+        )
+
+    except Exception:
+        conn.rollback()
+        app.logger.exception("Phase Coins fine payment failed")
+        flash(
+            "Payment failed. Please check your wallet and fine status.",
+            "danger"
+        )
+
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('fine'))
+
+@app.route('/admin/phase-coins/credit', methods=['POST'])
+def admin_credit_phase_coins():
+    if (
+        'user_id' not in session
+        or session.get('role') != 'admin'
+    ):
+        flash("Admin access required.", "danger")
+        return redirect(url_for('login'))
+
+    student_id = request.form.get('user_id', type=int)
+    amount_text = request.form.get('amount_rupees', '').strip()
+    payment_reference = (
+        request.form.get('payment_reference', '').strip() or None
+    )
+    notes = request.form.get('notes', '').strip() or None
+
+    if not student_id or not amount_text:
+        flash("Select a student and enter the amount.", "danger")
+        return redirect(url_for('admin_phase_coins'))
+
+    try:
+        amount_rupees = Decimal(amount_text)
+
+        if (
+            not amount_rupees.is_finite()
+            or amount_rupees <= 0
+            or amount_rupees != amount_rupees.to_integral_value()
+        ):
+            raise ValueError("Enter a positive whole-rupee amount.")
+
+        coins = int(amount_rupees)
+
+        if coins > 2_000_000_000:
+            raise ValueError("Amount exceeds the permitted limit.")
+
+    except Exception:
+        flash("Enter a valid positive whole-rupee amount.", "danger")
+        return redirect(url_for('admin_phase_coins'))
+
+    conn = get_db_connection()
+
+    if conn is None:
+        flash("Database connection failed.", "danger")
+        return redirect(url_for('admin_phase_coins'))
+
+    cursor = conn.cursor()
+
+    try:
+        conn.begin()
+
+        # Confirm the selected account is a student.
+        cursor.execute("""
+            SELECT id
+            FROM users
+            WHERE id = %s AND LOWER(role) = 'student'
+            FOR UPDATE
+        """, (student_id,))
+
+        if not cursor.fetchone():
+            conn.rollback()
+            flash("Student account not found.", "danger")
+            return redirect(url_for('admin_phase_coins'))
+
+        # Create a wallet if this student has none.
+        cursor.execute("""
+            INSERT INTO phase_coin_wallets (user_id, balance)
+            VALUES (%s, 0)
+            ON DUPLICATE KEY UPDATE user_id = VALUES(user_id)
+        """, (student_id,))
+
+        cursor.execute("""
+            SELECT balance
+            FROM phase_coin_wallets
+            WHERE user_id = %s
+            FOR UPDATE
+        """, (student_id,))
+
+        wallet = cursor.fetchone()
+
+        if wallet['balance'] + coins > 2_000_000_000:
+            conn.rollback()
+            flash("Wallet balance would exceed the permitted limit.", "danger")
+            return redirect(url_for('admin_phase_coins'))
+
+        cursor.execute("""
+            UPDATE phase_coin_wallets
+            SET balance = balance + %s
+            WHERE user_id = %s
+        """, (coins, student_id))
+
+        # Record the real-money receipt.
+        cursor.execute("""
+            INSERT INTO phase_coin_topups
+                (user_id, amount_rupees, coins_credited,
+                 payment_reference, received_by, notes)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (
+            student_id,
+            amount_rupees,
+            coins,
+            payment_reference,
+            session['user_id'],
+            notes
+        ))
+
+        topup_id = cursor.lastrowid
+
+        # Keep an auditable wallet ledger entry.
+        cursor.execute("""
+            INSERT INTO phase_coin_transactions
+                (user_id, transaction_type, amount, description,
+                 reference_type, reference_id, admin_id)
+            VALUES (%s, 'credit', %s, %s, 'topup', %s, %s)
+        """, (
+            student_id,
+            coins,
+            f"Admin credit: {coins} Phase Coins",
+            topup_id,
+            session['user_id']
+        ))
+
+        conn.commit()
+        flash(
+            f"{coins} Phase Coins credited successfully.",
+            "success"
+        )
+
+    except Exception:
+        conn.rollback()
+        app.logger.exception("Phase Coins credit failed")
+        flash("Could not credit coins. Check the server logs.", "danger")
+
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('admin_phase_coins'))
+@app.route('/admin/phase-coins')
+def admin_phase_coins():
+    if (
+        'user_id' not in session
+        or session.get('role') != 'admin'
+    ):
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+
+    if conn is None:
+        flash("Database connection failed.", "danger")
+        return redirect(url_for('home'))
+
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT id, name
+            FROM users
+            WHERE LOWER(role) = 'student'
+            ORDER BY name
+        """)
+        students = cursor.fetchall()
+
+        return render_template(
+            'admin_phase_coins.html',
+            students=students
+        )
+    finally:
+        cursor.close()
+        conn.close()
+
 @app.route('/repeater')
 def repeater_status():
     # Security check: User logged in hai ya nahi

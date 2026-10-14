@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manage Phase Coins</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1e293b;
+            padding: 24px 12px;
+            margin: 0;
+        }
+        .card {
+            max-width: 520px;
+            margin: 25px auto;
+            background: white;
+            padding: 24px;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px #0f172a12;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 16px;
+        }
+        input, select, textarea, button {
+            width: 100%;
+            padding: 11px;
+            margin-top: 7px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font: inherit;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 22px;
+        }
+        .muted { color: #64748b; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Manage Phase Coins</h1>
+    <p class="muted">₹1 received = 1 Phase Coin credited.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    <form method="POST"
+          action="{{ url_for('admin_credit_phase_coins') }}">
+
+        <label for="user_id">Select Student</label>
+        <select id="user_id" name="user_id" required>
+            <option value="">Choose a student</option>
+            {% for student in students %}
+                <option value="{{ student.id }}">
+                    {{ student.name }} (ID: {{ student.id }})
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="amount_rupees">Amount Received (₹)</label>
+        <input id="amount_rupees"
+               type="number"
+               name="amount_rupees"
+               min="1"
+               step="1"
+               placeholder="e.g. 100"
+               required>
+
+        <label for="payment_reference">Payment Reference</label>
+        <input id="payment_reference"
+               type="text"
+               name="payment_reference"
+               maxlength="100"
+               placeholder="Receipt or transaction reference">
+
+        <label for="notes">Notes</label>
+        <textarea id="notes"
+                  name="notes"
+                  maxlength="255"
+                  rows="3"
+                  placeholder="Optional notes"></textarea>
+
+        <button type="submit">Credit Phase Coins</button>
+    </form>
+</div>
+</body>
+</html>
