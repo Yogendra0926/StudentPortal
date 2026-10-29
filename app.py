@@ -424,6 +424,17 @@ def home():
 def student_attendance():
     if 'user_id' not in session or session['role'] != 'student':
         return redirect(url_for('login'))
+    student_id = session['user_id']
+
+    dues_status = student_has_pending_dues(student_id)
+
+    if dues_status is None:
+        flash("Unable to verify your dues. Please try again.", "danger")
+        return redirect(url_for('home'))
+
+    if dues_status:
+        flash("Clear your dues first!", "warning")
+        return redirect(url_for('fine'))
 
     student_id = session['user_id']
     conn = get_db_connection()
