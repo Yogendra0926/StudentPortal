@@ -51,8 +51,49 @@ def get_db_connection():
     except pymysql.MySQLError as e:
         print(f"Database Error: {e}")
         return None
+def student_has_pending_dues(user_id):
+    """
+    Returns:
+        True  -> student has pending dues
+        False -> student has no pending dues
+        None  -> unable to verify dues because of a DB error
+    """
+    conn = get_db_connection()
 
+    if conn is None:
+        return None
+
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT 1
+            FROM fines
+            WHERE user_id = %s
+              AND LOWER(TRIM(status)) = 'pending'
+            LIMIT 1
+        """, (user_id,))
+
+        return cursor.fetchone() is not None
+
+    except Exception:
+        app.logger.exception("Unable to check pending student dues")
+        return None
+
+    finally:
+        cursor.close()
+        conn.close()
 # --- AUTHENTICATION MODULE ---
+@app.context_processor
+def inject_pending_dues_status():
+    has_pending_dues = False
+
+    if session.get('role') == 'student' and session.get('user_id'):
+        has_pending_dues = (
+            student_has_pending_dues(session['user_id']) is True
+        )
+
+    return {'has_pending_dues': has_pending_dues}
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -443,6 +484,15 @@ def tournaments():
 
     if 'user_id' not in session or session['role'] != 'student':
         return redirect(url_for('login'))
+    dues_status = student_has_pending_dues(session['user_id'])
+
+    if dues_status is None:
+        flash("Unable to verify your dues. Please try again.", "danger")
+        return redirect(url_for('home'))
+
+    if dues_status:
+        flash("Clear your dues first!", "warning")
+        return redirect(url_for('fine'))
 
     student_id = session['user_id']
 
@@ -566,6 +616,15 @@ def register_tournament(tournament_id):
 
     if 'user_id' not in session or session['role'] != 'student':
         return redirect(url_for('login'))
+    dues_status = student_has_pending_dues(session['user_id'])
+
+    if dues_status is None:
+        flash("Unable to verify your dues. Please try again.", "danger")
+        return redirect(url_for('home'))
+
+    if dues_status:
+        flash("Clear your dues first!", "warning")
+        return redirect(url_for('fine'))
 
     student_id = session['user_id']
 
@@ -1751,6 +1810,17 @@ def profile():
 def game_center():
     if 'user_id' not in session or session['role'] != 'student':
         return redirect(url_for('login'))
+    student_id = session['user_id']
+
+    dues_status = student_has_pending_dues(student_id)
+
+    if dues_status is None:
+        flash("Unable to verify your dues. Please try again.", "danger")
+        return redirect(url_for('home'))
+
+    if dues_status:
+        flash("Clear your dues first!", "warning")
+        return redirect(url_for('fine'))
     
     student_id = session['user_id']
     conn = get_db_connection()
@@ -1780,6 +1850,15 @@ def game_center():
 def play_game(game_id):
     if 'user_id' not in session or session['role'] != 'student':
         return redirect(url_for('login'))
+    dues_status = student_has_pending_dues(session['user_id'])
+
+    if dues_status is None:
+        flash("Unable to verify your dues. Please try again.", "danger")
+        return redirect(url_for('home'))
+
+    if dues_status:
+        flash("Clear your dues first!", "warning")
+        return redirect(url_for('fine'))
     
     student_id = session['user_id']
     conn = get_db_connection()

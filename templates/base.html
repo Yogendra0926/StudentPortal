@@ -135,6 +135,105 @@
         /* -------------------------
            USER PROFILE (BOTTOM)
            ------------------------- */
+        /* Pending dues popup */
+.dues-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(5px);
+}
+
+.dues-modal.show {
+    display: flex;
+    animation: duesFadeIn 0.25s ease;
+}
+
+.dues-modal-card {
+    width: 100%;
+    max-width: 390px;
+    padding: 30px 24px;
+    text-align: center;
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.22);
+    animation: duesPopIn 0.35s cubic-bezier(.2, .8, .2, 1);
+}
+
+.dues-modal-icon {
+    width: 76px;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: #fff1f2;
+    color: #e11d48;
+    font-size: 32px;
+    animation: duesPulse 1.5s infinite;
+}
+
+.dues-modal-card h2 {
+    margin: 0 0 10px;
+    color: #1e293b;
+    font-size: 23px;
+}
+
+.dues-modal-card p {
+    margin: 0 0 24px;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.dues-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dues-pay-btn,
+.dues-close-btn {
+    display: block;
+    width: 100%;
+    padding: 13px 16px;
+    border: none;
+    border-radius: 12px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.dues-pay-btn {
+    background: linear-gradient(135deg, #ef4444, #e11d48);
+    color: white;
+}
+
+.dues-close-btn {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+@keyframes duesFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes duesPopIn {
+    from { opacity: 0; transform: translateY(18px) scale(.92); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes duesPulse {
+    50% { transform: scale(1.08); }
+}
         .user-profile-wrapper {
             padding: 20px;
             border-top: 1px solid #f4f7fe;
@@ -330,9 +429,10 @@
                     <a href="{{ url_for('profile') }}" class="{{ 'active' if request.endpoint=='profile' else '' }}">
                         <i class="fa-regular fa-id-badge"></i> Student Profile
                     </a>
-                    <a href="{{ url_for('student_attendance') }}" class="{{ 'active' if request.endpoint == 'student_attendance' }}">
-                        <i class="fa-solid fa-chart-pie"></i> Attendance
-                    </a>
+                    <a href="{{ url_for('student_attendance') }}"
+   class="dues-restricted-link {{ 'active' if request.endpoint == 'student_attendance' else '' }}">
+    <i class="fa-solid fa-chart-pie"></i> Attendance
+</a>
                     <a href="{{ url_for('student_assignments') }}" class="{{ 'active' if request.endpoint == 'student_assignments' }}">
                         <i class="fa-solid fa-book-open"></i> Assignments
                     </a>
@@ -354,18 +454,18 @@
                     <a href="{{ url_for('chatbot') }}" class="{{ 'active' if request.endpoint=='chatbot' }}">
                         <i class="fa-regular fa-comments"></i> Messages
                     </a>
-                    <a href="{{ url_for('game_center') }}" class="{{ 'active' if request.endpoint=='game_center' else '' }}">
-                        <i class="fa-solid fa-gamepad"></i> Game Center
-                    </a>
-                    <a href="{{ url_for('rp_shop') }}" class="{{ 'active' if request.endpoint=='rp_shop' or request.endpoint=='my_purchases' else '' }}">
-                        <i class="fa-solid fa-store"></i> RP Shop
-                    </a>
+                   <a href="{{ url_for('game_center') }}"
+   class="dues-restricted-link {{ 'active' if request.endpoint == 'game_center' else '' }}">
+    <i class="fa-solid fa-gamepad"></i> Game Center
+</a>
+                    <a href="{{ url_for('rp_shop') }}"
+   class="dues-restricted-link {{ 'active' if request.endpoint == 'rp_shop' or request.endpoint == 'my_purchases' else '' }}">
+    <i class="fa-solid fa-store"></i> RP Shop
+</a>
                     <a href="{{ url_for('tournaments') }}"
-   class="{{ 'active' if request.endpoint=='tournaments' else '' }}">
-
+   class="dues-restricted-link {{ 'active' if request.endpoint == 'tournaments' else '' }}">
     <i class="fa-solid fa-trophy"></i>
     Tournaments
-
 </a>
                 {% else %}
                     <a href="{{ url_for('admin_portal') }}" class="active">
@@ -416,6 +516,36 @@
         
         {% block content %}{% endblock %}
     </div>
+
+    <!-- Pending Dues Popup: kept outside the main content container -->
+    <div class="dues-modal" id="duesModal"
+         role="dialog" aria-modal="true"
+         aria-labelledby="duesModalTitle">
+        <div class="dues-modal-card">
+            <div class="dues-modal-icon">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+            </div>
+
+            <h2 id="duesModalTitle">Clear your dues first!</h2>
+
+            <p>
+                You have pending dues on your student account.
+                Please clear them before accessing Game Center or Tournaments.
+            </p>
+
+            <div class="dues-modal-actions">
+                <a href="{{ url_for('fine') }}" class="dues-pay-btn">
+                    <i class="fa-solid fa-wallet"></i>
+                    View Fines &amp; Dues
+                </a>
+
+                <button type="button" class="dues-close-btn"
+                        id="closeDuesModal">
+                    Maybe Later
+                </button>
+            </div>
+        </div>
+    </div>
     
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     
@@ -451,6 +581,45 @@
                 icon.classList.add('fa-bars');
             }
         });
+        document.addEventListener('DOMContentLoaded', function () {
+    const hasPendingDues = {{ 'true' if has_pending_dues else 'false' }};
+    const modal = document.getElementById('duesModal');
+    const closeButton = document.getElementById('closeDuesModal');
+
+    if (!modal) return;
+
+    document.querySelectorAll('.dues-restricted-link').forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            if (hasPendingDues) {
+                event.preventDefault();
+                modal.classList.add('show');
+            }
+        });
+    });
+
+    if (closeButton) {
+        closeButton.addEventListener('click', function () {
+            modal.classList.remove('show');
+        });
+    }
+
+    modal.addEventListener('click', function (event) {
+        if (event.target === modal) {
+            modal.classList.remove('show');
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            modal.classList.remove('show');
+        }
+    });
+});
+            
+
+    
+
+    
     </script>
 </body>
 </html>
