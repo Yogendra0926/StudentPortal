@@ -1,0 +1,243 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+.lb-page {
+    color: #f8fafc;
+    background:
+        radial-gradient(ellipse at 50% 0%, #4338ca55, transparent 48%),
+        #0b1020;
+    border-radius: 24px;
+    padding: 24px;
+    min-height: 80vh;
+}
+.lb-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.lb-back {
+    color: #c4b5fd;
+    text-decoration: none;
+    font-weight: 700;
+}
+.lb-title {
+    text-align: center;
+    margin: 24px 0;
+}
+.lb-title h1 {
+    font-size: clamp(25px, 4vw, 40px);
+    margin-bottom: 8px;
+}
+.lb-title p { color: #a5b4fc; }
+.lb-podium {
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    gap: 12px;
+    max-width: 680px;
+    margin: 38px auto 35px;
+    perspective: 900px;
+}
+.podium-person {
+    text-align: center;
+    width: 31%;
+    min-width: 0;
+    animation: podiumRise .7s ease both;
+}
+.podium-person.first { order: 2; animation-delay: .15s; }
+.podium-person.second { order: 1; animation-delay: .05s; }
+.podium-person.third { order: 3; animation-delay: .25s; }
+.podium-avatar {
+    width: 65px;
+    height: 65px;
+    margin: 0 auto 10px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 3px solid var(--medal);
+    background: linear-gradient(145deg, #334155, #111827);
+    color: var(--medal);
+    font-size: 25px;
+    box-shadow: 0 0 25px color-mix(in srgb, var(--medal) 30%, transparent);
+}
+.first { --medal: #fbbf24; }
+.second { --medal: #cbd5e1; }
+.third { --medal: #d97745; }
+.crown {
+    color: #fbbf24;
+    font-size: 25px;
+    display: block;
+    margin-bottom: 4px;
+    animation: crownFloat 1.7s ease-in-out infinite;
+}
+.podium-name {
+    font-weight: 800;
+    overflow-wrap: anywhere;
+    font-size: 14px;
+}
+.podium-score { color: #cbd5e1; font-size: 13px; margin: 6px 0 12px; }
+.podium-block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px 12px 0 0;
+    border: 1px solid color-mix(in srgb, var(--medal) 50%, transparent);
+    background: linear-gradient(160deg,
+        color-mix(in srgb, var(--medal) 25%, #111827), #111827);
+    color: var(--medal);
+    font-size: 30px;
+    font-weight: 900;
+    box-shadow: 0 12px 24px #0005;
+    transform: rotateX(5deg);
+}
+.first .podium-block { height: 130px; }
+.second .podium-block { height: 95px; }
+.third .podium-block { height: 75px; }
+.lb-me {
+    padding: 17px;
+    margin: 20px 0;
+    border: 1px solid #818cf866;
+    border-radius: 16px;
+    background: linear-gradient(100deg, #312e8155, #1e1b4b55);
+    text-align: center;
+    font-weight: 800;
+}
+.lb-table-wrap {
+    overflow-x: auto;
+    border: 1px solid #ffffff18;
+    border-radius: 16px;
+    background: #111827cc;
+}
+.lb-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 420px;
+}
+.lb-table th, .lb-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid #ffffff12;
+}
+.lb-table th {
+    color: #a5b4fc;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.lb-table tr.me {
+    background: #6366f125;
+    outline: 1px solid #818cf855;
+}
+.lb-table tr:last-child td { border-bottom: 0; }
+.lb-rank { font-weight: 900; color: #fbbf24; }
+.lb-empty {
+    padding: 28px;
+    text-align: center;
+    color: #cbd5e1;
+}
+@keyframes podiumRise {
+    from { opacity: 0; transform: translateY(25px) rotateX(-8deg); }
+    to { opacity: 1; transform: translateY(0) rotateX(0); }
+}
+@keyframes crownFloat {
+    50% { transform: translateY(-5px) rotate(-5deg); }
+}
+@media(max-width: 520px) {
+    .lb-page { padding: 14px; }
+    .podium-avatar { width: 48px; height: 48px; font-size: 19px; }
+    .podium-name { font-size: 12px; }
+    .first .podium-block { height: 95px; }
+    .second .podium-block { height: 70px; }
+    .third .podium-block { height: 55px; }
+}
+@media(prefers-reduced-motion: reduce) {
+    .podium-person, .crown { animation: none; }
+}
+</style>
+
+<div class="lb-page">
+    <div class="lb-topbar">
+        <a class="lb-back" href="{{ url_for('leaderboard') }}">
+            <i class="fa-solid fa-arrow-left"></i> All Subjects
+        </a>
+        <span>{{ course_code }}</span>
+    </div>
+
+    <header class="lb-title">
+        <h1><i class="fa-solid fa-trophy"></i> {{ course.name }}</h1>
+        <p>Every point counts. Every rank matters.</p>
+    </header>
+
+    {% if my_rank %}
+    <div class="lb-me">
+        YOUR RANK: #{{ my_rank.rank }}
+        &nbsp; · &nbsp; SCORE: {{ my_rank.score|round(2) }}
+    </div>
+    {% else %}
+    <div class="lb-me">
+        Your rank will appear here when your score is recorded.
+    </div>
+    {% endif %}
+
+    {% if leaderboard %}
+    <div class="lb-podium">
+        {% for rank_item in leaderboard[:3] %}
+        <div class="podium-person
+            {% if rank_item.rank == 1 %}first
+            {% elif rank_item.rank == 2 %}second
+            {% else %}third{% endif %}">
+            {% if rank_item.rank == 1 %}
+                <i class="fa-solid fa-crown crown" title="Rank 1"></i>
+            {% endif %}
+            <div class="podium-avatar">
+                <i class="fa-solid fa-user-astronaut"></i>
+            </div>
+            <div class="podium-name">{{ rank_item.student_name }}</div>
+            <div class="podium-score">{{ rank_item.score|round(2) }} pts</div>
+            <div class="podium-block">{{ rank_item.rank }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="lb-table-wrap">
+        <table class="lb-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Student</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in leaderboard %}
+                <tr class="{{ 'me' if row.is_me else '' }}">
+                    <td class="lb-rank">
+                        {% if row.rank == 1 %}
+                            <i class="fa-solid fa-crown"></i>
+                        {% else %}
+                            #{{ row.rank }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ row.student_name }}
+                        {% if row.is_me %}<strong> (You)</strong>{% endif %}
+                    </td>
+                    <td>{{ row.score|round(2) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="lb-empty">
+        <i class="fa-solid fa-ranking-star fa-2x"></i>
+        <h3>No scores recorded yet</h3>
+        <p>Rankings will appear here once scores are added to this course.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

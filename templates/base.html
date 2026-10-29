@@ -439,6 +439,11 @@
                     <a href="{{ url_for('internal_marks') }}" class="{{ 'active' if request.endpoint == 'internal_marks' }}">
                         <i class="fa-solid fa-file-invoice"></i> Internal Marks
                     </a>
+                    <a href="{{ url_for('leaderboard') }}"
+   class="dues-restricted-link {{ 'active' if request.endpoint in ['leaderboard', 'course_leaderboard'] else '' }}">
+    <i class="fa-solid fa-ranking-star"></i>
+    Leaderboard
+</a>
                     <a href="{{ url_for('announcements') }}" class="{{ 'active' if request.endpoint=='announcements' }}">
                         <i class="fa-regular fa-bell"></i> Announcements
                     </a> 

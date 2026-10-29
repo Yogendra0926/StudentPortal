@@ -1,0 +1,116 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+.leader-home {
+    color: #f8fafc;
+    padding: 28px;
+    min-height: 80vh;
+    border-radius: 24px;
+    background:
+        radial-gradient(ellipse at 10% 0%, #312e8155, transparent 40%),
+        radial-gradient(ellipse at 100% 100%, #0e749055, transparent 40%),
+        #0b1020;
+}
+.leader-heading {
+    text-align: center;
+    margin: 10px 0 32px;
+}
+.leader-heading h1 {
+    font-size: clamp(28px, 4vw, 44px);
+    margin-bottom: 10px;
+    font-weight: 900;
+    background: linear-gradient(90deg, #60a5fa, #c084fc, #fbbf24);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+.leader-heading p { color: #a5b4fc; }
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+}
+.course-card {
+    --glow: #60a5fa;
+    display: block;
+    text-decoration: none;
+    color: white;
+    padding: 26px 22px;
+    min-height: 230px;
+    border: 1px solid #ffffff20;
+    border-radius: 22px;
+    background: linear-gradient(145deg, #1e293b, #111827);
+    box-shadow: 0 14px 0 #070b14, 0 22px 35px #0005;
+    transform-style: preserve-3d;
+    transition: transform .3s ease, box-shadow .3s ease;
+    animation: cardEnter .65s ease both;
+}
+.course-card:hover {
+    transform: perspective(900px) rotateX(5deg) rotateY(-5deg) translateY(-8px);
+    box-shadow: 0 20px 0 #070b14, 0 32px 45px #0008,
+                0 0 25px color-mix(in srgb, var(--glow) 35%, transparent);
+}
+.course-card.blue { --glow: #60a5fa; }
+.course-card.purple { --glow: #c084fc; }
+.course-card.gold { --glow: #fbbf24; }
+.course-icon {
+    width: 64px;
+    height: 64px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: color-mix(in srgb, var(--glow) 16%, #111827);
+    color: var(--glow);
+    font-size: 28px;
+    box-shadow: inset 0 0 18px #ffffff0a;
+    transform: translateZ(25px);
+}
+.course-card h2 {
+    font-size: 21px;
+    margin: 24px 0 8px;
+    transform: translateZ(18px);
+}
+.course-card p { color: #94a3b8; margin: 0; }
+.course-open {
+    display: inline-block;
+    color: var(--glow);
+    font-weight: 800;
+    margin-top: 22px;
+}
+@keyframes cardEnter {
+    from { opacity: 0; transform: translateY(20px) scale(.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media(max-width: 600px) {
+    .leader-home { padding: 18px; }
+}
+@media(prefers-reduced-motion: reduce) {
+    .course-card { animation: none; transition: none; }
+}
+</style>
+
+<div class="leader-home">
+    <header class="leader-heading">
+        <h1><i class="fa-solid fa-trophy"></i> HALL OF FAME</h1>
+        <p>Choose your subject. Check your rank. Rise to the top.</p>
+    </header>
+
+    <div class="course-grid">
+        {% for code, course in courses.items() %}
+        <a class="course-card {{ course.theme }}"
+           href="{{ url_for('course_leaderboard', course_code=code) }}">
+            <div class="course-icon">
+                <i class="fa-solid {{ course.icon }}"></i>
+            </div>
+            <h2>{{ course.name }}</h2>
+            <p>{{ code }}</p>
+            <span class="course-open">
+                VIEW RANKINGS <i class="fa-solid fa-arrow-right"></i>
+            </span>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

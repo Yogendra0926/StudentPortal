@@ -490,6 +490,145 @@ def student_attendance():
 # =========================================================
 # TOURNAMENT MODULE
 # =========================================================
+# =========================
+# STUDENT LEADERBOARD
+# =========================
+
+LEADERBOARD_COURSES = {
+    "CSE0212": {
+        "name": "Deep Learning",
+        "icon": "fa-brain",
+        "theme": "blue"
+    },
+    "CSE0213": {
+        "name": "Generative AI",
+        "icon": "fa-robot",
+        "theme": "purple"
+    },
+    "AP0201": {
+        "name": "Aptitude and Reasoning",
+        "icon": "fa-bolt",
+        "theme": "gold"
+    }
+}
+
+
+@app.route('/leaderboard')
+def leaderboard():
+    if 'user_id' not in session or session.get('role') != 'student':
+        return redirect(url_for('login'))
+    student_id = session['user_id']
+
+    dues_status = student_has_pending_dues(student_id)
+
+    if dues_status is None:
+        flash("Unable to verify your dues. Please try again.", "danger")
+        return redirect(url_for('home'))
+
+    if dues_status:
+        flash("Clear your dues first!", "warning")
+        return redirect(url_for('fine'))
+
+    return render_template(
+        'leaderboard.html',
+        courses=LEADERBOARD_COURSES
+    )
+
+
+@app.route('/leaderboard/<course_code>')
+def course_leaderboard(course_code):
+    if 'user_id' not in session or session.get('role') != 'student':
+        return redirect(url_for('login'))
+    student_id = session['user_id']
+
+    dues_status = student_has_pending_dues(student_id)
+
+    if dues_status is None:
+        flash("Unable to verify your dues. Please try again.", "danger")
+        return redirect(url_for('home'))
+
+    if dues_status:
+        flash("Clear your dues first!", "warning")
+        return redirect(url_for('fine'))
+
+    course_code = course_code.upper()
+
+    if course_code not in LEADERBOARD_COURSES:
+        flash("Invalid leaderboard course.", "warning")
+        return redirect(url_for('leaderboard'))
+
+    conn = get_db_connection()
+
+    if conn is None:
+        flash("Database connection failed.", "danger")
+        return redirect(url_for('leaderboard'))
+
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT
+                u.id AS student_id,
+                u.name AS student_name,
+                ls.score,
+                ls.updated_at
+            FROM leaderboard_scores ls
+            JOIN users u ON u.id = ls.student_id
+            WHERE ls.course_code = %s
+              AND LOWER(u.role) = 'student'
+            ORDER BY
+                ls.score DESC,
+                ls.updated_at ASC,
+                u.name ASC
+        """, (course_code,))
+
+        results = cursor.fetchall()
+
+        # Rank students in score order.
+        # Equal scores receive the same rank.
+        leaderboard_rows = []
+        previous_score = None
+        current_rank = 0
+
+        for position, row in enumerate(results, start=1):
+            score = float(row['score'])
+
+            if previous_score is None or score < previous_score:
+                current_rank = position
+
+            leaderboard_rows.append({
+                **row,
+                'score': score,
+                'rank': current_rank,
+                'is_me': str(row['student_id']) == str(session['user_id'])
+            })
+
+            previous_score = score
+
+        my_rank = next(
+            (
+                row for row in leaderboard_rows
+                if row['is_me']
+            ),
+            None
+        )
+
+        return render_template(
+            'course_leaderboard.html',
+            course=LEADERBOARD_COURSES[course_code],
+            course_code=course_code,
+            leaderboard=leaderboard_rows,
+            my_rank=my_rank
+        )
+
+    except Exception:
+        app.logger.exception("Failed to load course leaderboard")
+        flash("Unable to load the leaderboard.", "danger")
+        return redirect(url_for('leaderboard'))
+
+    finally:
+        cursor.close()
+        conn.close()
 @app.route('/tournaments')
 def tournaments():
 
