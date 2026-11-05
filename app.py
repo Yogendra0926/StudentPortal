@@ -201,6 +201,10 @@ def change_password():
         return redirect(url_for('login'))
 
     return render_template('change_password.html')
+
+@app.route('/need-help')
+def need_help():
+    return render_template('need_help.html')
 @app.route("/home")
 def home():
 
@@ -247,24 +251,27 @@ def home():
     # Used for Tournament Eligibility
     # =====================================================
 
+    # 1. PHASE-2 ATTENDANCE
     cursor.execute("""
         SELECT
             COUNT(*) AS total,
-            SUM(status = 'P') AS present
+            COALESCE(SUM(status = 'P'), 0) AS present
         FROM phase2_attendance
         WHERE student_id = %s
     """, (student_id,))
 
-    phase2_attendance_data = cursor.fetchone()
+    attendance_data = cursor.fetchone()
 
-    phase2_total = phase2_attendance_data["total"] or 0
-    phase2_present = phase2_attendance_data["present"] or 0
+    total = attendance_data["total"] or 0
+    present = attendance_data["present"] or 0
 
     phase2_attendance = (
-        round((phase2_present / phase2_total) * 100)
-        if phase2_total > 0
-        else 0
+        round((present / total) * 100)
+        if total > 0 else 0
     )
+
+    # Keep backward compatibility with existing template variables
+    attendance = phase2_attendance
 
 
     # =====================================================
@@ -283,9 +290,10 @@ def home():
     # 4. INTERNAL MARKS
     # =====================================================
 
+    # 3. PHASE-2 INTERNAL MARKS
     cursor.execute("""
         SELECT COUNT(*) AS total
-        FROM phase1_marks
+        FROM phase2_marks
         WHERE student_id = %s
     """, (student_id,))
 
@@ -386,6 +394,63 @@ def home():
     """)
 
     upcoming_tournaments = cursor.fetchall()
+    
+# =====================================================
+# 9. PHASE-2 TIMETABLE
+# =====================================================
+
+    
+    
+# =====================================================
+# TODAY'S PHASE-2 TIMETABLE
+# =====================================================
+
+    today_name = datetime.now(
+        ZoneInfo("Asia/Kolkata")
+    ).strftime("%A")
+
+    cursor.execute("""
+        SELECT
+            id,
+            day_name,
+            slot_order,
+            TIME_FORMAT(start_time, '%%h:%%i %%p') AS start_time,
+            TIME_FORMAT(end_time, '%%h:%%i %%p') AS end_time,
+            subject,
+            course_code
+        FROM phase2_timetable
+        WHERE phase = %s
+        AND day_name = %s
+        ORDER BY slot_order
+    """, ("Phase-2", today_name))
+
+    today_timetable = cursor.fetchall()
+
+    
+# =====================================================
+# RECENT ANNOUNCEMENTS FOR DASHBOARD
+# =====================================================
+
+    cursor.execute("""
+        SELECT
+            id,
+            title,
+            description,
+            category,
+            priority,
+            published_at
+        FROM announcements
+        WHERE is_active = 1
+        AND published_at <= NOW()
+        AND (
+            expires_at IS NULL
+            OR expires_at >= NOW()
+        )
+        ORDER BY published_at DESC
+        LIMIT 3
+    """)
+
+    recent_announcements = cursor.fetchall()
 
 
     # =====================================================
@@ -400,25 +465,27 @@ def home():
     # 10. RENDER DASHBOARD
     # =====================================================
 
+        
     return render_template(
         "home.html",
 
-        # Existing dashboard values
-        attendance=attendance,
+        attendance=phase2_attendance,
+        phase2_attendance=phase2_attendance,
+
         assignments=assignments,
         marks=marks,
 
-        # Phase-2 attendance
-        phase2_attendance=phase2_attendance,
-
-        # Tournament statistics
         total_tournaments=total_tournaments,
         tournaments_won=tournaments_won,
         tournament_win_rate=tournament_win_rate,
 
-        # Upcoming tournament
-        upcoming_tournaments=upcoming_tournaments
+        upcoming_tournaments=upcoming_tournaments,
+        today_name=today_name,
+        today_timetable=today_timetable,
+        recent_announcements=recent_announcements  
+
     )
+
 
 @app.route('/attendance')
 def student_attendance():
@@ -2485,65 +2552,49 @@ def placement_course():
 @app.route("/lms/deep-learning")
 def deep_learning_course():
     return render_template("deep_learning_course.html")
+
 @app.route('/announcements')
 def announcements():
-    if 'user_id' not in session or session['role'] != 'student':
+
+    if 'user_id' not in session or session.get('role') != 'student':
         return redirect(url_for('login'))
 
-    webinars = [
-        {
-            "title": "Data Analytics using Python",
-            "date": "18 July 2026",
-            "time": "4:00 PM - 6:30 PM",
-            "credits": 1,
-            "icon": "fa-chart-line",
-            "color": "blue"
-        },
-        {
-            "title": "Web Development",
-            "date": "26 July 2026",
-            "time": "4:00 PM - 7:00 PM",
-            "credits": 1,
-            "icon": "fa-code",
-            "color": "green"
-        },
-        {
-            "title": "AI Tools & Technologies",
-            "date": "30 July 2026",
-            "time": "8:00 PM - 9:30 PM",
-            "credits": 1,
-            "icon": "fa-robot",
-            "color": "purple"
-        },
-        {
-            "title": "API Creation & Integration",
-            "date": "02 August 2026",
-            "time": "7:30 PM - 9:30 PM",
-            "credits": 1,
-            "icon": "fa-plug",
-            "color": "orange"
-        }
-    ]
+    conn = get_db_connection()
+
+    if conn is None:
+        flash("Database Connection Failed!", "danger")
+        return redirect(url_for('home'))
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            id,
+            title,
+            description,
+            category,
+            priority,
+            published_at,
+            expires_at
+        FROM announcements
+        WHERE is_active = 1
+          AND published_at <= NOW()
+          AND (
+              expires_at IS NULL
+              OR expires_at >= NOW()
+          )
+        ORDER BY published_at DESC
+    """)
+
+    all_announcements = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
 
     return render_template(
         "announcement.html",
-        webinars=webinars
+        announcements=all_announcements
     )
-# ... your other routes might be up here ...
-
-@app.route('/course/<course_code>/study-materials')
-def study_materials(course_code):
-    # TODO: In a complete system, query your MySQL database here to get the filename
-    # Example: pdf_filename = db.execute("SELECT pdf_file FROM materials WHERE course_code = %s", (course_code,))
-    
-    # For now, assuming the admin uploaded a file named 'java_notes.pdf' for CSP0101
-    pdf_filename = "java_notes.pdf" 
-    
-    return render_template('study_materials.html', 
-                           course_code=course_code, 
-                           pdf_filename=pdf_filename)
-
-# ... more of your routes down here ...
 
 
 @app.route("/internal_marks")

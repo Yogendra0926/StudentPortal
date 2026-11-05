@@ -1,216 +1,252 @@
+
 {% extends "base.html" %}
+
+{% block title %}My Profile - YJ-Portal{% endblock %}
 
 {% block content %}
 
 <style>
-
-/* =========================================================
-   PROFILE PAGE
-========================================================= */
+/* =========================================
+   PROFILE PAGE - YJ PORTAL
+========================================= */
 
 .profile-page {
-    max-width: 1200px;
+    max-width: 1450px;
     margin: 0 auto;
+    padding: 12px 18px 35px;
+    color: #102653;
 }
 
-
-/* =========================================================
-   PROFILE TOP SECTION
-========================================================= */
-
-.profile-layout {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 25px;
-    align-items: start;
+.profile-page * {
+    box-sizing: border-box;
 }
 
+/* Page heading */
 
-/* =========================================================
-   LEFT PROFILE CARD
-========================================================= */
-
-.profile-sidebar {
+.profile-page-header {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.profile-page-header h1 {
+    font-size: 27px;
+    font-weight: 800;
+    margin: 0;
+    color: #102653;
+}
+
+.profile-page-header p {
+    color: #71829f;
+    font-size: 13px;
+    margin: 5px 0 0;
+}
+
+/* =========================================
+   PROFILE HERO
+========================================= */
+
+.profile-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background: linear-gradient(110deg, #ffffff, #edf5ff);
+    border: 1px solid #dce9fc;
+    border-radius: 20px;
+    padding: 20px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 25px rgba(40, 90, 160, .07);
+}
+
+.profile-hero-left {
+    display: flex;
+    align-items: center;
     gap: 20px;
 }
 
-.profile-card {
-    background: white;
-    border-radius: 22px;
-    padding: 28px 20px;
-    text-align: center;
-    box-shadow: 0 8px 25px rgba(112, 144, 176, 0.12);
-    border: 1px solid #edf0f7;
-}
-
-.profile-photo-wrapper {
-    width: 105px;
-    height: 105px;
-    margin: 0 auto 15px;
+.profile-avatar {
+    width: 85px;
+    height: 85px;
+    flex-shrink: 0;
     border-radius: 50%;
-    overflow: hidden;
-    border: 4px solid #4f46e5;
-    background: linear-gradient(135deg, #00c6ff, #8b5cf6);
+    border: 4px solid #2769ee;
+    background: linear-gradient(135deg, #08a9f7, #6555ed);
     display: flex;
     align-items: center;
     justify-content: center;
+    color: white;
+    font-size: 32px;
+    font-weight: 800;
+    overflow: hidden;
 }
 
-.profile-photo {
+.profile-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.profile-placeholder {
-    color: white;
-    font-size: 2.5rem;
+.profile-hero-info {
+    border-left: 2px solid #b7d2fa;
+    padding-left: 22px;
+}
+
+.profile-hero-info h2 {
+    font-size: 23px;
     font-weight: 800;
+    margin: 0 0 5px;
+    color: #102653;
 }
 
-.profile-name {
-    color: #111827;
-    font-size: 1.15rem;
-    font-weight: 800;
-    margin-bottom: 5px;
+.profile-hero-info p {
+    margin: 0;
+    color: #647897;
+    font-size: 14px;
 }
 
-.profile-course {
-    color: #718096;
-    font-size: 0.82rem;
-    margin-bottom: 18px;
-}
-
-.rp-card {
-    background: linear-gradient(135deg, #f59e0b, #f97316);
+.profile-rp {
+    min-width: 205px;
+    padding: 15px 20px;
+    border-radius: 15px;
+    background: linear-gradient(110deg, #f59e0b, #f97316);
     color: white;
-    border-radius: 18px;
-    padding: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    box-shadow: 0 8px 18px rgba(245, 158, 11, 0.22);
+    gap: 15px;
+    box-shadow: 0 7px 18px rgba(245, 158, 11, .18);
 }
 
-.rp-card i {
-    font-size: 2rem;
+.profile-rp i {
+    font-size: 29px;
 }
 
-.rp-number {
-    font-size: 1.15rem;
-    font-weight: 800;
+.profile-rp strong {
+    display: block;
+    font-size: 23px;
 }
 
-.rp-label {
-    font-size: 0.7rem;
-    opacity: 0.9;
+.profile-rp span {
+    font-size: 11px;
 }
 
+/* =========================================
+   MAIN PROFILE GRID
+========================================= */
 
-/* =========================================================
-   ACCOUNT INFO
-========================================================= */
+.profile-layout {
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+.profile-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.profile-card,
+.account-card,
+.edit-profile-card,
+.tournament-stat-card,
+.tournament-history-card,
+.rp-history-card {
+    background: #fff;
+    border: 1px solid #e0eaf8;
+    border-radius: 17px;
+    box-shadow: 0 8px 24px rgba(40, 90, 160, .07);
+}
+
+/* Account */
 
 .account-card {
-    background: white;
-    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 25px rgba(112, 144, 176, 0.12);
-    border: 1px solid #edf0f7;
 }
 
-.account-header {
-    padding: 20px;
-    background: #f8fafc;
-    border-bottom: 1px solid #edf0f7;
+.account-header,
+.edit-profile-header {
     display: flex;
     align-items: center;
     gap: 12px;
+    padding: 16px 19px;
+    background: #f2f7ff;
+    border-bottom: 1px solid #e4edfa;
 }
 
-.account-header-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    background: #2563eb;
+.account-header-icon,
+.edit-header-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #1765e8;
     color: white;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
 }
 
-.account-header h3 {
+.account-header h3,
+.edit-profile-header h2 {
     margin: 0;
-    color: #2b3674;
-    font-size: 0.95rem;
+    font-size: 15px;
+    font-weight: 800;
+    color: #102653;
 }
 
 .account-info {
     padding: 20px;
-    text-align: center;
 }
 
 .account-info-row {
-    margin-bottom: 12px;
-    color: #718096;
-    font-size: 0.8rem;
+    margin-bottom: 17px;
+    color: #6c7f9e;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.account-info-row:last-child {
+    margin-bottom: 0;
 }
 
 .account-info-row strong {
-    color: #2b3674;
+    color: #18376d;
+    display: inline-block;
+    margin-bottom: 4px;
 }
 
-
-/* =========================================================
-   EDIT PROFILE CARD
-========================================================= */
+/* =========================================
+   EDIT PROFILE FORM
+========================================= */
 
 .edit-profile-card {
-    background: white;
-    border-radius: 22px;
-    padding: 30px;
-    box-shadow: 0 8px 25px rgba(112, 144, 176, 0.12);
-    border: 1px solid #edf0f7;
+    padding: 0 22px 20px;
+    overflow: hidden;
 }
 
 .edit-profile-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: #f8fafc;
-    padding: 16px 20px;
-    border-bottom: 1px solid #edf0f7;
-    margin-bottom: 25px;
+    margin: 0 -22px 20px;
+    padding: 16px 22px;
 }
 
 .edit-profile-header i {
-    color: #2563eb;
-    font-size: 2.2rem;
+    font-size: 23px;
+    color: #1765e8;
 }
-
-.edit-profile-header h2 {
-    margin: 0;
-    color: #2b3674;
-    font-size: 1rem;
-}
-
-
-/* =========================================================
-   FORM
-========================================================= */
 
 .profile-form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 18px 15px;
+    gap: 13px 17px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .form-group.full {
@@ -218,245 +254,254 @@
 }
 
 .form-group label {
-    color: #2b3674;
-    font-size: 0.8rem;
-    font-weight: 700;
-    margin-bottom: 7px;
+    font-size: 12px;
+    font-weight: 750;
+    color: #17366c;
+    margin-bottom: 6px;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
     width: 100%;
-    box-sizing: border-box;
-    padding: 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    outline: none;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid #c9d8ed;
+    border-radius: 9px;
+    background: #fff;
+    color: #334b6d;
     font-family: inherit;
-    font-size: 0.88rem;
-    color: #1e293b;
-    background: white;
+    font-size: 13px;
+    outline: none;
+    transition: .2s;
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
+    border-color: #1765e8;
+    box-shadow: 0 0 0 3px rgba(23, 101, 232, .09);
+}
+
+.form-group input[type="file"] {
+    padding: 7px;
+    font-size: 12px;
 }
 
 .form-group textarea {
-    min-height: 100px;
+    min-height: 75px;
     resize: vertical;
 }
 
 .save-profile-btn {
     width: 100%;
-    margin-top: 20px;
     border: none;
-    border-radius: 8px;
+    border-radius: 9px;
     padding: 12px;
-    background: #4f46e5;
+    margin-top: 17px;
+    background: linear-gradient(100deg, #0863e9, #0755d6);
     color: white;
-    font-weight: 800;
+    font-size: 14px;
+    font-weight: 750;
     cursor: pointer;
-    transition: 0.2s;
+    transition: .2s;
 }
 
 .save-profile-btn:hover {
-    background: #4338ca;
-    transform: translateY(-1px);
+    background: #084dbb;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 15px rgba(23, 101, 232, .2);
 }
 
+/* =========================================
+   FLASH MESSAGES
+========================================= */
 
-/* =========================================================
-   TOURNAMENT SECTION
-========================================================= */
+.profile-alert {
+    padding: 11px 14px;
+    margin-bottom: 15px;
+    border-radius: 9px;
+    font-size: 13px;
+}
+
+.profile-alert.success {
+    background: #e8f9ef;
+    color: #15803d;
+}
+
+.profile-alert.danger,
+.profile-alert.error {
+    background: #fff0f0;
+    color: #dc2626;
+}
+
+/* =========================================
+   TOURNAMENT JOURNEY
+========================================= */
 
 .tournament-section {
-    margin-top: 30px;
+    margin-top: 28px;
 }
 
 .section-heading {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 18px;
+    gap: 13px;
+    margin-bottom: 17px;
 }
 
 .heading-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #00c6ff, #8b5cf6);
+    width: 43px;
+    height: 43px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #08b5ed, #6252f3);
     color: white;
     display: flex;
-    align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
-    box-shadow: 0 8px 18px rgba(139, 92, 246, 0.2);
+    align-items: center;
+    font-size: 19px;
 }
 
 .section-heading h2 {
     margin: 0;
-    color: #2b3674;
-    font-size: 1.25rem;
+    font-size: 21px;
+    font-weight: 800;
+    color: #102653;
 }
 
 .section-heading p {
     margin: 3px 0 0;
-    color: #94a3b8;
-    font-size: 0.78rem;
+    color: #8292ae;
+    font-size: 12px;
 }
 
-
-/* =========================================================
-   TOURNAMENT STAT CARDS
-========================================================= */
+/* Statistics */
 
 .tournament-stat-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    gap: 15px;
 }
 
 .tournament-stat-card {
-    position: relative;
-    background: white;
-    border-radius: 20px;
-    padding: 22px;
-    border: 1px solid #edf0f7;
-    box-shadow: 0 8px 25px rgba(112, 144, 176, 0.10);
-    overflow: hidden;
-    transition: 0.25s ease;
-}
-
-.tournament-stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 14px 30px rgba(112, 144, 176, 0.16);
-}
-
-.tournament-stat-card::after {
-    content: "";
-    position: absolute;
-    right: -35px;
-    top: -35px;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: rgba(139, 92, 246, 0.06);
-}
-
-.stat-top {
+    padding: 19px;
     display: flex;
     align-items: center;
     gap: 13px;
+    transition: .2s;
+}
+
+.tournament-stat-card:hover {
+    transform: translateY(-3px);
 }
 
 .stat-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 15px;
+    width: 47px;
+    height: 47px;
+    flex-shrink: 0;
+    border-radius: 13px;
     display: flex;
-    align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    align-items: center;
+    font-size: 20px;
 }
 
 .stat-icon.enrolled {
-    background: #e0f2fe;
+    background: #e2f3ff;
     color: #0284c7;
 }
 
 .stat-icon.won {
-    background: #fef3c7;
-    color: #d97706;
+    background: #fff3cf;
+    color: #df8700;
 }
 
 .stat-icon.rate {
-    background: #ede9fe;
+    background: #f0eaff;
     color: #7c3aed;
 }
 
 .stat-label {
-    color: #94a3b8;
-    font-size: 0.7rem;
+    color: #8292ae;
+    font-size: 10px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
 }
 
 .stat-value {
-    margin-top: 4px;
-    color: #2b3674;
-    font-size: 1.7rem;
-    font-weight: 800;
+    color: #102653;
+    font-size: 25px;
+    font-weight: 850;
+    margin-top: 3px;
 }
 
+/* =========================================
+   TABLES
+========================================= */
 
-/* =========================================================
-   TOURNAMENT HISTORY
-========================================================= */
-
-.tournament-history-card {
-    margin-top: 20px;
-    background: white;
-    border-radius: 20px;
-    border: 1px solid #edf0f7;
-    box-shadow: 0 8px 25px rgba(112, 144, 176, 0.10);
+.tournament-history-card,
+.rp-history-card {
+    margin-top: 17px;
     overflow: hidden;
 }
 
-.history-header {
-    padding: 20px 22px;
-    border-bottom: 1px solid #edf0f7;
+.history-header,
+.rp-history-header {
+    padding: 17px 20px;
+    border-bottom: 1px solid #e8eef7;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
 }
 
-.history-header h3 {
+.history-header h3,
+.rp-history-header h3 {
     margin: 0;
-    color: #2b3674;
-    font-size: 1rem;
+    color: #17366c;
+    font-size: 15px;
+    font-weight: 800;
 }
 
-.history-header h3 i {
-    margin-right: 7px;
-    color: #8b5cf6;
+.history-header h3 i,
+.rp-history-header h3 i {
+    color: #6555ed;
+    margin-right: 8px;
 }
 
 .history-header span {
-    color: #94a3b8;
-    font-size: 0.75rem;
+    color: #8493ad;
+    font-size: 11px;
 }
 
 .tournament-table-wrapper {
     overflow-x: auto;
 }
 
-.tournament-table {
+.tournament-table,
+.rp-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 650px;
 }
 
-.tournament-table th {
-    text-align: left;
-    padding: 14px 20px;
-    background: #f8fafc;
-    color: #718096;
-    font-size: 0.68rem;
+.tournament-table th,
+.rp-table th {
+    background: #f1f6ff;
+    color: #617695;
+    font-size: 10px;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
+    text-align: left;
+    padding: 13px 17px;
     white-space: nowrap;
 }
 
-.tournament-table td {
-    padding: 15px 20px;
-    border-top: 1px solid #f1f5f9;
-    color: #2b3674;
-    font-size: 0.8rem;
+.tournament-table td,
+.rp-table td {
+    padding: 14px 17px;
+    border-top: 1px solid #edf2f9;
+    color: #18376d;
+    font-size: 12px;
     white-space: nowrap;
 }
 
@@ -465,112 +510,33 @@
 }
 
 .tournament-venue {
-    color: #94a3b8;
-    font-size: 0.7rem;
-    margin-top: 3px;
+    font-size: 10px;
+    color: #8796af;
+    margin-top: 4px;
 }
-
-
-/* =========================================================
-   RESULT BADGES
-========================================================= */
 
 .result-badge {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 11px;
+    gap: 5px;
+    padding: 6px 10px;
     border-radius: 20px;
-    font-size: 0.68rem;
+    font-size: 10px;
     font-weight: 800;
 }
 
 .result-participated {
-    background: #eff6ff;
-    color: #2563eb;
+    color: #1260d9;
+    background: #eaf3ff;
 }
 
 .result-winner {
-    background: #fef3c7;
-    color: #b45309;
-    box-shadow: 0 3px 10px rgba(245, 158, 11, 0.12);
-}
-
-
-/* =========================================================
-   EMPTY TOURNAMENT
-========================================================= */
-
-.tournament-empty {
-    padding: 45px 20px;
-    text-align: center;
-}
-
-.tournament-empty i {
-    font-size: 2.5rem;
-    color: #cbd5e1;
-    margin-bottom: 12px;
-}
-
-.tournament-empty h4 {
-    margin: 0 0 6px;
-    color: #2b3674;
-}
-
-.tournament-empty p {
-    margin: 0;
-    color: #94a3b8;
-    font-size: 0.8rem;
-}
-
-
-/* =========================================================
-   RP HISTORY
-========================================================= */
-
-.rp-history-card {
-    margin-top: 30px;
-    background: white;
-    border-radius: 20px;
-    border: 1px solid #edf0f7;
-    box-shadow: 0 8px 25px rgba(112, 144, 176, 0.10);
-    overflow: hidden;
-}
-
-.rp-history-header {
-    padding: 20px 22px;
-    border-bottom: 1px solid #edf0f7;
-}
-
-.rp-history-header h3 {
-    margin: 0;
-    color: #2b3674;
-    font-size: 1rem;
-}
-
-.rp-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.rp-table th {
-    text-align: left;
-    padding: 13px 20px;
-    background: #f8fafc;
-    color: #718096;
-    font-size: 0.68rem;
-    text-transform: uppercase;
-}
-
-.rp-table td {
-    padding: 14px 20px;
-    border-top: 1px solid #f1f5f9;
-    color: #2b3674;
-    font-size: 0.8rem;
+    color: #a16207;
+    background: #fff2cf;
 }
 
 .rp-positive {
-    color: #16a34a !important;
+    color: #159447 !important;
     font-weight: 800;
 }
 
@@ -579,13 +545,52 @@
     font-weight: 800;
 }
 
+/* Empty states */
 
-/* =========================================================
+.tournament-empty {
+    padding: 30px 15px;
+    text-align: center;
+    color: #8796af;
+}
+
+.tournament-empty i {
+    font-size: 30px;
+    margin-bottom: 10px;
+    color: #b9c9e0;
+}
+
+.tournament-empty h4 {
+    color: #17366c;
+    margin: 0 0 5px;
+}
+
+.tournament-empty p {
+    font-size: 12px;
+    margin: 0;
+}
+
+.empty-rp {
+    padding: 25px;
+    text-align: center;
+    color: #8796af;
+    font-size: 13px;
+}
+
+/* =========================================
    RESPONSIVE
-========================================================= */
+========================================= */
 
-@media (max-width: 950px) {
+@media(max-width: 1000px) {
+    .profile-layout {
+        grid-template-columns: 190px minmax(0, 1fr);
+    }
 
+    .tournament-stat-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 750px) {
     .profile-layout {
         grid-template-columns: 1fr;
     }
@@ -595,24 +600,42 @@
         grid-template-columns: 1fr 1fr;
     }
 
-    .tournament-stat-grid {
-        grid-template-columns: 1fr;
+    .profile-page-header h1 {
+        font-size: 23px;
     }
 }
 
-
-@media (max-width: 650px) {
-
+@media(max-width: 550px) {
     .profile-page {
-        width: 100%;
+        padding: 8px 10px 25px;
     }
 
     .profile-sidebar {
         grid-template-columns: 1fr;
     }
 
-    .edit-profile-card {
-        padding: 20px;
+    .profile-hero {
+        padding: 16px;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .profile-avatar {
+        width: 65px;
+        height: 65px;
+        font-size: 25px;
+    }
+
+    .profile-hero-info {
+        padding-left: 12px;
+    }
+
+    .profile-hero-info h2 {
+        font-size: 18px;
+    }
+
+    .profile-rp {
+        width: 100%;
     }
 
     .profile-form-grid {
@@ -623,116 +646,108 @@
         grid-column: auto;
     }
 
+    .edit-profile-card {
+        padding: 0 14px 17px;
+    }
+
+    .edit-profile-header {
+        margin-left: -14px;
+        margin-right: -14px;
+    }
+
     .history-header {
-        flex-direction: column;
+        gap: 8px;
         align-items: flex-start;
-        gap: 6px;
     }
 }
-
 </style>
 
 
 <div class="profile-page">
 
+    <!-- PAGE HEADER -->
 
-    <!-- =====================================================
-         PROFILE MAIN AREA
-    ====================================================== -->
+    <div class="profile-page-header">
+        <div>
+            <h1>My Profile</h1>
+            <p>Manage your personal details, academic information, and activity records.</p>
+        </div>
+    </div>
+
+
+    <!-- PROFILE HERO -->
+
+    <div class="profile-hero">
+
+        <div class="profile-hero-left">
+
+            <div class="profile-avatar">
+
+                {% if profile and profile.profile_photo %}
+
+                    <img
+                        src="{{ url_for('static', filename='uploads/' ~ profile.profile_photo) }}"
+                        alt="Profile Photo"
+                    >
+
+                {% else %}
+
+                    {{ user.name[0]|upper if user and user.name else 'U' }}
+
+                {% endif %}
+
+            </div>
+
+            <div class="profile-hero-info">
+
+                <h2>{{ user.name if user else session.get('name', 'Student') }}</h2>
+
+                <p>
+                    {{ profile.course if profile and profile.course else 'B.Tech' }}
+                    {% if profile and profile.branch %}
+                        · {{ profile.branch }}
+                    {% endif %}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="profile-rp">
+
+            <i class="fa-solid fa-trophy"></i>
+
+            <div>
+                <strong>
+                    {{ profile.rp_points if profile and profile.rp_points is not none else 0 }} RP
+                </strong>
+                <span>Reward Points</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PROFILE MAIN LAYOUT -->
 
     <div class="profile-layout">
 
 
-        <!-- =================================================
-             LEFT SIDEBAR
-        ================================================== -->
+        <!-- LEFT ACCOUNT INFORMATION -->
 
         <div class="profile-sidebar">
-
-
-            <!-- PROFILE CARD -->
-
-            <div class="profile-card">
-
-                <div class="profile-photo-wrapper">
-
-                    {% if profile and profile.profile_photo %}
-
-                        <img
-                            src="{{ url_for('static', filename='uploads/' ~ profile.profile_photo) }}"
-                            class="profile-photo"
-                            alt="Profile Photo"
-                        >
-
-                    {% else %}
-
-                        <div class="profile-placeholder">
-
-                            {{ user.name[0]|upper if user and user.name else 'U' }}
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <div class="profile-name">
-
-                    {{ user.name if user else session.name }}
-
-                </div>
-
-
-                <div class="profile-course">
-
-                    {{ profile.course if profile and profile.course else 'B.Tech' }}
-
-                </div>
-
-
-                <!-- RP -->
-
-                <div class="rp-card">
-
-                    <i class="fa-solid fa-trophy"></i>
-
-                    <div>
-
-                        <div class="rp-number">
-
-                            {{ profile.rp_points if profile and profile.rp_points is not none else 0 }} RP
-
-                        </div>
-
-                        <div class="rp-label">
-
-                            Reward Points
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- ACCOUNT INFO -->
 
             <div class="account-card">
 
                 <div class="account-header">
 
                     <div class="account-header-icon">
-
                         <i class="fa-solid fa-address-card"></i>
-
                     </div>
 
-                    <h3>
-                        Account Info
-                    </h3>
+                    <h3>Account Info</h3>
 
                 </div>
 
@@ -740,22 +755,21 @@
                 <div class="account-info">
 
                     <div class="account-info-row">
-
-                        <strong>Email:</strong><br>
-
+                        <strong>
+                            <i class="fa-regular fa-envelope"></i>
+                            Email
+                        </strong>
+                        <br>
                         {{ user.username if user else 'N/A' }}
-
                     </div>
 
 
                     {% if profile and profile.phone %}
 
                     <div class="account-info-row">
-
-                        <strong>Phone:</strong><br>
-
+                        <strong>Phone Number</strong>
+                        <br>
                         {{ profile.phone }}
-
                     </div>
 
                     {% endif %}
@@ -764,11 +778,9 @@
                     {% if profile and profile.branch %}
 
                     <div class="account-info-row">
-
-                        <strong>Branch:</strong><br>
-
+                        <strong>Branch</strong>
+                        <br>
                         {{ profile.branch }}
-
                     </div>
 
                     {% endif %}
@@ -777,11 +789,9 @@
                     {% if profile and profile.semester %}
 
                     <div class="account-info-row">
-
-                        <strong>Semester:</strong><br>
-
+                        <strong>Semester / Phase</strong>
+                        <br>
                         {{ profile.semester }}
-
                     </div>
 
                     {% endif %}
@@ -793,29 +803,37 @@
         </div>
 
 
-        <!-- =================================================
-             RIGHT SIDE - EDIT PROFILE
-        ================================================== -->
+        <!-- RIGHT EDIT PROFILE -->
 
         <div class="edit-profile-card">
-
 
             <div class="edit-profile-header">
 
                 <i class="fa-solid fa-user-pen"></i>
 
-                <h2>
-                    Edit Profile Information
-                </h2>
+                <h2>Edit Profile Information</h2>
 
             </div>
 
 
-            <form
-                method="POST"
-                enctype="multipart/form-data"
-            >
+            {% with messages = get_flashed_messages(with_categories=true) %}
 
+                {% if messages %}
+
+                    {% for category, message in messages %}
+
+                        <div class="profile-alert {{ category }}">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            <form method="POST" enctype="multipart/form-data">
 
                 <div class="profile-form-grid">
 
@@ -824,9 +842,7 @@
 
                     <div class="form-group">
 
-                        <label>
-                            Phone Number
-                        </label>
+                        <label>Phone Number</label>
 
                         <input
                             type="text"
@@ -838,24 +854,18 @@
                     </div>
 
 
-                    <!-- DOB -->
+                    <!-- DATE OF BIRTH -->
 
                     <div class="form-group">
 
-                        <label>
-                            Date of Birth
-                        </label>
+                        <label>Date of Birth</label>
 
                         <input
                             type="date"
                             name="dob"
-
                             {% if profile and profile.date_of_birth %}
-
-                            value="{{ profile.date_of_birth.strftime('%Y-%m-%d') }}"
-
+                                value="{{ profile.date_of_birth.strftime('%Y-%m-%d') }}"
                             {% endif %}
-
                         >
 
                     </div>
@@ -865,34 +875,24 @@
 
                     <div class="form-group">
 
-                        <label>
-                            Gender
-                        </label>
+                        <label>Gender</label>
 
                         <select name="gender">
 
-                            <option value="">
-                                Select Gender
-                            </option>
+                            <option value="">Select Gender</option>
 
-                            <option
-                                value="Male"
-                                {% if profile and profile.gender == 'Male' %}selected{% endif %}
-                            >
+                            <option value="Male"
+                                {% if profile and profile.gender == 'Male' %}selected{% endif %}>
                                 Male
                             </option>
 
-                            <option
-                                value="Female"
-                                {% if profile and profile.gender == 'Female' %}selected{% endif %}
-                            >
+                            <option value="Female"
+                                {% if profile and profile.gender == 'Female' %}selected{% endif %}>
                                 Female
                             </option>
 
-                            <option
-                                value="Other"
-                                {% if profile and profile.gender == 'Other' %}selected{% endif %}
-                            >
+                            <option value="Other"
+                                {% if profile and profile.gender == 'Other' %}selected{% endif %}>
                                 Other
                             </option>
 
@@ -905,9 +905,7 @@
 
                     <div class="form-group">
 
-                        <label>
-                            Course
-                        </label>
+                        <label>Course</label>
 
                         <input
                             type="text"
@@ -923,9 +921,7 @@
 
                     <div class="form-group">
 
-                        <label>
-                            Branch
-                        </label>
+                        <label>Branch</label>
 
                         <input
                             type="text"
@@ -941,45 +937,39 @@
 
                     <div class="form-group">
 
-                        <label>
-                            Semester / Phase
-                        </label>
+                        <label>Semester / Phase</label>
 
                         <input
                             type="text"
                             name="semester"
                             value="{{ profile.semester if profile and profile.semester else '' }}"
-                            placeholder="3"
+                            placeholder="Phase-2"
                         >
 
                     </div>
 
 
-                    <!-- UNIVERSITY -->
+                    <!-- UNIVERSITY / INSTITUTION -->
 
                     <div class="form-group">
 
-                        <label>
-                            University
-                        </label>
+                        <label>Institution (Optional)</label>
 
                         <input
                             type="text"
                             name="university"
                             value="{{ profile.university if profile and profile.university else '' }}"
-                            placeholder="ITM University Gwalior"
+                            placeholder="Enter institution"
                         >
 
                     </div>
 
 
-                    <!-- PROFILE PHOTO -->
+                    <!-- PHOTO -->
 
                     <div class="form-group">
 
-                        <label>
-                            Profile Photo
-                        </label>
+                        <label>Profile Photo</label>
 
                         <input
                             type="file"
@@ -994,9 +984,7 @@
 
                     <div class="form-group full">
 
-                        <label>
-                            Bio / About
-                        </label>
+                        <label>Bio / About</label>
 
                         <textarea
                             name="bio"
@@ -1010,9 +998,7 @@
 
                     <div class="form-group full">
 
-                        <label>
-                            Skills (comma separated)
-                        </label>
+                        <label>Skills (comma separated)</label>
 
                         <input
                             type="text"
@@ -1028,9 +1014,7 @@
 
                     <div class="form-group">
 
-                        <label>
-                            GitHub URL
-                        </label>
+                        <label>GitHub URL</label>
 
                         <input
                             type="url"
@@ -1046,9 +1030,7 @@
 
                     <div class="form-group">
 
-                        <label>
-                            LinkedIn URL
-                        </label>
+                        <label>LinkedIn URL</label>
 
                         <input
                             type="url"
@@ -1062,14 +1044,10 @@
                 </div>
 
 
-                <button
-                    type="submit"
-                    class="save-profile-btn"
-                >
+                <button type="submit" class="save-profile-btn">
 
                     <i class="fa-solid fa-floppy-disk"></i>
-
-                    Save Profile
+                    &nbsp; Save Profile
 
                 </button>
 
@@ -1080,10 +1058,9 @@
     </div>
 
 
-
-    <!-- =====================================================
+    <!-- =====================================
          TOURNAMENT JOURNEY
-    ====================================================== -->
+    ====================================== -->
 
     <div class="tournament-section">
 
@@ -1091,160 +1068,89 @@
         <div class="section-heading">
 
             <div class="heading-icon">
-
                 <i class="fa-solid fa-trophy"></i>
-
             </div>
 
             <div>
-
-                <h2>
-                    Tournament Journey
-                </h2>
-
-                <p>
-                    Your participation and achievements
-                </p>
-
+                <h2>Tournament Journey</h2>
+                <p>Your participation and achievements</p>
             </div>
 
         </div>
 
 
-
-        <!-- =================================================
-             TOURNAMENT STATISTICS
-        ================================================== -->
+        <!-- STATISTICS -->
 
         <div class="tournament-stat-grid">
 
 
-            <!-- ENROLLED -->
-
             <div class="tournament-stat-card">
 
-                <div class="stat-top">
+                <div class="stat-icon enrolled">
+                    <i class="fa-solid fa-users"></i>
+                </div>
 
-                    <div class="stat-icon enrolled">
-
-                        <i class="fa-solid fa-users"></i>
-
+                <div>
+                    <div class="stat-label">Tournaments Enrolled</div>
+                    <div class="stat-value">
+                        {{ total_tournaments|default(0) }}
                     </div>
-
-                    <div>
-
-                        <div class="stat-label">
-                            Tournaments Enrolled
-                        </div>
-
-                        <div class="stat-value">
-
-                            {{ total_tournaments|default(0) }}
-
-                        </div>
-
-                    </div>
-
                 </div>
 
             </div>
 
 
-
-            <!-- WON -->
-
             <div class="tournament-stat-card">
 
-                <div class="stat-top">
+                <div class="stat-icon won">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
 
-                    <div class="stat-icon won">
-
-                        <i class="fa-solid fa-trophy"></i>
-
+                <div>
+                    <div class="stat-label">Tournaments Won</div>
+                    <div class="stat-value">
+                        {{ tournaments_won|default(0) }}
                     </div>
-
-                    <div>
-
-                        <div class="stat-label">
-                            Tournaments Won
-                        </div>
-
-                        <div class="stat-value">
-
-                            {{ tournaments_won|default(0) }}
-
-                        </div>
-
-                    </div>
-
                 </div>
 
             </div>
 
 
-
-            <!-- WIN RATE -->
-
             <div class="tournament-stat-card">
 
-                <div class="stat-top">
+                <div class="stat-icon rate">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
 
-                    <div class="stat-icon rate">
-
-                        <i class="fa-solid fa-chart-line"></i>
-
+                <div>
+                    <div class="stat-label">Win Rate</div>
+                    <div class="stat-value">
+                        {{ tournament_win_rate|default(0) }}%
                     </div>
-
-                    <div>
-
-                        <div class="stat-label">
-                            Win Rate
-                        </div>
-
-                        <div class="stat-value">
-
-                            {{ tournament_win_rate|default(0) }}%
-
-                        </div>
-
-                    </div>
-
                 </div>
 
             </div>
-
 
         </div>
 
 
-
-        <!-- =================================================
-             TOURNAMENT HISTORY
-        ================================================== -->
+        <!-- TOURNAMENT HISTORY -->
 
         <div class="tournament-history-card">
-
 
             <div class="history-header">
 
                 <h3>
-
                     <i class="fa-solid fa-medal"></i>
-
                     Tournament History
-
                 </h3>
 
-
                 <span>
-
-                    {{ total_tournaments|default(0) }}
+                    {{ tournament_history|length if tournament_history else 0 }}
                     participation(s)
-
                 </span>
 
             </div>
-
 
 
             {% if tournament_history %}
@@ -1254,61 +1160,33 @@
                 <table class="tournament-table">
 
                     <thead>
-
                         <tr>
-
-                            <th>
-                                Tournament
-                            </th>
-
-                            <th>
-                                Date
-                            </th>
-
-                            <th>
-                                Attendance
-                            </th>
-
-                            <th>
-                                Result
-                            </th>
-
-                            <th>
-                                Registered On
-                            </th>
-
+                            <th>Tournament</th>
+                            <th>Date</th>
+                            <th>Attendance</th>
+                            <th>Result</th>
+                            <th>Registered On</th>
                         </tr>
-
                     </thead>
 
 
                     <tbody>
 
-
                         {% for tournament in tournament_history %}
 
                         <tr>
 
-
-                            <!-- TOURNAMENT -->
-
                             <td>
 
                                 <div class="tournament-name">
-
                                     {{ tournament.title }}
-
                                 </div>
-
 
                                 {% if tournament.venue %}
 
                                 <div class="tournament-venue">
-
                                     <i class="fa-solid fa-location-dot"></i>
-
                                     {{ tournament.venue }}
-
                                 </div>
 
                                 {% endif %}
@@ -1316,86 +1194,54 @@
                             </td>
 
 
-                            <!-- DATE -->
-
                             <td>
-
                                 {% if tournament.tournament_date %}
-
                                     {{ tournament.tournament_date.strftime('%d %b %Y') }}
-
                                 {% else %}
-
                                     —
-
                                 {% endif %}
-
                             </td>
 
-
-                            <!-- ATTENDANCE -->
 
                             <td>
-
                                 <strong>
-
                                     {{ tournament.attendance_percentage }}%
-
                                 </strong>
-
                             </td>
 
-
-                            <!-- RESULT -->
 
                             <td>
 
                                 {% if tournament.result == 'Winner' %}
 
-                                    <span class="result-badge result-winner">
-
-                                        <i class="fa-solid fa-crown"></i>
-
-                                        Winner
-
-                                    </span>
+                                <span class="result-badge result-winner">
+                                    <i class="fa-solid fa-crown"></i>
+                                    Winner
+                                </span>
 
                                 {% else %}
 
-                                    <span class="result-badge result-participated">
-
-                                        <i class="fa-solid fa-check"></i>
-
-                                        Participated
-
-                                    </span>
+                                <span class="result-badge result-participated">
+                                    <i class="fa-solid fa-check"></i>
+                                    Participated
+                                </span>
 
                                 {% endif %}
 
                             </td>
 
-
-                            <!-- REGISTERED DATE -->
 
                             <td>
-
                                 {% if tournament.registered_at %}
-
                                     {{ tournament.registered_at.strftime('%d %b %Y') }}
-
                                 {% else %}
-
                                     —
-
                                 {% endif %}
-
                             </td>
-
 
                         </tr>
 
                         {% endfor %}
-
 
                     </tbody>
 
@@ -1406,147 +1252,106 @@
 
             {% else %}
 
-
             <div class="tournament-empty">
 
                 <i class="fa-solid fa-trophy"></i>
 
-                <h4>
-                    No Tournament History
-                </h4>
+                <h4>No Tournament History</h4>
 
                 <p>
-                    Register for a tournament to start
-                    building your tournament profile.
+                    Register for a tournament to start building your tournament profile.
                 </p>
 
             </div>
 
+            {% endif %}
+
+        </div>
+
+
+        <!-- RP TRANSACTION HISTORY -->
+
+        <div class="rp-history-card">
+
+            <div class="rp-history-header">
+
+                <h3>
+                    <i class="fa-solid fa-coins"></i>
+                    RP Transaction History
+                </h3>
+
+            </div>
+
+
+            {% if rp_history %}
+
+            <div class="tournament-table-wrapper">
+
+                <table class="rp-table">
+
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Type</th>
+                            <th>Points</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for transaction in rp_history %}
+
+                        <tr>
+
+                            <td>
+                                {{ transaction.description or 'RP Transaction' }}
+                            </td>
+
+                            <td>
+                                {{ transaction.transaction_type|title }}
+                            </td>
+
+                            <td class="{% if transaction.points >= 0 %}rp-positive{% else %}rp-negative{% endif %}">
+
+                                {% if transaction.points >= 0 %}
+                                    +{{ transaction.points }}
+                                {% else %}
+                                    {{ transaction.points }}
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {% if transaction.created_at %}
+                                    {{ transaction.created_at.strftime('%d %b %Y') }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="empty-rp">
+                No RP transactions available yet.
+            </div>
 
             {% endif %}
 
         </div>
 
     </div>
-
-
-
-    <!-- =====================================================
-         RP TRANSACTION HISTORY
-    ====================================================== -->
-
-    {% if rp_history %}
-
-    <div class="rp-history-card">
-
-
-        <div class="rp-history-header">
-
-            <h3>
-
-                <i class="fa-solid fa-coins"></i>
-
-                RP Transaction History
-
-            </h3>
-
-        </div>
-
-
-        <div class="tournament-table-wrapper">
-
-            <table class="rp-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Description
-                        </th>
-
-                        <th>
-                            Type
-                        </th>
-
-                        <th>
-                            Points
-                        </th>
-
-                        <th>
-                            Date
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-
-                    {% for transaction in rp_history %}
-
-                    <tr>
-
-
-                        <td>
-
-                            {{ transaction.description or 'RP Transaction' }}
-
-                        </td>
-
-
-                        <td>
-
-                            {{ transaction.transaction_type|title }}
-
-                        </td>
-
-
-                        <td
-                            class="{% if transaction.points >= 0 %}rp-positive{% else %}rp-negative{% endif %}"
-                        >
-
-                            {% if transaction.points >= 0 %}
-                                +{{ transaction.points }}
-                            {% else %}
-                                {{ transaction.points }}
-                            {% endif %}
-
-                        </td>
-
-
-                        <td>
-
-                            {% if transaction.created_at %}
-
-                                {{ transaction.created_at.strftime('%d %b %Y') }}
-
-                            {% else %}
-
-                                —
-
-                            {% endif %}
-
-                        </td>
-
-
-                    </tr>
-
-                    {% endfor %}
-
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-    {% endif %}
-
 
 </div>
 

@@ -1,2570 +1,737 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Dashboard | YJ-Portal{% endblock %}
 
 {% block content %}
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-
-/* =========================================================
-   PREMIUM DASHBOARD
-========================================================= */
-
-.dashboard-page {
-
-    --primary: #4f46e5;
-    --primary-dark: #312e81;
-    --secondary: #7c3aed;
-
-    --blue: #0ea5e9;
-    --green: #10b981;
-    --orange: #f59e0b;
-    --red: #ef4444;
-
-    --dark: #111827;
-    --text: #1e293b;
+/* YJ-Portal dashboard — scoped styles; base.html navigation is preserved */
+.yjp-dashboard {
+    --blue: #1677e8;
+    --blue-dark: #125fc0;
+    --blue-soft: #eaf4ff;
+    --blue-pale: #f4f9ff;
+    --ink: #172338;
     --muted: #718096;
-
-    --bg: #f5f7fb;
-    --card: #ffffff;
-    --border: #e8edf5;
-
+    --line: #e3ebf5;
+    --surface: #ffffff;
+    --page: #f6f9fd;
+    color: var(--ink);
+    font-family: Inter, "Segoe UI", sans-serif;
     min-height: calc(100vh - 70px);
-
-    padding: 28px 25px 55px;
-
+    padding: 26px;
     background:
-        radial-gradient(
-            circle at 5% 0%,
-            rgba(99,102,241,0.07),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 95% 20%,
-            rgba(14,165,233,0.06),
-            transparent 25%
-        ),
-        #f5f7fb;
-
-    font-family:
-        "Plus Jakarta Sans",
-        "Inter",
-        Arial,
-        sans-serif;
-
-    color: var(--text);
+        radial-gradient(circle at 88% 4%, rgba(57, 145, 245, .07), transparent 25%),
+        var(--page);
 }
-
-
-/* =========================================================
-   CONTAINER
-========================================================= */
-
-.dashboard-container {
-
-    max-width: 1380px;
-
-    margin: 0 auto;
-}
-
-
-/* =========================================================
-   HERO
-========================================================= */
-
-.dashboard-hero {
-
+.yjp-dashboard * { box-sizing: border-box; }
+.yjp-wrap { max-width: 1440px; margin: 0 auto; }
+.yjp-hero {
     position: relative;
-
     overflow: hidden;
-
-    padding: 28px 32px;
-
-    margin-bottom: 24px;
-
-    border-radius: 25px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ffffff 0%,
-            #f8faff 60%,
-            #eef2ff 100%
-        );
-
-    border: 1px solid var(--border);
-
-    box-shadow:
-        0 10px 35px rgba(15,23,42,0.045);
-
-    animation: fadeUp 0.55s ease both;
+    display: flex;
+    align-items: center;
+    min-height: 168px;
+    padding: 32px 36px;
+    margin-bottom: 22px;
+    border: 1px solid #dceafa;
+    border-radius: 22px;
+    background: linear-gradient(105deg, #fff 0%, #f4f9ff 62%, #e7f2ff 100%);
+    box-shadow: 0 8px 28px rgba(28, 76, 132, .055);
 }
-
-
-.dashboard-hero::before {
-
+.yjp-hero::after {
     content: "";
-
     position: absolute;
-
-    width: 220px;
-    height: 220px;
-
+    width: 260px;
+    height: 260px;
     right: -70px;
-    top: -120px;
-
+    top: -145px;
     border-radius: 50%;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(79,70,229,0.14),
-            rgba(14,165,233,0.06)
-        );
-
-    animation: heroFloat 7s ease-in-out infinite;
+    background: rgba(55, 139, 235, .09);
 }
-
-
-.dashboard-hero::after {
-
-    content: "";
-
-    position: absolute;
-
-    width: 130px;
-    height: 130px;
-
-    right: 190px;
-    bottom: -90px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(124,58,237,0.06);
-
-    animation: heroFloat 9s ease-in-out infinite reverse;
-}
-
-
-.hero-content {
-
-    position: relative;
-
-    z-index: 2;
-}
-
-
-.hero-title {
-
-    margin: 0;
-
-    font-size: clamp(2rem, 4vw, 2.65rem);
-
-    line-height: 1.08;
-
-    font-weight: 900;
-
-    letter-spacing: -1.5px;
-
-    color: #111827;
-}
-
-
-.hero-name {
-
-    display: inline-block;
-
-    background:
-        linear-gradient(
-            135deg,
-            #0ea5e9,
-            #4f46e5,
-            #7c3aed
-        );
-
-    -webkit-background-clip: text;
-
-    -webkit-text-fill-color: transparent;
-
-    background-clip: text;
-
-    animation: gradientMove 5s ease infinite;
-
-    background-size: 200% 200%;
-}
-
-
-.hero-subtitle {
-
-    margin: 10px 0 20px;
-
-    color: #64748b;
-
-    font-size: 0.82rem;
-
-    font-weight: 500;
-}
-
-
-.hero-pills {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 9px;
-}
-
-
-.hero-pill {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    padding: 8px 12px;
-
-    border-radius: 25px;
-
-    background: white;
-
-    border: 1px solid #e7ebf3;
-
-    color: #475569;
-
-    font-size: 0.67rem;
-
+.yjp-hero-content { position: relative; z-index: 1; max-width: 760px; }
+.yjp-eyebrow {
+    margin: 0 0 9px;
+    color: var(--blue);
+    font-size: .72rem;
     font-weight: 800;
-
-    box-shadow:
-        0 4px 12px rgba(15,23,42,0.035);
+    letter-spacing: .11em;
+    text-transform: uppercase;
 }
-
-
-.hero-pill i {
-
-    color: var(--primary);
-}
-
-
-/* =========================================================
-   MAIN DASHBOARD GRID
-========================================================= */
-
-.dashboard-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        minmax(0, 1.45fr)
-        minmax(360px, 0.85fr);
-
-    gap: 22px;
-
-    align-items: start;
-}
-
-
-.left-column,
-.right-column {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 20px;
-}
-
-
-/* =========================================================
-   COMMON CARD
-========================================================= */
-
-.dashboard-card {
-
-    background: var(--card);
-
-    border: 1px solid var(--border);
-
-    border-radius: 21px;
-
-    box-shadow:
-        0 8px 28px rgba(15,23,42,0.045);
-
-    padding: 21px;
-
-    transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease;
-}
-
-
-.dashboard-card:hover {
-
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 14px 35px rgba(15,23,42,0.065);
-}
-
-
-.section-heading {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    margin-bottom: 17px;
-}
-
-
-.section-heading-icon {
-
-    width: 38px;
-    height: 38px;
-
-    border-radius: 11px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background: #eef2ff;
-
-    color: var(--primary);
-
-    font-size: 0.9rem;
-}
-
-
-.section-heading h2 {
-
+.yjp-hero h1 {
     margin: 0;
-
-    color: #1e293b;
-
-    font-size: 0.88rem;
-
-    font-weight: 900;
+    color: #152238;
+    font-size: clamp(1.8rem, 3.5vw, 2.65rem);
+    line-height: 1.12;
+    font-weight: 800;
+    letter-spacing: -.055em;
 }
-
-
-.section-heading p {
-
-    margin: 2px 0 0;
-
-    color: #94a3b8;
-
-    font-size: 0.62rem;
+.yjp-hero h1 span { color: var(--blue); }
+.yjp-hero p {
+    margin: 11px 0 0;
+    color: #64748b;
+    font-size: .9rem;
+    line-height: 1.6;
 }
-
-
-/* =========================================================
-   TOURNAMENT SPOTLIGHT
-========================================================= */
-
-.tournament-card {
-
-    position: relative;
-
-    overflow: hidden;
-
-    padding: 25px;
-
-    border-radius: 24px;
-
-    color: white;
-
-    background:
-        linear-gradient(
-            135deg,
-            #10172f 0%,
-            #312e81 43%,
-            #4f46e5 75%,
-            #4338ca 100%
-        );
-
-    box-shadow:
-        0 18px 42px rgba(67,56,202,0.22);
-
-    animation:
-        fadeUp 0.65s ease both,
-        tournamentGlow 5s ease-in-out infinite;
-}
-
-
-.tournament-card::before {
-
-    content: "";
-
-    position: absolute;
-
-    width: 240px;
-    height: 240px;
-
-    right: -90px;
-    top: -150px;
-
-    border-radius: 50%;
-
-    background: rgba(255,255,255,0.09);
-
-    animation: heroFloat 8s ease-in-out infinite;
-}
-
-
-.tournament-card::after {
-
-    content: "";
-
-    position: absolute;
-
-    width: 160px;
-    height: 160px;
-
-    right: 90px;
-    bottom: -125px;
-
-    border-radius: 50%;
-
-    background: rgba(14,165,233,0.12);
-}
-
-
-.tournament-content {
-
-    position: relative;
-
-    z-index: 2;
-}
-
-
-.tournament-header {
-
-    display: flex;
-
-    align-items: flex-start;
-
-    justify-content: space-between;
-
-    gap: 15px;
-}
-
-
-.tournament-brand {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-}
-
-
-.tournament-icon {
-
-    width: 48px;
-    height: 48px;
-
-    flex-shrink: 0;
-
-    border-radius: 14px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background: rgba(255,255,255,0.13);
-
-    border: 1px solid rgba(255,255,255,0.13);
-
-    font-size: 1.15rem;
-
-    animation: trophyFloat 3s ease-in-out infinite;
-}
-
-
-.tournament-label {
-
-    margin: 0;
-
-    font-size: 0.9rem;
-
-    font-weight: 900;
-}
-
-
-.tournament-caption {
-
-    margin: 3px 0 0;
-
-    color: rgba(255,255,255,0.62);
-
-    font-size: 0.62rem;
-}
-
-
-.tournament-status {
-
+.yjp-date-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 19px; }
+.yjp-chip {
     display: inline-flex;
-
     align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid #e1eaf5;
+    border-radius: 999px;
+    background: rgba(255,255,255,.9);
+    color: #52647d;
+    font-size: .72rem;
+    font-weight: 700;
+}
+.yjp-chip i { color: var(--blue); }
+.yjp-grid { display: grid; gap: 18px; }
+.yjp-metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 18px; }
+.yjp-card {
+    min-width: 0;
+    padding: 21px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--surface);
+    box-shadow: 0 7px 24px rgba(24, 57, 96, .045);
+}
+.yjp-metric {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    min-height: 122px;
+}
+.yjp-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    background: var(--blue-soft);
+    color: var(--blue);
+    font-size: 1.05rem;
+}
+.yjp-metric-copy { min-width: 0; }
+.yjp-metric-value {
+    margin: 0;
+    color: #14233a;
+    font-size: 1.8rem;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -.04em;
+}
+.yjp-metric-label { margin: 5px 0 0; color: #52647d; font-size: .79rem; font-weight: 700; }
+.yjp-metric-note { margin: 6px 0 0; color: #8a98aa; font-size: .69rem; }
+.yjp-main-grid { grid-template-columns: minmax(0, 1.55fr) minmax(280px, .85fr); align-items: start; }
+.yjp-stack { display: grid; gap: 18px; min-width: 0; }
+.yjp-section-head { display: flex; align-items: center; gap: 11px; margin-bottom: 18px; }
+.yjp-section-head .yjp-icon { width: 39px; height: 39px; flex-basis: 39px; border-radius: 11px; }
+.yjp-section-head h2 { margin: 0; color: #1b2a40; font-size: .96rem; font-weight: 800; letter-spacing: -.02em; }
+.yjp-section-head p { margin: 4px 0 0; color: #8a98aa; font-size: .7rem; }
+.yjp-attendance-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 15px; margin: 4px 0 12px; }
+.yjp-attendance-top span { color: #62738b; font-size: .78rem; font-weight: 700; }
+.yjp-attendance-top strong { color: var(--blue); font-size: 1.65rem; font-weight: 800; }
+.yjp-progress { height: 11px; overflow: hidden; border-radius: 99px; background: #eaf1f9; }
+.yjp-progress > span { display: block; height: 100%; max-width: 100%; border-radius: inherit; background: linear-gradient(90deg, #65b5ff, #1677e8); }
+.yjp-footnote { display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; color: #8795a8; font-size: .68rem; }
+.yjp-footnote strong { color: #16805d; }
+.yjp-profile-top { display: flex; align-items: center; gap: 13px; margin-bottom: 18px; }
+.yjp-avatar {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 52px; height: 52px; border-radius: 50%;
+    background: #e4f1ff; color: var(--blue); font-size: 1.25rem; font-weight: 800;
+}
+.yjp-profile-name { margin: 0; font-size: 1rem; font-weight: 800; }
+.yjp-role { display: inline-block; margin-top: 5px; padding: 4px 9px; border-radius: 6px; background: var(--blue-soft); color: var(--blue-dark); font-size: .67rem; font-weight: 700; }
+.yjp-profile-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+.yjp-detail { padding: 12px 10px; border: 1px solid #e5edf7; border-radius: 12px; background: #f8fbff; }
+.yjp-detail small { display: block; margin-bottom: 6px; color: #8291a5; font-size: .66rem; }
+.yjp-detail strong { color: #1b2a40; font-size: .79rem; overflow-wrap: anywhere; }
+.yjp-link {
+    display: inline-flex; justify-content: center; align-items: center; gap: 9px;
+    width: 100%; margin-top: 15px; padding: 11px 14px;
+    border: 1px solid #9bc8fa; border-radius: 10px;
+    background: #f4f9ff; color: var(--blue-dark);
+    text-decoration: none; font-size: .76rem; font-weight: 800;
+    transition: background .18s ease, transform .18s ease;
+}
+.yjp-link:hover { background: #e7f2ff; transform: translateY(-1px); color: var(--blue-dark); }
+.yjp-tournament {
+    overflow: hidden;
+    border-color: #d9e9fb;
+    background: linear-gradient(115deg, #fff 0%, #f4f9ff 100%);
+}
+.yjp-tournament-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; }
+.yjp-tournament h3 { margin: 0; font-size: .95rem; font-weight: 800; }
+.yjp-tournament p { margin: 6px 0 0; color: #77879b; font-size: .72rem; line-height: 1.55; }
+.yjp-status {
+    white-space: nowrap; padding: 6px 9px; border-radius: 999px;
+    background: #eaf7f1; color: #16805d; font-size: .65rem; font-weight: 800;
+}
+.yjp-tournament-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 16px; }
+.yjp-tournament-meta div { padding: 11px; border: 1px solid #e3edf8; border-radius: 11px; background: rgba(255,255,255,.8); }
+.yjp-tournament-meta small { display: block; color: #8a98aa; font-size: .63rem; }
+.yjp-tournament-meta strong { display: block; margin-top: 5px; color: #25364e; font-size: .75rem; }
+.yjp-tournament-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 15px; }
+.yjp-tournament-footer span { color: #65768d; font-size: .7rem; }
+.yjp-tournament-footer strong { color: var(--blue); }
+.yjp-mini-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.yjp-mini {
+    display: flex; align-items: center; gap: 10px; padding: 12px;
+    border: 1px solid #e5edf7; border-radius: 12px; background: #f9fbfe;
+    color: #40536d; text-decoration: none; font-size: .72rem; font-weight: 700;
+}
+.yjp-mini i { color: var(--blue); font-size: .9rem; }
+.yjp-mini:hover { border-color: #b9d8fa; background: #f0f7ff; color: var(--blue-dark); }
+.yjp-empty {
+    padding: 19px; border: 1px dashed #cbdced; border-radius: 13px;
+    background: #f9fbfe; color: #75869b;
+}
+.yjp-empty strong { display: block; margin-bottom: 5px; color: #40536d; font-size: .78rem; }
+.yjp-empty p { margin: 0; font-size: .7rem; line-height: 1.5; }
+.yjp-progress-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; }
+.yjp-progress-item { padding: 12px; border-right: 1px solid #e5edf7; }
+.yjp-progress-item:last-child { border-right: 0; }
+.yjp-progress-item small { display: block; color: #8492a5; font-size: .66rem; }
+.yjp-progress-item strong { display: block; margin-top: 5px; color: #263750; font-size: .82rem; }
+.yjp-muted { color: #8a98aa; }
+@media (max-width: 1100px) {
+    .yjp-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .yjp-main-grid { grid-template-columns: 1fr; }
+    .yjp-side-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 650px) {
+    .yjp-dashboard { padding: 16px 12px 32px; }
+    .yjp-hero { min-height: 0; padding: 24px 20px; }
+    .yjp-card { padding: 17px; }
+    .yjp-metrics { gap: 10px; }
+    .yjp-metric { min-height: 108px; gap: 10px; }
+    .yjp-icon { width: 38px; height: 38px; flex-basis: 38px; }
+    .yjp-metric-value { font-size: 1.45rem; }
+    .yjp-side-grid { grid-template-columns: 1fr; }
+    .yjp-profile-details { grid-template-columns: 1fr 1fr 1fr; }
+    .yjp-tournament-meta { grid-template-columns: 1fr; }
+    .yjp-progress-summary { grid-template-columns: 1fr; }
+    .yjp-progress-item { border-right: 0; border-bottom: 1px solid #e5edf7; }
+    .yjp-progress-item:last-child { border-bottom: 0; }
+}
+@media (max-width: 420px) {
+    .yjp-metrics { grid-template-columns: 1fr 1fr; }
+    .yjp-metric { display: block; }
+    .yjp-metric .yjp-icon { margin-bottom: 10px; }
+    .yjp-profile-details { grid-template-columns: 1fr; }
+    .yjp-tournament-row, .yjp-tournament-footer { align-items: flex-start; flex-direction: column; }
+}
 
+
+
+.yjp-today-classes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.yjp-today-class {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 14px;
+    border: 1px solid #e5edf7;
+    border-radius: 12px;
+    background: #fbfdff;
+    transition: background .2s ease;
+}
+
+.yjp-today-class:hover {
+    background: #f0f7ff;
+}
+
+.yjp-today-time {
+    min-width: 105px;
+    display: flex;
+    flex-direction: column;
     gap: 5px;
+}
 
-    padding: 6px 10px;
+.yjp-today-time strong {
+    font-size: .78rem;
+    color: #1769c2;
+}
 
-    border-radius: 20px;
+.yjp-today-time span {
+    font-size: .68rem;
+    color: #8291a5;
+}
 
-    color: #6ee7b7;
+.yjp-today-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
 
-    background: rgba(16,185,129,0.15);
+.yjp-today-info strong {
+    font-size: .82rem;
+    color: #263750;
+    overflow-wrap: anywhere;
+}
 
-    border: 1px solid rgba(110,231,183,0.18);
+.yjp-today-info small {
+    font-size: .7rem;
+    color: #8291a5;
+}
 
-    font-size: 0.61rem;
+.yjp-class-number {
+    color: #b4c9e1;
+    font-size: .85rem;
+    font-weight: 800;
+}
 
-    font-weight: 900;
+@media(max-width: 480px) {
+    .yjp-today-class {
+        padding: 12px 9px;
+        gap: 10px;
+    }
 
+    .yjp-today-time {
+        min-width: 88px;
+    }
+}
+
+
+.view-all-link {
+    margin-left: auto;
+    color: #1769c2 !important;
+    text-decoration: none !important;
+    font-size: 12px;
+    font-weight: 700;
     white-space: nowrap;
 }
 
-
-.status-dot {
-
-    width: 6px;
-    height: 6px;
-
-    border-radius: 50%;
-
-    background: #34d399;
-
-    box-shadow:
-        0 0 0 4px rgba(52,211,153,0.10);
-
-    animation: pulseDot 1.8s infinite;
+.view-all-link:hover {
+    color: #084fa5 !important;
 }
 
-
-.tournament-title {
-
-    margin: 23px 0 6px;
-
-    font-size: 1.45rem;
-
-    line-height: 1.15;
-
-    font-weight: 900;
-
-    letter-spacing: -0.5px;
-}
-
-
-.tournament-description {
-
-    max-width: 850px;
-
-    margin: 0 0 19px;
-
-    color: rgba(255,255,255,0.68);
-
-    font-size: 0.69rem;
-
-    line-height: 1.6;
-}
-
-
-/* TOURNAMENT INFO */
-
-.tournament-info {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 9px;
-}
-
-
-.tournament-info-box {
-
-    padding: 12px;
-
-    border-radius: 13px;
-
-    background: rgba(255,255,255,0.08);
-
-    border: 1px solid rgba(255,255,255,0.09);
-
-    backdrop-filter: blur(8px);
-
-    transition: 0.2s ease;
-}
-
-
-.tournament-info-box:hover {
-
-    background: rgba(255,255,255,0.13);
-
-    transform: translateY(-2px);
-}
-
-
-.tournament-info-label {
-
-    display: block;
-
-    margin-bottom: 4px;
-
-    color: rgba(255,255,255,0.48);
-
-    font-size: 0.57rem;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.5px;
-
-    font-weight: 900;
-}
-
-
-.tournament-info-value {
-
-    display: block;
-
-    color: white;
-
-    font-size: 0.7rem;
-
-    font-weight: 800;
-}
-
-
-.tournament-footer {
-
+.announcement-list {
     display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 15px;
-
-    margin-top: 19px;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
 }
-
-
-.tournament-attendance {
-
-    color: rgba(255,255,255,0.70);
-
-    font-size: 0.66rem;
-
-    font-weight: 600;
-}
-
-
-.tournament-attendance strong {
-
-    color: #6ee7b7;
-
-    font-weight: 900;
-}
-
-
-.tournament-button {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    padding: 10px 15px;
-
-    border-radius: 11px;
-
-    background: white;
-
-    color: #4338ca;
-
-    text-decoration: none;
-
-    font-size: 0.68rem;
-
-    font-weight: 900;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-
-.tournament-button:hover {
-
-    transform: translateY(-2px);
-
-    color: #312e81;
-
-    box-shadow:
-        0 9px 18px rgba(0,0,0,0.15);
-}
-
-
-/* =========================================================
-   EMPTY TOURNAMENT
-========================================================= */
-
-.tournament-empty {
-
-    padding: 25px;
-
-    border-radius: 22px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #eef2ff,
-            #f5f3ff
-        );
-
-    border: 1px solid #ddd6fe;
-}
-
-
-.tournament-empty-content {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-}
-
-
-.tournament-empty-icon {
-
-    width: 48px;
-    height: 48px;
-
-    flex-shrink: 0;
-
-    border-radius: 14px;
-
-    background: white;
-
-    color: #6366f1;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    box-shadow:
-        0 5px 15px rgba(99,102,241,0.10);
-}
-
-
-.tournament-empty h3 {
-
-    margin: 0 0 4px;
-
-    color: #3730a3;
-
-    font-size: 0.85rem;
-}
-
-
-.tournament-empty p {
-
-    margin: 0;
-
-    color: #6366f1;
-
-    font-size: 0.65rem;
-}
-
-
-/* =========================================================
-   ANNOUNCEMENTS
-========================================================= */
 
 .announcement-item {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 13px;
-
-    padding: 14px;
-
-    border-radius: 15px;
-
-    background: #f8fafc;
-
-    border: 1px solid #edf1f6;
-
-    transition: 0.22s ease;
+    padding: 16px;
+    background: #f8fbff;
+    border: 1px solid #e5edf6;
+    border-radius: 12px;
 }
-
-
-.announcement-item:hover {
-
-    transform: translateX(4px);
-
-    background: #f6f8fc;
-}
-
-
-.announcement-icon {
-
-    width: 43px;
-    height: 43px;
-
-    flex-shrink: 0;
-
-    border-radius: 13px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background: #fff1f2;
-
-    color: #e11d48;
-}
-
-
-.announcement-title {
-
-    margin: 0 0 5px;
-
-    color: #334155;
-
-    font-size: 0.75rem;
-
-    font-weight: 900;
-}
-
 
 .announcement-meta {
-
-    margin: 0;
-
-    color: #64748b;
-
-    font-size: 0.63rem;
-}
-
-
-/* =========================================================
-   ATTENDANCE
-========================================================= */
-
-.attendance-header {
-
     display: flex;
-
     align-items: center;
-
-    justify-content: space-between;
-
-    margin-bottom: 10px;
-}
-
-
-.attendance-label {
-
-    color: #475569;
-
-    font-size: 0.72rem;
-
-    font-weight: 800;
-}
-
-
-.attendance-value {
-
-    color: #10b981;
-
-    font-size: 0.82rem;
-
-    font-weight: 900;
-}
-
-
-.progress-container {
-
-    width: 100%;
-
-    height: 10px;
-
-    padding: 2px;
-
-    border-radius: 20px;
-
-    background: #edf2f7;
-
-    overflow: hidden;
-}
-
-
-.progress-bar {
-
-    height: 100%;
-
-    width: {{ attendance|default(0) }}%;
-
-    max-width: 100%;
-
-    border-radius: 20px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #10b981,
-            #34d399
-        );
-
-    animation:
-        progressGrow 1.3s ease both;
-}
-
-
-.attendance-footer {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    margin-top: 9px;
-
-    color: #94a3b8;
-
-    font-size: 0.59rem;
-}
-
-
-.attendance-footer strong {
-
-    color: #10b981;
-}
-
-
-/* =========================================================
-   RIGHT STATS
-========================================================= */
-
-.stats-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 13px;
-}
-
-
-.stat-card {
-
-    position: relative;
-
-    overflow: hidden;
-
-    min-height: 145px;
-
-    padding: 18px;
-
-    border-radius: 19px;
-
-    background: white;
-
-    border: 1px solid var(--border);
-
-    box-shadow:
-        0 8px 23px rgba(15,23,42,0.04);
-
-    transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease;
-}
-
-
-.stat-card:hover {
-
-    transform: translateY(-4px);
-
-    box-shadow:
-        0 15px 30px rgba(15,23,42,0.08);
-}
-
-
-.stat-card::after {
-
-    content: "";
-
-    position: absolute;
-
-    width: 85px;
-    height: 85px;
-
-    right: -32px;
-    top: -32px;
-
-    border-radius: 50%;
-
-    background: rgba(99,102,241,0.045);
-}
-
-
-.stat-icon {
-
-    width: 42px;
-    height: 42px;
-
-    border-radius: 12px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 1rem;
-
-    margin-bottom: 13px;
-}
-
-
-.stat-green {
-
-    background: #dcfce7;
-
-    color: #16a34a;
-}
-
-
-.stat-blue {
-
-    background: #e0f2fe;
-
-    color: #0284c7;
-}
-
-
-.stat-purple {
-
-    background: #f3e8ff;
-
-    color: #9333ea;
-}
-
-
-.stat-red {
-
-    background: #ffe4e6;
-
-    color: #e11d48;
-}
-
-
-.stat-value {
-
-    margin: 0;
-
-    color: #111827;
-
-    font-size: 1.55rem;
-
-    font-weight: 900;
-}
-
-
-.stat-label {
-
-    margin-top: 4px;
-
-    color: #64748b;
-
-    font-size: 0.65rem;
-
-    font-weight: 700;
-}
-
-
-.stat-note {
-
-    margin-top: 7px;
-
-    font-size: 0.58rem;
-
-    font-weight: 700;
-}
-
-
-/* =========================================================
-   TOURNAMENT STATS
-========================================================= */
-
-.tournament-stats {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 9px;
-}
-
-
-.tournament-mini {
-
-    padding: 13px;
-
-    border-radius: 13px;
-
-    background: #f8fafc;
-
-    border: 1px solid #edf1f7;
-
-    transition: 0.2s;
-}
-
-
-.tournament-mini:hover {
-
-    transform: translateY(-2px);
-
-    background: #f5f7ff;
-}
-
-
-.tournament-mini-label {
-
-    color: #94a3b8;
-
-    font-size: 0.56rem;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.4px;
-
-    font-weight: 900;
-}
-
-
-.tournament-mini-value {
-
-    margin-top: 4px;
-
-    color: #293451;
-
-    font-size: 1rem;
-
-    font-weight: 900;
-}
-
-
-.explore-button {
-
-    width: 100%;
-
-    margin-top: 11px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
     gap: 8px;
-
-    padding: 11px;
-
-    border-radius: 11px;
-
-    text-decoration: none;
-
-    background: #eef2ff;
-
-    border: 1px solid #ddd6fe;
-
-    color: #4f46e5;
-
-    font-size: 0.66rem;
-
-    font-weight: 900;
-
-    transition: 0.2s;
+    margin-bottom: 9px;
 }
 
-
-.explore-button:hover {
-
-    background: #e0e7ff;
-
-    transform: translateY(-2px);
-}
-
-
-/* =========================================================
-   QUICK ACCESS
-========================================================= */
-
-.quick-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 9px;
-}
-
-
-.quick-button {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 9px;
-
-    padding: 12px;
-
-    border-radius: 12px;
-
-    background: #f8fafc;
-
-    border: 1px solid #e5eaf1;
-
-    color: #334155;
-
-    text-decoration: none;
-
-    font-size: 0.63rem;
-
-    font-weight: 800;
-
-    transition: 0.22s ease;
-}
-
-
-.quick-button i {
-
-    width: 25px;
-
-    color: #3b82f6;
-
-    font-size: 0.85rem;
-}
-
-
-.quick-button:hover {
-
-    transform: translateY(-3px);
-
-    background: white;
-
-    border-color: #c7d2fe;
-
-    color: #4338ca;
-
-    box-shadow:
-        0 7px 17px rgba(15,23,42,0.06);
-}
-
-
-.quick-button.tournament i {
-
-    color: #f59e0b;
-}
-
-
-/* =========================================================
-   MOTIVATION
-========================================================= */
-
-.quote-card {
-
-    position: relative;
-
-    overflow: hidden;
-
-    padding: 22px;
-
-    border-radius: 21px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #eef2ff,
-            #e0e7ff
-        );
-
-    border: 1px solid #c7d2fe;
-}
-
-
-.quote-card h3 {
-
+.announcement-item h3 {
     margin: 0 0 7px;
+    color: #263750;
+    font-size: 15px;
+}
 
-    color: #4338ca;
+.announcement-item p {
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+    margin: 0 0 9px;
+}
 
-    font-size: 0.82rem;
+.announcement-item small {
+    color: #94a3b8;
+    font-size: 11px;
+}
 
-    font-weight: 900;
+.announcement-open-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    border: 1px solid #9bc7ff;
+    border-radius: 10px;
+    background: #f3f8ff;
+    color: #1769c2 !important;
+    text-decoration: none !important;
+    font-size: 12px;
+    font-weight: 700;
+    transition: .2s;
+}
+
+.announcement-open-btn:hover {
+    background: #e5f1ff;
 }
 
 
-.quote-card p {
-
-    max-width: 80%;
-
-    margin: 0;
-
-    color: #4f46e5;
-
-    font-size: 0.63rem;
-
-    line-height: 1.55;
-
-    font-weight: 600;
-}
-
-
-.quote-icon {
-
-    position: absolute;
-
-    right: -4px;
-
-    bottom: -25px;
-
-    color: rgba(99,102,241,0.11);
-
-    font-size: 5.5rem;
-}
-
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media (max-width: 1100px) {
-
-    .dashboard-grid {
-
-        grid-template-columns: 1fr;
-
-    }
-
-    .right-column {
-
-        display: grid;
-
-        grid-template-columns:
-            repeat(2, 1fr);
-
-        align-items: start;
-
-    }
-
-    .right-column .dashboard-card:last-child {
-
-        grid-column: 1 / -1;
-
-    }
-
-}
-
-
-@media (max-width: 760px) {
-
-    .dashboard-page {
-
-        padding: 18px 14px 40px;
-
-    }
-
-    .dashboard-hero {
-
-        padding: 23px;
-
-    }
-
-    .dashboard-grid {
-
-        grid-template-columns: 1fr;
-
-    }
-
-    .right-column {
-
-        display: flex;
-
-        flex-direction: column;
-
-    }
-
-    .tournament-info {
-
-        grid-template-columns: 1fr;
-
-    }
-
-    .tournament-footer {
-
-        flex-direction: column;
-
-        align-items: flex-start;
-
-    }
-
-}
-
-
-@media (max-width: 520px) {
-
-    .stats-grid {
-
-        grid-template-columns: 1fr 1fr;
-
-    }
-
-    .tournament-stats {
-
-        grid-template-columns: 1fr;
-
-    }
-
-    .quick-grid {
-
-        grid-template-columns: 1fr;
-
-    }
-
-    .hero-title {
-
-        font-size: 1.9rem;
-
-    }
-
-    .hero-pills {
-
-        flex-direction: column;
-
-        align-items: flex-start;
-
-    }
-
-}
-
-
-/* =========================================================
-   ANIMATIONS
-========================================================= */
-
-@keyframes fadeUp {
-
-    from {
-
-        opacity: 0;
-
-        transform: translateY(18px);
-
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform: translateY(0);
-
-    }
-
-}
-
-
-@keyframes heroFloat {
-
-    0%, 100% {
-
-        transform:
-            translate(0, 0);
-
-    }
-
-    50% {
-
-        transform:
-            translate(-12px, 15px);
-
-    }
-
-}
-
-
-@keyframes gradientMove {
-
-    0%, 100% {
-
-        background-position:
-            0% 50%;
-
-    }
-
-    50% {
-
-        background-position:
-            100% 50%;
-
-    }
-
-}
-
-
-@keyframes progressGrow {
-
-    from {
-
-        width: 0;
-
-    }
-
-}
-
-
-@keyframes pulseDot {
-
-    0%, 100% {
-
-        box-shadow:
-            0 0 0 3px
-            rgba(52,211,153,0.08);
-
-    }
-
-    50% {
-
-        box-shadow:
-            0 0 0 6px
-            rgba(52,211,153,0.03);
-
-    }
-
-}
-
-
-@keyframes trophyFloat {
-
-    0%, 100% {
-
-        transform:
-            translateY(0);
-
-    }
-
-    50% {
-
-        transform:
-            translateY(-4px);
-
-    }
-
-}
-
-
-@keyframes tournamentGlow {
-
-    0%, 100% {
-
-        box-shadow:
-            0 18px 42px
-            rgba(67,56,202,0.20);
-
-    }
-
-    50% {
-
-        box-shadow:
-            0 22px 48px
-            rgba(67,56,202,0.28);
-
-    }
-
-}
 
 </style>
 
+<div class="yjp-dashboard">
+<div class="yjp-wrap">
 
-<div class="dashboard-page">
-
-<div class="dashboard-container">
-
-
-    <!-- =====================================================
-         HERO
-    ====================================================== -->
-
-    <section class="dashboard-hero">
-
-        <div class="hero-content">
-
-            <h1 class="hero-title">
-
-                Welcome Back,
-
-                <br>
-
-                <span class="hero-name">
-                    {{ session.name }}
-                </span>
-
-            </h1>
-
-
-            <p class="hero-subtitle">
-
-                Glad to see you again! Let's make today productive. 👋
-
-            </p>
-
-
-            <div class="hero-pills">
-
-                <div class="hero-pill">
-
-                    <i class="fa-regular fa-calendar"></i>
-
-                    <span id="todayDate"></span>
-
-                </div>
-
-
-                <div class="hero-pill">
-
-                    <i class="fa-regular fa-clock"></i>
-
-                    <span id="clock"></span>
-
-                </div>
-
-
-                <div
-                    class="hero-pill"
-                    style="
-                        background:#eef2ff;
-                        color:#4f46e5;
-                        border-color:#ddd6fe;
-                    "
-                >
-
-                    <i class="fa-solid fa-layer-group"></i>
-
-                    Phase - 1
-
-                </div>
-
+    <section class="yjp-hero">
+        <div class="yjp-hero-content">
+            <p class="yjp-eyebrow">YJ-Portal · Student Dashboard</p>
+            <h1>Welcome back, <span>{{ session.get('name', 'Student') }}</span></h1>
+            <p>Your academic activity, progress and important portal sections in one place.</p>
+            <div class="yjp-date-row">
+                <span class="yjp-chip"><i class="fa-regular fa-calendar"></i><span id="yjpTodayDate"></span></span>
+                <span class="yjp-chip"><i class="fa-regular fa-clock"></i><span id="yjpClock"></span></span>
+                <span class="yjp-chip"><i class="fa-solid fa-layer-group"></i>Phase-2</span>
             </div>
-
         </div>
-
     </section>
 
-
-
-    <!-- =====================================================
-         MAIN GRID
-    ====================================================== -->
-
-    <div class="dashboard-grid">
-
-
-        <!-- =================================================
-             LEFT COLUMN
-        ================================================== -->
-
-        <div class="left-column">
-
-
-            <!-- =================================================
-                 TOURNAMENT
-            ================================================== -->
-
-            {% if upcoming_tournaments|default([]) %}
-
-                {% set tournament = upcoming_tournaments[0] %}
-
-
-                <section class="tournament-card">
-
-                    <div class="tournament-content">
-
-
-                        <div class="tournament-header">
-
-
-                            <div class="tournament-brand">
-
-                                <div class="tournament-icon">
-
-                                    <i class="fa-solid fa-trophy"></i>
-
-                                </div>
-
-
-                                <div>
-
-                                    <h2 class="tournament-label">
-                                        Tournament Spotlight
-                                    </h2>
-
-                                    <p class="tournament-caption">
-                                        Compete • Participate • Achieve
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-
-                            <span class="tournament-status">
-
-                                <span class="status-dot"></span>
-
-                                Upcoming
-
-                            </span>
-
-                        </div>
-
-
-
-                        <h1 class="tournament-title">
-
-                            {{ tournament.title }}
-
-                        </h1>
-
-
-                        <p class="tournament-description">
-
-                            {{ tournament.description|default(
-                                'An exciting tournament awaits you. Check the tournament details and register before the registration deadline.'
-                            )|truncate(180) }}
-
-                        </p>
-
-
-
-                        <div class="tournament-info">
-
-
-                            <!-- DATE -->
-
-                            <div class="tournament-info-box">
-
-                                <span class="tournament-info-label">
-                                    Date
-                                </span>
-
-                                <span class="tournament-info-value">
-
-                                    {% if tournament.tournament_date %}
-
-                                        {{ tournament.tournament_date.strftime('%d %b %Y') }}
-
-                                    {% else %}
-
-                                        TBA
-
-                                    {% endif %}
-
-                                </span>
-
-                            </div>
-
-
-
-                            <!-- TIME -->
-
-                            <div class="tournament-info-box">
-
-                                <span class="tournament-info-label">
-                                    Time
-                                </span>
-
-                                <span class="tournament-info-value">
-
-                                    {{ tournament.formatted_start_time|default('TBA') }}
-
-                                </span>
-
-                            </div>
-
-
-
-                            <!-- VENUE -->
-
-                            <div class="tournament-info-box">
-
-                                <span class="tournament-info-label">
-                                    Venue
-                                </span>
-
-                                <span class="tournament-info-value">
-
-                                    {{ tournament.venue|default('TBA') }}
-
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <div class="tournament-footer">
-
-
-                            <div class="tournament-attendance">
-
-                                <i class="fa-solid fa-chart-simple"></i>
-
-                                Your Phase-2 Attendance:
-
-                                <strong>
-
-                                    {{ phase2_attendance|default(0) }}%
-
-                                </strong>
-
-                            </div>
-
-
-                            <a
-                                href="{{ url_for('tournaments') }}"
-                                class="tournament-button"
-                            >
-
-                                View Tournament
-
-                                <i class="fa-solid fa-arrow-right"></i>
-
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-            {% else %}
-
-
-                <section class="tournament-empty">
-
-                    <div class="tournament-empty-content">
-
-                        <div class="tournament-empty-icon">
-
-                            <i class="fa-solid fa-trophy"></i>
-
-                        </div>
-
-
-                        <div>
-
-                            <h3>
-                                Tournament Arena
-                            </h3>
-
-                            <p>
-                                No upcoming tournament is available right now.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-            {% endif %}
-
-
-
-            <!-- =================================================
-                 ANNOUNCEMENTS
-            ================================================== -->
-
-            <section class="dashboard-card">
-
-                <div class="section-heading">
-
-                    <div
-                        class="section-heading-icon"
-                        style="
-                            background:#f3e8ff;
-                            color:#8b5cf6;
-                        "
-                    >
-
-                        <i class="fa-solid fa-bullhorn"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h2>
-                            Announcements
-                        </h2>
-
-                        <p>
-                            Latest university updates
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="announcement-item">
-
-
-                    <div class="announcement-icon">
-
-                        <i class="fa-solid fa-fire"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h3 class="announcement-title">
-
-                            Data Analytics using Python
-
-                        </h3>
-
-
-                        <p class="announcement-meta">
-
-                            📅 18 July 2026
-                            &nbsp; • &nbsp;
-                            🕓 4:00 PM - 6:30 PM
-                            &nbsp; • &nbsp;
-                            ⭐ Credit: 1
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-
-            <!-- =================================================
-                 ATTENDANCE
-            ================================================== -->
-
-            <section class="dashboard-card">
-
-                <div class="section-heading">
-
-                    <div
-                        class="section-heading-icon"
-                        style="
-                            background:#dcfce7;
-                            color:#10b981;
-                        "
-                    >
-
-                        <i class="fa-solid fa-chart-line"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h2>
-                            Attendance Progress
-                        </h2>
-
-                        <p>
-                            Your academic attendance
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="attendance-header">
-
-                    <span class="attendance-label">
-                        Overall Status
-                    </span>
-
-
-                    <span class="attendance-value">
-
-                        {{ attendance|default(0) }}%
-
-                    </span>
-
-                </div>
-
-
-                <div class="progress-container">
-
-                    <div
-                        class="progress-bar"
-                        style="
-                            width:{{ attendance|default(0) }}%;
-                        "
-                    ></div>
-
-                </div>
-
-
-                <div class="attendance-footer">
-
-                    <span>
-                        Tournament eligibility
-                    </span>
-
-
-                    <strong>
-
-                        80% Required
-
-                    </strong>
-
-                </div>
-
-            </section>
-
-
-        </div>
-
-
-
-        <!-- =================================================
-             RIGHT COLUMN
-        ================================================== -->
-
-        <div class="right-column">
-
-
-            <!-- =================================================
-                 STAT CARDS
-            ================================================== -->
-
-            <div class="stats-grid">
-
-
-                <!-- ATTENDANCE -->
-
-                <div class="stat-card">
-
-                    <div class="stat-icon stat-green">
-
-                        <i class="fa-solid fa-arrow-trend-up"></i>
-
-                    </div>
-
-
-                    <h2 class="stat-value">
-
-                        {{ attendance|default(0) }}%
-
-                    </h2>
-
-
-                    <div class="stat-label">
-
-                        Overall Progress
-
-                    </div>
-
-
-                    <div
-                        class="stat-note"
-                        style="color:#16a34a;"
-                    >
-
-                        {% if attendance|default(0) >= 80 %}
-
-                            Excellent standing 🚀
-
-                        {% else %}
-
-                            Improve attendance
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-
-
-                <!-- ASSIGNMENTS -->
-
-                <div class="stat-card">
-
-                    <div class="stat-icon stat-blue">
-
-                        <i class="fa-solid fa-book-open"></i>
-
-                    </div>
-
-
-                    <h2 class="stat-value">
-
-                        {{ assignments|default(0) }}
-
-                    </h2>
-
-
-                    <div class="stat-label">
-                        Assignments
-                    </div>
-
-
-                    <div
-                        class="stat-note"
-                        style="color:#0284c7;"
-                    >
-                        Pending tasks
-                    </div>
-
-                </div>
-
-
-
-                <!-- MARKS -->
-
-                <div class="stat-card">
-
-                    <div class="stat-icon stat-purple">
-
-                        <i class="fa-solid fa-clipboard-check"></i>
-
-                    </div>
-
-
-                    <h2 class="stat-value">
-
-                        {{ marks|default(0) }}
-
-                    </h2>
-
-
-                    <div class="stat-label">
-                        Internal Marks
-                    </div>
-
-
-                    <div
-                        class="stat-note"
-                        style="color:#9333ea;"
-                    >
-                        Latest results
-                    </div>
-
-                </div>
-
-
-
-                <!-- ANNOUNCEMENTS -->
-
-                <div class="stat-card">
-
-                    <div class="stat-icon stat-red">
-
-                        <i class="fa-regular fa-bell"></i>
-
-                    </div>
-
-
-                    <h2 class="stat-value">
-                        4
-                    </h2>
-
-
-                    <div class="stat-label">
-                        Announcements
-                    </div>
-
-
-                    <div
-                        class="stat-note"
-                        style="color:#e11d48;"
-                    >
-                        Check updates
-                    </div>
-
-                </div>
-
-
+    <section class="yjp-grid yjp-metrics">
+        <article class="yjp-card yjp-metric">
+            <div class="yjp-icon"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="yjp-metric-copy">
+                <h2 class="yjp-metric-value">{{ phase2_attendance|default(0) }}%</h2>
+                <p class="yjp-metric-label">Phase-2 Attendance</p>
+                <p class="yjp-metric-note">80% required for tournament eligibility</p>
             </div>
+        </article>
 
+        <article class="yjp-card yjp-metric">
+            <div class="yjp-icon"><i class="fa-solid fa-book-open"></i></div>
+            <div class="yjp-metric-copy">
+                <h2 class="yjp-metric-value">{{ assignments|default(0) }}</h2>
+                <p class="yjp-metric-label">Available Assignments</p>
+                <p class="yjp-metric-note">Assignments currently in the portal</p>
+            </div>
+        </article>
 
+        <article class="yjp-card yjp-metric">
+            <div class="yjp-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+            <div class="yjp-metric-copy">
+                <h2 class="yjp-metric-value">{{ marks|default(0) }}</h2>
+                <p class="yjp-metric-label">Phase-2 Marks Records</p>
+                <p class="yjp-metric-note">Records available for your account</p>
+            </div>
+        </article>
 
-            <!-- =================================================
-                 TOURNAMENT STATS
-            ================================================== -->
+        <article class="yjp-card yjp-metric">
+            <div class="yjp-icon"><i class="fa-solid fa-trophy"></i></div>
+            <div class="yjp-metric-copy">
+                <h2 class="yjp-metric-value">{{ total_tournaments|default(0) }}</h2>
+                <p class="yjp-metric-label">Tournaments Enrolled</p>
+                <p class="yjp-metric-note">{{ tournaments_won|default(0) }} tournament wins</p>
+            </div>
+        </article>
+    </section>
 
-            <section class="dashboard-card">
+    <div class="yjp-grid yjp-main-grid">
+        <div class="yjp-stack">
 
-
-                <div class="section-heading">
-
-                    <div
-                        class="section-heading-icon"
-                        style="
-                            background:#fff7ed;
-                            color:#f59e0b;
-                        "
-                    >
-
-                        <i class="fa-solid fa-ranking-star"></i>
-
-                    </div>
-
-
+            <section class="yjp-card">
+                <div class="yjp-section-head">
+                    <div class="yjp-icon"><i class="fa-solid fa-chart-column"></i></div>
                     <div>
-
-                        <h2>
-                            Tournament Stats
-                        </h2>
-
-                        <p>
-                            Your competitive journey
-                        </p>
-
+                        <h2>Phase-2 Academic Progress</h2>
+                        <p>Your attendance status for the current phase</p>
                     </div>
+                </div>
+                <div class="yjp-attendance-top">
+                    <span>Phase-2 attendance</span>
+                    <strong>{{ phase2_attendance|default(0) }}%</strong>
+                </div>
+                <div class="yjp-progress" role="progressbar"
+                     aria-valuenow="{{ phase2_attendance|default(0) }}"
+                     aria-valuemin="0" aria-valuemax="100"
+                     aria-label="Phase-2 attendance">
+                    <span style="width: {{ [phase2_attendance|default(0)|float, 100]|min }}%;"></span>
+                </div>
+                <div class="yjp-footnote">
+                    <span>Attendance calculated from Phase-2 records</span>
+                    {% if phase2_attendance|default(0) >= 80 %}
+                        <strong>Meets 80% requirement</strong>
+                    {% else %}
+                        <strong>Below 80% requirement</strong>
+                    {% endif %}
+                </div>
+            </section>
 
+            <section class="yjp-card yjp-tournament">
+                <div class="yjp-section-head">
+                    <div class="yjp-icon"><i class="fa-solid fa-trophy"></i></div>
+                    <div>
+                        <h2>Tournament Overview</h2>
+                        <p>Your participation and upcoming opportunities</p>
+                    </div>
                 </div>
 
-
-
-                <div class="tournament-stats">
-
-
-                    <div class="tournament-mini">
-
-                        <div class="tournament-mini-label">
-                            Enrolled
+                {% if upcoming_tournaments|default([]) %}
+                    {% set tournament = upcoming_tournaments[0] %}
+                    <div class="yjp-tournament-row">
+                        <div>
+                            <h3>{{ tournament.title }}</h3>
+                            <p>{{ tournament.description|default('View the tournament details and registration information.', true)|truncate(180) }}</p>
                         </div>
-
-                        <div class="tournament-mini-value">
-
-                            {{ total_tournaments|default(0) }}
-
-                        </div>
-
+                        <span class="yjp-status">Upcoming</span>
                     </div>
-
-
-                    <div class="tournament-mini">
-
-                        <div class="tournament-mini-label">
-                            Won
+                    <div class="yjp-tournament-meta">
+                        <div>
+                            <small>Date</small>
+                            <strong>{{ tournament.tournament_date.strftime('%d %b %Y') if tournament.tournament_date else 'To be announced' }}</strong>
                         </div>
-
-                        <div class="tournament-mini-value">
-
-                            {{ tournaments_won|default(0) }}
-
+                        <div>
+                            <small>Time</small>
+                            <strong>{{ tournament.formatted_start_time|default('To be announced', true) }}</strong>
                         </div>
-
+                        <div>
+                            <small>Venue</small>
+                            <strong>{{ tournament.venue|default('To be announced', true) }}</strong>
+                        </div>
                     </div>
-
-
-                    <div class="tournament-mini">
-
-                        <div class="tournament-mini-label">
-                            Win Rate
-                        </div>
-
-                        <div class="tournament-mini-value">
-
-                            {{ tournament_win_rate|default(0) }}%
-
-                        </div>
-
+                {% else %}
+                    <div class="yjp-empty">
+                        <strong>No upcoming tournament</strong>
+                        <p>There are currently no tournaments available for registration.</p>
                     </div>
+                {% endif %}
 
-
+                <div class="yjp-tournament-footer">
+                    <span>Phase-2 attendance: <strong>{{ phase2_attendance|default(0) }}%</strong></span>
+                    <span>Win rate: <strong>{{ tournament_win_rate|default(0) }}%</strong></span>
                 </div>
-
-
-                <a
-                    href="{{ url_for('tournaments') }}"
-                    class="explore-button"
-                >
-
-                    <i class="fa-solid fa-trophy"></i>
-
-                    Explore Tournaments
-
-                    <i
-                        class="fa-solid fa-arrow-right"
-                        style="margin-left:auto;"
-                    ></i>
-
+                <a class="yjp-link" href="{{ url_for('tournaments') }}">
+                    Explore tournaments <i class="fa-solid fa-arrow-right"></i>
                 </a>
-
             </section>
 
+            <section class="yjp-card">
+                
 
+<div class="yjp-card">
 
-            <!-- =================================================
-                 QUICK ACCESS
-            ================================================== -->
+    <div class="yjp-section-head">
 
-            <section class="dashboard-card">
-
-
-                <div class="section-heading">
-
-                    <div
-                        class="section-heading-icon"
-                        style="
-                            background:#fef9c3;
-                            color:#eab308;
-                        "
-                    >
-
-                        <i class="fa-solid fa-bolt"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h2>
-                            Quick Access
-                        </h2>
-
-                        <p>
-                            Frequently used sections
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-
-                <div class="quick-grid">
-
-
-                    <a
-                        href="{{ url_for('student_attendance') }}"
-                        class="quick-button"
-                    >
-
-                        <i class="fa-solid fa-chart-pie"></i>
-
-                        Attendance
-
-                    </a>
-
-
-                    <a
-                        href="{{ url_for('student_assignments') }}"
-                        class="quick-button"
-                    >
-
-                        <i class="fa-solid fa-file-signature"></i>
-
-                        Assignments
-
-                    </a>
-
-
-                    <a
-                        href="{{ url_for('internal_marks') }}"
-                        class="quick-button"
-                    >
-
-                        <i class="fa-solid fa-square-poll-vertical"></i>
-
-                        Internal Marks
-
-                    </a>
-
-
-                    <a
-                        href="{{ url_for('announcements') }}"
-                        class="quick-button"
-                    >
-
-                        <i class="fa-solid fa-bullhorn"></i>
-
-                        Announcements
-
-                    </a>
-
-
-                    <a
-                        href="{{ url_for('tournaments') }}"
-                        class="quick-button tournament"
-                    >
-
-                        <i class="fa-solid fa-trophy"></i>
-
-                        Tournaments
-
-                    </a>
-
-
-                    <a
-                        href="{{ url_for('profile') }}"
-                        class="quick-button"
-                    >
-
-                        <i
-                            class="fa-solid fa-user"
-                            style="color:#8b5cf6;"
-                        ></i>
-
-                        My Profile
-
-                    </a>
-
-                </div>
-
-            </section>
-
-
-
-            <!-- =================================================
-                 MOTIVATION
-            ================================================== -->
-
-            <section class="quote-card">
-
-                <h3>
-                    Your journey matters.
-                </h3>
-
-
-                <p>
-
-                    Success is the sum of small efforts repeated
-                    every day. Stay focused, stay consistent,
-                    stay unstoppable.
-
-                </p>
-
-
-                <i
-                    class="fa-solid fa-quote-right quote-icon"
-                ></i>
-
-            </section>
-
-
+        <div class="yjp-icon">
+            <i class="fa-solid fa-bullhorn"></i>
         </div>
+
+        <div>
+            <h2>Recent Announcements</h2>
+            <p>Latest updates and notifications</p>
+        </div>
+
+        <a href="{{ url_for('announcements') }}"
+           class="view-all-link">
+            View All →
+        </a>
 
     </div>
 
-</div>
+    {% if recent_announcements %}
+
+        <div class="announcement-list">
+
+            {% for item in recent_announcements %}
+
+                <div class="announcement-item">
+
+                    <div class="announcement-meta">
+                        <span>{{ item.category }}</span>
+
+                        <span class="priority-{{ item.priority|lower }}">
+                            {{ item.priority }}
+                        </span>
+                    </div>
+
+                    <h3>{{ item.title }}</h3>
+
+                    <p>
+                        {{ item.description|truncate(140) }}
+                    </p>
+
+                    <small>
+                        {{ item.published_at.strftime('%d %b %Y, %I:%M %p') }}
+                    </small>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="yjp-empty">
+            <strong>No announcements available</strong>
+            <p>New updates will appear here.</p>
+        </div>
+
+    {% endif %}
+
+    <a href="{{ url_for('announcements') }}"
+       class="announcement-open-btn">
+        Open Announcements
+        <i class="fa-solid fa-arrow-right"></i>
+    </a>
 
 </div>
 
 
-<!-- =========================================================
-     LIVE DATE & CLOCK
-========================================================= -->
+             
+            </section>
+
+        </div>
+
+        <div class="yjp-stack yjp-side-grid">
+
+            <section class="yjp-card">
+                <div class="yjp-profile-top">
+                    <div class="yjp-avatar">
+                        {{ session.get('name', 'S')[:1]|upper }}
+                    </div>
+                    <div>
+                        <h2 class="yjp-profile-name">{{ session.get('name', 'Student') }}</h2>
+                        <span class="yjp-role">Student</span>
+                    </div>
+                </div>
+                <div class="yjp-profile-details">
+                    <div class="yjp-detail">
+                        <small>Student ID</small>
+                        <strong>STD1</strong>
+                    </div>
+                    <div class="yjp-detail">
+                        <small>Program</small>
+                        <strong>B.Tech (AIML)</strong>
+                    </div>
+                    <div class="yjp-detail">
+                        <small>Phase</small>
+                        <strong>Phase-2</strong>
+                    </div>
+                </div>
+                <a class="yjp-link" href="{{ url_for('profile') }}">
+                    View student profile <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </section>
+
+            <section class="yjp-card">
+                <div class="yjp-section-head">
+                    <div class="yjp-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <div>
+                        <h2>Academic Records</h2>
+                        <p>Quick access to your academic sections</p>
+                    </div>
+                </div>
+                <div class="yjp-mini-grid">
+                    <a class="yjp-mini" href="{{ url_for('student_attendance') }}"><i class="fa-solid fa-chart-pie"></i> Attendance</a>
+                    <a class="yjp-mini" href="{{ url_for('student_assignments') }}"><i class="fa-solid fa-file-lines"></i> Assignments</a>
+                    <a class="yjp-mini" href="{{ url_for('internal_marks') }}"><i class="fa-solid fa-square-poll-vertical"></i> Internal Marks</a>
+                    <a class="yjp-mini" href="{{ url_for('announcements') }}"><i class="fa-solid fa-bell"></i> Announcements</a>
+                    <a class="yjp-mini" href="{{ url_for('tournaments') }}"><i class="fa-solid fa-trophy"></i> Tournaments</a>
+                    <a class="yjp-mini" href="{{ url_for('profile') }}"><i class="fa-solid fa-user"></i> My Profile</a>
+                </div>
+            </section>
+
+          
+
+
+<section class="yjp-card">
+
+    <div class="yjp-section-head">
+        <div class="yjp-icon">
+            <i class="fa-regular fa-calendar"></i>
+        </div>
+
+        <div>
+            <h2>Today's Timetable</h2>
+            <p>{{ today_name }} · Phase-2 Schedule</p>
+        </div>
+    </div>
+
+    {% if today_timetable %}
+
+        <div class="yjp-today-classes">
+
+            {% for item in today_timetable %}
+
+                <div class="yjp-today-class">
+
+                    <div class="yjp-today-time">
+                        <strong>{{ item.start_time }}</strong>
+                        <span>{{ item.end_time }}</span>
+                    </div>
+
+                    <div class="yjp-today-info">
+                        <strong>{{ item.subject }}</strong>
+
+                        <small>
+                            {{ item.course_code or 'Training Session' }}
+                        </small>
+                    </div>
+
+                    <div class="yjp-class-number">
+                        {{ "%02d"|format(loop.index) }}
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="yjp-empty">
+            <strong>No classes scheduled today</strong>
+            <p>Enjoy your free day! Your next scheduled classes will appear automatically.</p>
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+
+
+        </div>
+    </div>
+
+</div>
+</div>
 
 <script>
+(function () {
+    function updateYjpClock() {
+        const now = new Date();
+        const date = document.getElementById("yjpTodayDate");
+        const clock = document.getElementById("yjpClock");
 
-function updateDashboardClock() {
-
-    const now = new Date();
-
-
-    const timeElement =
-        document.getElementById("clock");
-
-    const dateElement =
-        document.getElementById("todayDate");
-
-
-    if (timeElement) {
-
-        timeElement.textContent =
-            now.toLocaleTimeString(
-                [],
-                {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit"
-                }
-            );
-
+        if (date) {
+            date.textContent = now.toLocaleDateString(undefined, {
+                weekday: "short", day: "numeric", month: "short", year: "numeric"
+            });
+        }
+        if (clock) {
+            clock.textContent = now.toLocaleTimeString(undefined, {
+                hour: "2-digit", minute: "2-digit"
+            });
+        }
     }
-
-
-    if (dateElement) {
-
-        dateElement.textContent =
-            now.toLocaleDateString(
-                undefined,
-                {
-                    weekday: "short",
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric"
-                }
-            );
-
-    }
-
-}
-
-
-updateDashboardClock();
-
-setInterval(
-    updateDashboardClock,
-    1000
-);
-
+    updateYjpClock();
+    window.setInterval(updateYjpClock, 1000);
+})();
 </script>
-
-
 {% endblock %}

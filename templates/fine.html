@@ -4,197 +4,387 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Fines | Student Portal</title>
+    <title>My Fines | YJ-Portal</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #075bd8;
+            --primary-dark: #0647b7;
+            --light-blue: #eaf3ff;
+            --border: #dce8f8;
+            --text: #102957;
+            --muted: #64748b;
+            --green: #059b78;
+            --background: #f4f8ff;
+        }
+
         body {
-            margin: 0;
-            padding: 28px 16px;
-            background: #f4f7fb;
-            color: #1e293b;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px 4.5%;
         }
 
         .container {
-            max-width: 1050px;
+            max-width: 1500px;
             margin: auto;
         }
 
-        .header {
+        /* HEADER */
+
+        .top-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 25px;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            gap: 15px;
         }
 
-        .header h1 {
-            margin: 0 0 8px;
-            font-size: 28px;
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
-        .muted {
-            color: #64748b;
-            margin: 0;
+        .brand-logo {
+            width: 58px;
+            height: 58px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #0877ed, #0050c8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 25px;
+            font-weight: 800;
         }
 
-        .back {
+        .brand h2 {
+            font-size: 29px;
+            font-weight: 800;
+            color: #102957;
+        }
+
+        .back-btn {
             text-decoration: none;
-            color: #2563eb;
-            font-weight: bold;
-        }
-
-        .back:hover {
-            text-decoration: underline;
-        }
-
-        .wallet {
-            background: linear-gradient(135deg, #0f766e, #115e59);
-            color: white;
-            padding: 26px;
-            border-radius: 16px;
-            margin-bottom: 18px;
-            box-shadow: 0 8px 22px #0f766e18;
-        }
-
-        .wallet-label {
-            margin: 0 0 10px;
-            opacity: .9;
-            font-size: 15px;
-        }
-
-        .wallet-balance {
-            font-size: 36px;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            padding: 12px 20px;
+            border-radius: 12px;
             font-weight: 700;
-            overflow-wrap: anywhere;
+            transition: .25s;
         }
 
-        .wallet-note {
-            margin: 10px 0 0;
-            font-size: 13px;
-            opacity: .9;
-        }
-
-        .summary {
-            background: linear-gradient(135deg, #1d4ed8, #4338ca);
+        .back-btn:hover {
+            background: var(--primary);
             color: white;
-            padding: 26px;
-            border-radius: 16px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 22px #1e40af18;
         }
 
-        .summary p {
-            margin: 0 0 12px;
-            opacity: .9;
-        }
+        /* PAGE INTRO */
 
-        .amount {
-            font-size: 36px;
-            font-weight: 700;
-        }
-
-        .summary small {
-            display: block;
-            margin-top: 12px;
-            opacity: .9;
-        }
-
-        .section-title {
-            margin: 0 0 16px;
-            font-size: 21px;
-        }
-
-        .fine-card {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 13px;
-            padding: 20px;
-            margin-bottom: 14px;
+        .page-intro {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 20px;
-            box-shadow: 0 3px 12px #0f172a06;
+            gap: 25px;
+            margin-bottom: 32px;
         }
 
-        .fine-info {
-            min-width: 0;
+        .intro-content {
+            display: flex;
+            align-items: center;
+            gap: 25px;
         }
 
-        .fine-card h3 {
-            margin: 0 0 9px;
+        .intro-icon {
+            width: 96px;
+            height: 96px;
+            border-radius: 22px;
+            background: #dcecff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 43px;
+        }
+
+        .intro-divider {
+            width: 2px;
+            height: 90px;
+            background: #80a9e9;
+        }
+
+        .intro-content h1 {
+            font-size: clamp(30px, 4vw, 48px);
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .intro-content p {
+            color: #475d81;
+            font-size: 18px;
+        }
+
+        .intro-decoration {
+            color: #9bbfec;
+            font-size: 95px;
+            padding-right: 30px;
+        }
+
+        /* FLASH MESSAGES */
+
+        .flash-message {
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            background: #e0f2fe;
+            color: #075985;
+            border: 1px solid #bae6fd;
+        }
+
+        .flash-message.success {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+
+        .flash-message.danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+
+        .flash-message.warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fde68a;
+        }
+
+        /* SUMMARY CARDS */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 38px;
+        }
+
+        .summary-card {
+            min-height: 175px;
+            padding: 30px 35px;
+            border-radius: 23px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 27px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 12px 28px rgba(24, 77, 150, .12);
+        }
+
+        .wallet-card {
+            background: linear-gradient(115deg, #05ae85, #07816d);
+        }
+
+        .dues-card {
+            background: linear-gradient(115deg, #0761df, #194bc0);
+        }
+
+        .summary-icon {
+            min-width: 94px;
+            width: 94px;
+            height: 94px;
+            background: rgba(255,255,255,.96);
+            color: var(--primary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 43px;
+        }
+
+        .wallet-card .summary-icon {
+            color: #f5a900;
+        }
+
+        .summary-info {
+            position: relative;
+            z-index: 1;
+        }
+
+        .summary-info p {
             font-size: 17px;
-        }
-
-        .description {
-            color: #64748b;
-            line-height: 1.5;
-            margin: 0 0 10px;
-            overflow-wrap: anywhere;
-        }
-
-        .date {
-            font-size: 13px;
-            color: #64748b;
-        }
-
-        .right {
-            text-align: right;
-            flex-shrink: 0;
-        }
-
-        .fine-amount {
-            font-size: 22px;
-            font-weight: 700;
+            font-weight: 600;
             margin-bottom: 10px;
         }
 
+        .summary-info h2 {
+            font-size: clamp(30px, 3vw, 43px);
+            font-weight: 800;
+            margin-bottom: 7px;
+        }
+
+        .summary-info small {
+            font-size: 16px;
+            opacity: .95;
+        }
+
+        .watermark {
+            position: absolute;
+            right: 30px;
+            bottom: 20px;
+            font-size: 90px;
+            opacity: .10;
+        }
+
+        /* FINE DETAILS */
+
+        .details-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 8px 25px rgba(15, 55, 110, .05);
+            margin-bottom: 25px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 17px;
+            margin-bottom: 22px;
+        }
+
+        .section-heading i {
+            font-size: 29px;
+            color: var(--primary);
+        }
+
+        .section-heading h2 {
+            font-size: 27px;
+            font-weight: 800;
+        }
+
+        /* TABLE */
+
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+        }
+
+        .fine-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 720px;
+        }
+
+        .fine-table thead {
+            background: linear-gradient(90deg, #eaf3ff, #dceaff);
+        }
+
+        .fine-table th {
+            padding: 18px 20px;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 800;
+            color: #102957;
+        }
+
+        .fine-table td {
+            padding: 20px;
+            border-top: 1px solid #e8eef8;
+            font-size: 16px;
+            vertical-align: middle;
+        }
+
+        .fine-table tbody tr:hover {
+            background: #f8fbff;
+        }
+
+        .fine-number {
+            font-weight: 800;
+            color: #334b70;
+        }
+
+        .fine-title {
+            font-weight: 800;
+            color: #172b4d;
+            margin-bottom: 5px;
+        }
+
+        .fine-description {
+            color: var(--muted);
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .fine-amount {
+            font-weight: 800;
+            font-size: 19px;
+            white-space: nowrap;
+        }
+
+        /* STATUS */
+
         .status {
             display: inline-block;
-            padding: 6px 11px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 800;
         }
 
-        .pending {
-            color: #b45309;
-            background: #fef3c7;
+        .status.pending {
+            background: #fff2cc;
+            color: #a16207;
         }
 
-        .paid {
-            color: #15803d;
-            background: #dcfce7;
+        .status.paid {
+            background: #c9f4d6;
+            color: #16803c;
         }
 
-        .waived {
-            color: #475569;
+        .status.waived {
             background: #e2e8f0;
+            color: #475569;
         }
+
+        .status:not(.pending):not(.paid):not(.waived) {
+            background: #eaf3ff;
+            color: #075bd8;
+        }
+
+        /* PAYMENT BUTTON */
 
         .pay-button {
-            display: block;
-            width: 100%;
-            margin-top: 12px;
-            padding: 11px 15px;
-            border: none;
-            border-radius: 8px;
-            background: #0f766e;
+            margin-top: 10px;
+            padding: 10px 14px;
+            background: var(--primary);
             color: white;
-            font-size: 13px;
+            border: none;
+            border-radius: 9px;
             font-weight: 700;
             cursor: pointer;
-            transition: background .2s;
+            transition: .25s;
+            white-space: nowrap;
         }
 
         .pay-button:hover {
-            background: #115e59;
+            background: var(--primary-dark);
+            transform: translateY(-2px);
         }
 
         .pay-button:disabled {
@@ -203,133 +393,229 @@
         }
 
         .insufficient {
-            margin: 9px 0 0;
-            font-size: 12px;
             color: #b45309;
+            font-size: 12px;
+            margin-top: 9px;
         }
 
-        .empty {
-            text-align: center;
-            background: white;
-            border: 1px solid #dcfce7;
-            border-radius: 16px;
-            padding: 45px 20px;
-        }
+        /* FOOTER NOTE */
 
-        .check {
-            font-size: 45px;
-            margin-bottom: 12px;
-        }
-
-        .empty h2 {
-            color: #15803d;
-            margin: 0 0 10px;
-        }
-
-        .empty p {
-            color: #64748b;
-            margin: 0;
+        .footer-note {
+            background: linear-gradient(100deg, #eaf3ff, #dceeff);
+            border: 1px solid #c5dfff;
+            border-radius: 17px;
+            padding: 20px 25px;
+            display: flex;
+            align-items: center;
+            gap: 17px;
+            color: #173b79;
+            font-size: 15px;
             line-height: 1.6;
         }
 
-        .flash-message {
-            padding: 12px 15px;
-            margin-bottom: 14px;
-            border-radius: 8px;
-            background: #e0f2fe;
-            color: #075985;
-            overflow-wrap: anywhere;
+        .footer-note i {
+            font-size: 27px;
+            color: var(--primary);
+            flex-shrink: 0;
         }
 
-        .flash-message.danger {
-            background: #fee2e2;
-            color: #991b1b;
+        /* EMPTY STATE */
+
+        .empty-state {
+            text-align: center;
+            padding: 55px 20px;
         }
 
-        .flash-message.warning {
-            background: #fef3c7;
-            color: #92400e;
+        .empty-state i {
+            font-size: 65px;
+            color: #16a36b;
+            margin-bottom: 20px;
         }
 
-        .flash-message.success {
-            background: #dcfce7;
+        .empty-state h2 {
+            font-size: 26px;
+            margin-bottom: 10px;
             color: #166534;
         }
 
-        .footer-note {
-            margin-top: 20px;
-            color: #64748b;
-            font-size: 12px;
-            line-height: 1.6;
+        .empty-state p {
+            color: var(--muted);
+            line-height: 1.7;
         }
 
-        @media (max-width: 550px) {
+        /* MOBILE RESPONSIVENESS */
+
+        @media(max-width: 900px) {
+            .intro-decoration {
+                display: none;
+            }
+
+            .summary-card {
+                padding: 25px;
+            }
+
+            .summary-icon {
+                min-width: 75px;
+                width: 75px;
+                height: 75px;
+                font-size: 33px;
+            }
+        }
+
+        @media(max-width: 650px) {
             body {
-                padding: 20px 12px;
+                padding: 18px 14px;
             }
 
-            .header h1 {
-                font-size: 24px;
+            .top-header {
+                margin-bottom: 30px;
             }
 
-            .wallet-balance,
-            .amount {
-                font-size: 30px;
+            .brand-logo {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
             }
 
-            .fine-card {
-                align-items: flex-start;
-                padding: 16px;
+            .brand h2 {
+                font-size: 22px;
+            }
+
+            .back-btn {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            .page-intro {
+                margin-bottom: 25px;
+            }
+
+            .intro-content {
                 gap: 12px;
             }
 
-            .fine-amount {
-                font-size: 18px;
+            .intro-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 27px;
+                border-radius: 14px;
             }
 
-            .right {
-                min-width: 112px;
+            .intro-divider {
+                height: 60px;
             }
 
-            .pay-button {
-                padding: 10px;
-            }
-        }
-
-        @media (max-width: 380px) {
-            .fine-card {
-                flex-direction: column;
+            .intro-content h1 {
+                font-size: 27px;
             }
 
-            .right {
-                width: 100%;
-                text-align: left;
+            .intro-content p {
+                font-size: 13px;
             }
 
-            .pay-button {
-                width: auto;
+            .summary-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                margin-bottom: 25px;
+            }
+
+            .summary-card {
+                min-height: 135px;
+                padding: 20px;
+                gap: 17px;
+                border-radius: 17px;
+            }
+
+            .summary-icon {
+                min-width: 65px;
+                width: 65px;
+                height: 65px;
+                font-size: 28px;
+                border-radius: 14px;
+            }
+
+            .summary-info p {
+                font-size: 14px;
+            }
+
+            .summary-info h2 {
+                font-size: 29px;
+            }
+
+            .summary-info small {
+                font-size: 13px;
+            }
+
+            .details-card {
+                padding: 18px 12px;
+                border-radius: 17px;
+            }
+
+            .section-heading h2 {
+                font-size: 21px;
+            }
+
+            .fine-table {
+                min-width: 700px;
+            }
+
+            .footer-note {
+                font-size: 13px;
+                padding: 15px;
             }
         }
     </style>
 </head>
 
 <body>
+
 <div class="container">
 
-    <div class="header">
-        <div>
-            <h1>My Fines</h1>
-            <p class="muted">
-                Manage your outstanding dues using Phase Coins.
-            </p>
+    <!-- HEADER -->
+
+    <header class="top-header">
+
+        <div class="brand">
+            <div class="brand-logo">YJ</div>
+            <h2>YJ-Portal</h2>
         </div>
 
-        <a class="back" href="{{ url_for('home') }}">
-            ← Back to Dashboard
+        <a href="{{ url_for('home') }}" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
         </a>
-    </div>
 
-    <!-- Flash messages -->
+    </header>
+
+
+    <!-- PAGE INTRO -->
+
+    <section class="page-intro">
+
+        <div class="intro-content">
+
+            <div class="intro-icon">
+                <i class="fa-solid fa-coins"></i>
+            </div>
+
+            <div class="intro-divider"></div>
+
+            <div>
+                <h1>My Fines & Dues</h1>
+                <p>Manage your outstanding dues using Phase Coins.</p>
+            </div>
+
+        </div>
+
+        <div class="intro-decoration">
+            <i class="fa-solid fa-receipt"></i>
+        </div>
+
+    </section>
+
+
+    <!-- FLASH MESSAGES -->
+
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
             <div class="flash-message {{ category }}">
@@ -338,108 +624,249 @@
         {% endfor %}
     {% endwith %}
 
-    <!-- Phase Coins wallet -->
-    <div class="wallet">
-        <p class="wallet-label">Your Phase Coins Balance</p>
 
-        <div class="wallet-balance">
-            🪙 {{ wallet_balance|default(0) }} Coins
+    <!-- SUMMARY CARDS -->
+
+    <section class="summary-grid">
+
+        <!-- PHASE COINS -->
+
+        <div class="summary-card wallet-card">
+
+            <div class="summary-icon">
+                <i class="fa-solid fa-coins"></i>
+            </div>
+
+            <div class="summary-info">
+                <p>Your Phase Coins Balance</p>
+
+                <h2>
+                    {{ wallet_balance|default(0) }} Coins
+                </h2>
+
+                <small>1 Phase Coin = ₹1</small>
+            </div>
+
+            <i class="fa-solid fa-coins watermark"></i>
+
         </div>
 
-        <p class="wallet-note">
-            1 Phase Coin = ₹1
-        </p>
-    </div>
 
-    <!-- Outstanding dues -->
-    <div class="summary">
-        <p>Total Outstanding Dues</p>
+        <!-- OUTSTANDING DUES -->
 
-        <div class="amount">
-            ₹{{ "%.2f"|format(total_due|default(0)) }}
+        <div class="summary-card dues-card">
+
+            <div class="summary-icon">
+                <i class="fa-solid fa-file-invoice"></i>
+            </div>
+
+            <div class="summary-info">
+                <p>Total Outstanding Dues</p>
+
+                <h2>
+                    ₹{{ "%.2f"|format(total_due|default(0)) }}
+                </h2>
+
+                <small>
+                    {{ pending_count|default(0) }} pending fine(s)
+                </small>
+            </div>
+
+            <i class="fa-solid fa-receipt watermark"></i>
+
         </div>
 
-        <small>
-            {{ pending_count|default(0) }} pending fine(s)
-        </small>
-    </div>
+    </section>
 
-    <h2 class="section-title">Fine Details</h2>
 
-    {% if fines %}
-        {% for fine in fines %}
-        <div class="fine-card">
+    <!-- FINE DETAILS -->
 
-            <div class="fine-info">
-                <h3>{{ fine.fine_type }}</h3>
+    <section class="details-card">
 
-                <p class="description">
-                    {{ fine.description or 'No description provided.' }}
+        <div class="section-heading">
+            <i class="fa-solid fa-rectangle-list"></i>
+            <h2>Fine Details</h2>
+        </div>
+
+
+        {% if fines %}
+
+        <div class="table-wrapper">
+
+            <table class="fine-table">
+
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Issued On</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for fine in fines %}
+
+                    <tr>
+
+                        <td class="fine-number">
+                            {{ loop.index }}
+                        </td>
+
+                        <td>
+                            <div class="fine-title">
+                                {{ fine.fine_type }}
+                            </div>
+
+                            <div class="fine-description">
+                                {{ fine.description or 'No description provided.' }}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="fine-amount">
+                                ₹{{ "%.2f"|format(fine.amount) }}
+                            </div>
+                        </td>
+
+                        <td>
+
+                            <span class="status {{ fine.status|lower }}">
+                                {{ fine.status|title }}
+                            </span>
+
+                            {% if fine.status|lower == 'pending' %}
+
+                                {% if wallet_balance|default(0)|int >= fine.amount|int
+                                      and fine.amount|int > 0 %}
+
+                                    <form method="POST"
+                                          action="{{ url_for('pay_fine_with_coins', fine_id=fine.id) }}"
+                                          onsubmit="return confirm('Pay this fine using Phase Coins?');">
+
+                                        <button type="submit" class="pay-button">
+                                            <i class="fa-solid fa-coins"></i>
+                                            Pay with Coins
+                                        </button>
+
+                                    </form>
+
+                                {% else %}
+
+                                    <p class="insufficient">
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                        Insufficient coins
+                                    </p>
+
+                                {% endif %}
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ fine.imposed_date.strftime('%d %b %Y')
+                               if fine.imposed_date else 'N/A' }}
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <i class="fa-solid fa-circle-check"></i>
+
+                <h2>No Dues — All Clear!</h2>
+
+                <p>
+                    You currently have no fines imposed against your account.
+                    Keep up the good work!
                 </p>
 
-                <span class="date">
-                    Imposed on:
-                    {{ fine.imposed_date.strftime('%d %b %Y')
-                       if fine.imposed_date else 'N/A' }}
-                </span>
             </div>
 
-            <div class="right">
-                <div class="fine-amount">
-                    ₹{{ "%.2f"|format(fine.amount) }}
-                </div>
+        {% endif %}
 
-                <span class="status {{ fine.status|lower }}">
-                    {{ fine.status|title }}
-                </span>
+    </section>
 
-                {% if fine.status|lower == 'pending' %}
 
-                    {% if wallet_balance|default(0)|int >= fine.amount|int
-                          and fine.amount|int > 0 %}
+    <!-- FOOTER INFORMATION -->
 
-                        <form method="POST"
-                              action="{{ url_for(
-                                  'pay_fine_with_coins',
-                                  fine_id=fine.id
-                              ) }}"
-                              onsubmit="return confirm(
-                                  'Pay this fine using Phase Coins?'
-                              );">
+    <div class="footer-note">
 
-                            <button type="submit" class="pay-button">
-                                Pay with Coins 🪙
-                            </button>
-                        </form>
+        <i class="fa-solid fa-circle-info"></i>
 
-                    {% else %}
-                        <p class="insufficient">
-                            Insufficient coins
-                        </p>
-                    {% endif %}
-
-                {% endif %}
-            </div>
-
-        </div>
-        {% endfor %}
-
-        <p class="footer-note">
-            Each fine is paid separately. Coins are deducted only after
-            the server successfully processes your payment.
+        <p>
+            Each fine must be paid separately. Coins are deducted only
+            after the server successfully processes your payment.
         </p>
 
-    {% else %}
-        <div class="empty">
-            <div class="check">✓</div>
-            <h2>No Dues — All Clear!</h2>
-            <p>
-                You currently have no fines imposed against your account.
-                Keep up the good work!
-            </p>
-        </div>
-    {% endif %}
+    </div>
 
 </div>
+
+
+<!-- INTERACTION SCRIPT -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    // Payment loading state
+
+    const paymentForms = document.querySelectorAll(
+        'form[action*="pay_fine_with_coins"]'
+    );
+
+    paymentForms.forEach(form => {
+
+        form.addEventListener("submit", function() {
+
+            const button = form.querySelector("button");
+
+            if (button) {
+                button.disabled = true;
+                button.innerHTML =
+                    '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            }
+
+        });
+
+    });
+
+
+    // Automatically dismiss flash messages
+
+    const messages = document.querySelectorAll(".flash-message");
+
+    messages.forEach(message => {
+
+        setTimeout(() => {
+
+            message.style.transition = "opacity .5s ease";
+            message.style.opacity = "0";
+
+            setTimeout(() => message.remove(), 500);
+
+        }, 5000);
+
+    });
+
+});
+
+</script>
+
 </body>
 </html>

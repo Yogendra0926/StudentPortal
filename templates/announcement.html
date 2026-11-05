@@ -1,389 +1,254 @@
+
 {% extends "base.html" %}
 
-{% block title %}Announcements{% endblock %}
+{% block title %}Announcements | YJ-Portal{% endblock %}
 
 {% block content %}
 
 <style>
-
-body{
-    background:#eef4ff;
+.announcement-page {
+    max-width: 1150px;
+    margin: auto;
+    padding: 10px 0 30px;
 }
 
-/* Header */
-
-.announcement-header{
-    text-align:center;
-    margin:35px 0;
-    animation:fadeDown 1s;
+.announcement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
 }
 
-.announcement-header h1{
-    font-size:42px;
-    font-weight:700;
-    color:#0d47a1;
+.announcement-header h1 {
+    font-size: 27px;
+    font-weight: 750;
+    color: #172b4d;
+    margin: 0 0 7px;
 }
 
-.announcement-header p{
-    color:#555;
-    font-size:18px;
+.announcement-header p {
+    font-size: 13px;
+    color: #8291a5;
+    margin: 0;
 }
 
-/* Grid */
-
-.webinar-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-    gap:30px;
+.announcement-count {
+    padding: 10px 15px;
+    border-radius: 9px;
+    background: #eaf3ff;
+    color: #1769c2;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
 }
 
-/* Card */
-
-.webinar-card{
-
-    background:white;
-    border-radius:20px;
-    overflow:hidden;
-    box-shadow:0 15px 40px rgba(0,0,0,.15);
-
-    transition:.4s;
-    position:relative;
-
-    animation:cardAppear .8s ease;
+.announcement-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
 }
 
-.webinar-card:hover{
-
-    transform:translateY(-12px) scale(1.03);
-
-    box-shadow:0 20px 45px rgba(0,0,0,.25);
-
+.announcement-card {
+    background: #fff;
+    border: 1px solid #e4ebf5;
+    border-radius: 15px;
+    padding: 21px;
+    transition: .2s ease;
 }
 
-.card-top{
-
-    padding:25px;
-    color:white;
-    text-align:center;
-
+.announcement-card:hover {
+    border-color: #b9d7fa;
+    box-shadow: 0 8px 22px rgba(30, 90, 150, .07);
+    transform: translateY(-2px);
 }
 
-.blue{
-background:linear-gradient(135deg,#1565c0,#42a5f5);
+.announcement-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
 }
 
-.green{
-background:linear-gradient(135deg,#2e7d32,#66bb6a);
+.announcement-category {
+    color: #1769c2;
+    background: #edf5ff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
 }
 
-.purple{
-background:linear-gradient(135deg,#6a1b9a,#ba68c8);
+.announcement-priority {
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
 }
 
-.orange{
-background:linear-gradient(135deg,#ef6c00,#ffa726);
+.priority-normal {
+    background: #f1f5f9;
+    color: #64748b;
 }
 
-.card-top i{
-
-    font-size:55px;
-    margin-bottom:15px;
-
-    animation:float 2s infinite;
-
+.priority-important {
+    background: #fff7e6;
+    color: #a66a13;
 }
 
-.card-top h3{
-
-    font-weight:700;
-
+.priority-urgent {
+    background: #fff0f0;
+    color: #dc3545;
 }
 
-.card-body{
-
-    padding:25px;
-
+.announcement-card h2 {
+    color: #243650;
+    font-size: 17px;
+    font-weight: 750;
+    margin: 0 0 10px;
+    line-height: 1.4;
 }
 
-.info{
-
-margin:15px 0;
-font-size:17px;
-color:#444;
-
+.announcement-description {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 0 0 18px;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
 }
 
-.info i{
-
-width:28px;
-color:#1565c0;
-
+.announcement-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding-top: 13px;
+    border-top: 1px solid #edf1f6;
+    color: #8795a8;
+    font-size: 11px;
 }
 
-.credit{
-
-display:inline-block;
-
-padding:8px 18px;
-
-background:#00c853;
-
-color:white;
-
-font-weight:bold;
-
-border-radius:30px;
-
-margin-top:12px;
-
+.announcement-footer i {
+    margin-right: 5px;
+    color: #1769c2;
 }
 
-.register{
-
-margin-top:25px;
-
-display:block;
-
-text-align:center;
-
-background:#0d47a1;
-
-padding:12px;
-
-border-radius:10px;
-
-text-decoration:none;
-
-font-weight:bold;
-
-color:white;
-
-transition:.3s;
-
+.announcement-empty {
+    background: #fff;
+    border: 1px dashed #cbdcf0;
+    border-radius: 14px;
+    text-align: center;
+    padding: 55px 20px;
 }
 
-.register:hover{
-
-background:#1565c0;
-
-transform:scale(1.03);
-
-color:white;
-
+.announcement-empty i {
+    font-size: 30px;
+    color: #3986d9;
+    margin-bottom: 14px;
 }
 
-.ribbon{
-
-position:absolute;
-
-top:15px;
-
-right:-35px;
-
-background:red;
-
-color:white;
-
-padding:8px 40px;
-
-transform:rotate(45deg);
-
-font-size:13px;
-
-font-weight:bold;
-
+.announcement-empty h2 {
+    color: #243650;
+    font-size: 17px;
 }
 
-/* Animations */
-
-@keyframes float{
-
-0%,100%{
-
-transform:translateY(0);
-
+.announcement-empty p {
+    color: #8291a5;
+    font-size: 13px;
 }
 
-50%{
+@media(max-width: 700px) {
+    .announcement-grid {
+        grid-template-columns: 1fr;
+    }
 
-transform:translateY(-10px);
-
+    .announcement-header h1 {
+        font-size: 22px;
+    }
 }
-
-}
-
-@keyframes fadeDown{
-
-from{
-
-opacity:0;
-
-transform:translateY(-40px);
-
-}
-
-to{
-
-opacity:1;
-
-transform:translateY(0);
-
-}
-
-}
-
-@keyframes cardAppear{
-
-from{
-
-opacity:0;
-
-transform:translateY(50px);
-
-}
-
-to{
-
-opacity:1;
-
-transform:translateY(0);
-
-}
-
-}
-
 </style>
 
-<div class="announcement-header">
+<div class="announcement-page">
 
-<h1>
-<i class="fa-solid fa-bullhorn"></i>
-Upcoming Webinars
-</h1>
+    <div class="announcement-header">
 
-<p>
-Enhance your skills by attending these university webinars.
-Earn Academic Credits.
-</p>
+        <div>
+            <h1>Announcements</h1>
+            <p>
+                Stay informed about the latest updates and notifications.
+            </p>
+        </div>
 
-</div>
+        <div class="announcement-count">
+            {{ announcements|length }} Updates
+        </div>
 
-<div class="webinar-grid">
+    </div>
 
-<!-- Card 1 -->
+    {% if announcements %}
 
-<div class="webinar-card">
+        <div class="announcement-grid">
 
-<div class="ribbon">Upcoming</div>
+            {% for item in announcements %}
 
-<div class="card-top blue">
+                <article class="announcement-card">
 
-<i class="fa-solid fa-chart-line"></i>
+                    <div class="announcement-card-top">
 
-<h3>Advance ML Part-1</h3>
+                        <span class="announcement-category">
+                            {{ item.category or 'General' }}
+                        </span>
 
-</div>
+                        <span class="announcement-priority priority-{{ item.priority|lower }}">
+                            {{ item.priority or 'Normal' }}
+                        </span>
 
-<div class="card-body">
+                    </div>
 
-<div class="info">
-<i class="fa-solid fa-calendar-days"></i>
-19 October 2026
-</div>
+                    <h2>{{ item.title }}</h2>
 
-<div class="info">
-<i class="fa-solid fa-clock"></i>
-4:00 PM - 6:30 PM
-</div>
+                    <p class="announcement-description">
+                        {{ item.description }}
+                    </p>
 
-<div class="credit">
-⭐ RP : 10
-</div>
+                    <div class="announcement-footer">
 
-<a href="#" class="Pending...">
-Pending...
-</a>
+                        <span>
+                            <i class="fa-regular fa-calendar"></i>
+                            {{ item.published_at.strftime('%d %b %Y') }}
+                        </span>
 
-</div>
+                        <span>
+                            {{ item.published_at.strftime('%I:%M %p') }}
+                        </span>
 
-</div>
-<!--Card 2-->
-<div class="webinar-card">
+                    </div>
 
-<div class="ribbon">Upcoming</div>
+                </article>
 
-<div class="card-top blue">
+            {% endfor %}
 
-<i class="fa-solid fa-chart-line"></i>
+        </div>
 
-<h3>Advance ML Part-2</h3>
+    {% else %}
 
-</div>
+        <div class="announcement-empty">
 
-<div class="card-body">
+            <i class="fa-regular fa-bell"></i>
 
-<div class="info">
-<i class="fa-solid fa-calendar-days"></i>
-24 October 2026
-</div>
+            <h2>No announcements available</h2>
 
-<div class="info">
-<i class="fa-solid fa-clock"></i>
-4:00 PM - 6:30 PM
-</div>
+            <p>
+                New announcements and updates will appear here.
+            </p>
 
-<div class="credit">
-⭐ RP : 10
-</div>
+        </div>
 
-<a href="#" class="Pending...">
-Pending...
-</a>
+    {% endif %}
 
 </div>
-
-</div>
-
-
-
-
-
-
-
-</div>
-
-<script>
-
-const cards=document.querySelectorAll(".webinar-card");
-
-const observer=new IntersectionObserver(entries=>{
-
-entries.forEach(entry=>{
-
-if(entry.isIntersecting){
-
-entry.target.style.opacity=1;
-
-entry.target.style.transform="translateY(0px)";
-
-}
-
-});
-
-});
-
-cards.forEach(card=>{
-
-card.style.opacity=0;
-
-card.style.transform="translateY(70px)";
-
-card.style.transition="all .8s ease";
-
-observer.observe(card);
-
-});
-
-</script>
 
 {% endblock %}
