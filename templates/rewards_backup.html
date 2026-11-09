@@ -1,0 +1,590 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .rewards-page {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding-bottom: 40px;
+        color: #2b3674;
+    }
+
+    /* Header */
+
+    .rewards-header {
+        position: relative;
+        overflow: hidden;
+        padding: 35px;
+        border-radius: 24px;
+        color: white;
+        background: linear-gradient(120deg, #00c6ff, #4776ee, #8b5cf6);
+        margin-bottom: 30px;
+        box-shadow: 0 12px 30px rgba(99, 102, 241, .20);
+    }
+
+    .rewards-header h1 {
+        font-size: 2rem;
+        font-weight: 850;
+        margin: 0 0 10px;
+    }
+
+    .rewards-header p {
+        margin: 0;
+        opacity: .92;
+        font-size: .98rem;
+    }
+
+    .header-icon {
+        position: absolute;
+        right: 45px;
+        top: 20px;
+        font-size: 100px;
+        opacity: .15;
+        transform: rotate(-12deg);
+    }
+
+    /* Reward grid */
+
+    .rewards-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 25px;
+    }
+
+    .reward-card {
+        position: relative;
+        background: #fff;
+        border: 1px solid #edf0f7;
+        border-radius: 23px;
+        padding: 27px;
+        box-shadow: 0 8px 28px rgba(112, 144, 176, .12);
+        overflow: hidden;
+        transition: .25s ease;
+    }
+
+    .reward-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(112, 144, 176, .18);
+    }
+
+    .reward-card::before {
+        content: "";
+        position: absolute;
+        height: 5px;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(90deg, #00c6ff, #8b5cf6);
+    }
+
+    .reward-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .reward-trophy {
+        width: 58px;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 17px;
+        color: white;
+        font-size: 25px;
+        background: linear-gradient(135deg, #00c6ff, #8b5cf6);
+    }
+
+    .reward-tag {
+        padding: 8px 13px;
+        border-radius: 30px;
+        font-size: .72rem;
+        font-weight: 800;
+        background: #f0f3ff;
+        color: #5965d8;
+    }
+
+    .reward-card h2 {
+        font-size: 1.35rem;
+        font-weight: 850;
+        margin: 0 0 7px;
+        color: #2b3674;
+    }
+
+    .reward-subtitle {
+        color: #8492a6;
+        font-size: .87rem;
+        margin-bottom: 23px;
+    }
+
+    /* Points */
+
+    .points-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 13px;
+        margin-bottom: 24px;
+    }
+
+    .point-box {
+        padding: 17px;
+        border-radius: 16px;
+        background: #f7f9fd;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+    }
+
+    .point-icon {
+        width: 43px;
+        height: 43px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 13px;
+        font-size: 19px;
+        background: #e8edff;
+        color: #5865df;
+        flex-shrink: 0;
+    }
+
+    .point-box h3 {
+        font-size: 1.15rem;
+        font-weight: 850;
+        margin: 0;
+        color: #2b3674;
+    }
+
+    .point-box small {
+        display: block;
+        color: #8492a6;
+        font-size: .72rem;
+        font-weight: 700;
+        margin-top: 3px;
+    }
+
+    /* Reward list */
+
+    .reward-list-title {
+        font-size: .95rem;
+        font-weight: 850;
+        margin-bottom: 14px;
+        color: #2b3674;
+    }
+
+    .reward-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+        padding: 13px 14px;
+        background: #fafbfe;
+        border: 1px solid #f0f2f8;
+        border-radius: 13px;
+        margin-bottom: 10px;
+    }
+
+    .reward-item i {
+        color: #8b5cf6;
+        font-size: 17px;
+        margin-top: 3px;
+        min-width: 19px;
+    }
+
+    .reward-item span {
+        color: #52617e;
+        font-size: .86rem;
+        line-height: 1.5;
+        font-weight: 650;
+    }
+
+    /* Winner status */
+
+    .winner-status {
+        padding: 14px 16px;
+        border-radius: 13px;
+        margin: 20px 0 15px;
+        font-size: .85rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .winner-status i {
+        font-size: 19px;
+    }
+
+    .status-winner {
+        background: #ecfdf3;
+        color: #15803d;
+    }
+
+    .status-locked {
+        background: #fff1f2;
+        color: #be123c;
+    }
+
+    .status-claimed {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    /* Claim button */
+
+    .claim-btn {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 13px;
+        background: linear-gradient(120deg, #00b8f0, #7658ed);
+        color: white;
+        font-size: .92rem;
+        font-weight: 850;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .claim-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, .25);
+    }
+
+    .claim-btn.locked {
+        background: #e5e7eb;
+        color: #687385;
+    }
+
+    .claim-btn.locked:hover {
+        background: #dfe2e8;
+        box-shadow: none;
+    }
+
+    .claim-btn.claimed {
+        background: #dbeafe;
+        color: #1d4ed8;
+        cursor: default;
+    }
+
+    /* Flash messages */
+
+    .flash-message {
+        padding: 14px 18px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        font-weight: 750;
+        font-size: .9rem;
+    }
+
+    .flash-success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .flash-error {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .flash-info {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    /* Empty state */
+
+    .empty-rewards {
+        background: white;
+        padding: 60px 20px;
+        border-radius: 22px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(112, 144, 176, .10);
+    }
+
+    .empty-rewards i {
+        font-size: 55px;
+        color: #a5b4fc;
+        margin-bottom: 15px;
+    }
+
+    .empty-rewards h2 {
+        color: #2b3674;
+    }
+
+    .empty-rewards p {
+        color: #8492a6;
+    }
+
+    @media(max-width: 850px) {
+        .rewards-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media(max-width: 550px) {
+        .rewards-header {
+            padding: 25px;
+        }
+
+        .rewards-header h1 {
+            font-size: 1.55rem;
+        }
+
+        .header-icon {
+            font-size: 65px;
+            right: 15px;
+        }
+
+        .reward-card {
+            padding: 20px;
+        }
+
+        .points-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+</style>
+
+
+<div class="rewards-page">
+
+    <!-- HEADER -->
+
+    <div class="rewards-header">
+
+        <div class="header-icon">
+            <i class="fa-solid fa-trophy"></i>
+        </div>
+
+        <h1>
+            <i class="fa-solid fa-gift"></i>
+            My Rewards
+        </h1>
+
+        <p>
+            Celebrate your achievements and explore the rewards
+            you can earn through university tournaments.
+        </p>
+
+    </div>
+
+
+    <!-- FLASH MESSAGES -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+
+            <div class="flash-message flash-{{ category }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+    {% endwith %}
+
+
+    <!-- REWARDS -->
+
+    {% if rewards %}
+
+    <div class="rewards-grid">
+
+        {% for reward in rewards %}
+
+        <div class="reward-card">
+
+            <div class="reward-top">
+
+                <div class="reward-trophy">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+
+                <span class="reward-tag">
+                    TOURNAMENT REWARD
+                </span>
+
+            </div>
+
+
+            <h2>{{ reward.title }}</h2>
+
+            <div class="reward-subtitle">
+                Exclusive rewards for tournament champions
+            </div>
+
+
+            <!-- POINTS -->
+
+            <div class="points-grid">
+
+                <div class="point-box">
+
+                    <div class="point-icon">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+
+                    <div>
+                        <h3>{{ reward.rp_points }}</h3>
+                        <small>RP POINTS</small>
+                    </div>
+
+                </div>
+
+
+                <div class="point-box">
+
+                    <div class="point-icon">
+                        <i class="fa-solid fa-coins"></i>
+                    </div>
+
+                    <div>
+                        <h3>{{ reward.phase_coins }}</h3>
+                        <small>PHASE COINS</small>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- REWARD DETAILS -->
+
+            <div class="reward-list-title">
+                <i class="fa-solid fa-award"></i>
+                Rewards Included
+            </div>
+
+
+            <div class="reward-item">
+
+                <i class="fa-solid fa-crown"></i>
+
+                <span>
+                    {{ reward.champion_title }}
+                </span>
+
+            </div>
+
+
+            <div class="reward-item">
+
+                <i class="fa-solid fa-certificate"></i>
+
+                <span>
+                    {{ reward.certificate }}
+                </span>
+
+            </div>
+
+
+            <div class="reward-item">
+
+                <i class="fa-solid fa-gift"></i>
+
+                <span>
+                    {{ reward.special_reward }}
+                </span>
+
+            </div>
+
+
+            <!-- WINNER STATUS -->
+
+            {% if reward.claimed_at %}
+
+                <div class="winner-status status-claimed">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    Reward Successfully Claimed
+
+                </div>
+
+                <button class="claim-btn claimed" disabled>
+
+                    <i class="fa-solid fa-check"></i>
+                    Already Claimed
+
+                </button>
+
+
+            {% elif reward.is_winner %}
+
+                <div class="winner-status status-winner">
+
+                    <i class="fa-solid fa-trophy"></i>
+
+                    Congratulations! You are a Winner.
+
+                </div>
+
+                <form method="POST"
+                      action="{{ url_for('claim_reward',
+                      tournament_id=reward.tournament_id) }}"
+                      onsubmit="return confirm('Are you sure you want to claim this reward?');">
+
+                    <button type="submit" class="claim-btn">
+
+                        <i class="fa-solid fa-gift"></i>
+                        Claim Your Reward
+
+                    </button>
+
+                </form>
+
+
+            {% else %}
+
+                <div class="winner-status status-locked">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    You have not won this reward.
+
+                </div>
+
+                <form method="POST"
+                      action="{{ url_for('claim_reward',
+                      tournament_id=reward.tournament_id) }}">
+
+                    <button type="submit"
+                            class="claim-btn locked">
+
+                        <i class="fa-solid fa-lock"></i>
+                        Claim Reward
+
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    {% else %}
+
+    <div class="empty-rewards">
+
+        <i class="fa-solid fa-gift"></i>
+
+        <h2>No Rewards Available</h2>
+
+        <p>
+            Tournament rewards will appear here once they
+            have been announced by the administration.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

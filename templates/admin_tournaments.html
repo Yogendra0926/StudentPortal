@@ -388,6 +388,62 @@
         </table>
 
     </div>
+    
+<!-- WINNER SELECTION -->
+
+<div class="admin-table-wrapper" style="margin-top:30px;">
+
+    <h2 style="color:#2b3674;">
+        <i class="fa-solid fa-crown"></i>
+        Declare Tournament Champion
+    </h2>
+
+    <p style="color:#718096;margin-bottom:20px;">
+        Select a tournament and declare its official winner.
+    </p>
+
+    <form method="POST" action="{{ url_for('declare_tournament_winner') }}">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label>Select Tournament</label>
+
+                <select name="tournament_id" required>
+                    <option value="">Choose Tournament</option>
+
+                    {% for tournament in tournaments %}
+                    <option value="{{ tournament.tournament_id }}">
+                        {{ tournament.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Select Champion</label>
+
+                <select name="student_id" required>
+                    <option value="">Choose Tournament First</option>
+                    {% for student in all_students %}
+                    <option value="{{ student.id }}">
+                        {{ student.name }} ({{ student.username }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+
+        <button type="submit" class="create-btn">
+            <i class="fa-solid fa-trophy"></i>
+            Declare Winner
+        </button>
+
+    </form>
+
+</div>
+
 
 </div>
 

@@ -1,0 +1,857 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .rewards-page {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding-bottom: 40px;
+        color: #2b3674;
+    }
+
+    /* Header */
+
+    .rewards-header {
+        position: relative;
+        overflow: hidden;
+        padding: 35px;
+        border-radius: 24px;
+        color: white;
+        background: linear-gradient(120deg, #00c6ff, #4776ee, #8b5cf6);
+        margin-bottom: 30px;
+        box-shadow: 0 12px 30px rgba(99, 102, 241, .20);
+    }
+
+    .rewards-header h1 {
+        font-size: 2rem;
+        font-weight: 850;
+        margin: 0 0 10px;
+    }
+
+    .rewards-header p {
+        margin: 0;
+        opacity: .92;
+        font-size: .98rem;
+    }
+
+    .header-icon {
+        position: absolute;
+        right: 45px;
+        top: 20px;
+        font-size: 100px;
+        opacity: .15;
+        transform: rotate(-12deg);
+    }
+
+    /* Reward grid */
+
+    .rewards-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 25px;
+    }
+
+    .reward-card {
+        position: relative;
+        background: #fff;
+        border: 1px solid #edf0f7;
+        border-radius: 23px;
+        padding: 27px;
+        box-shadow: 0 8px 28px rgba(112, 144, 176, .12);
+        overflow: hidden;
+        transition: .25s ease;
+    }
+
+    .reward-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(112, 144, 176, .18);
+    }
+
+    .reward-card::before {
+        content: "";
+        position: absolute;
+        height: 5px;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(90deg, #00c6ff, #8b5cf6);
+    }
+
+    .reward-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .reward-trophy {
+        width: 58px;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 17px;
+        color: white;
+        font-size: 25px;
+        background: linear-gradient(135deg, #00c6ff, #8b5cf6);
+    }
+
+    .reward-tag {
+        padding: 8px 13px;
+        border-radius: 30px;
+        font-size: .72rem;
+        font-weight: 800;
+        background: #f0f3ff;
+        color: #5965d8;
+    }
+
+    .reward-card h2 {
+        font-size: 1.35rem;
+        font-weight: 850;
+        margin: 0 0 7px;
+        color: #2b3674;
+    }
+
+    .reward-subtitle {
+        color: #8492a6;
+        font-size: .87rem;
+        margin-bottom: 23px;
+    }
+
+    /* Points */
+
+    .points-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 13px;
+        margin-bottom: 24px;
+    }
+
+    .point-box {
+        padding: 17px;
+        border-radius: 16px;
+        background: #f7f9fd;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+    }
+
+    .point-icon {
+        width: 43px;
+        height: 43px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 13px;
+        font-size: 19px;
+        background: #e8edff;
+        color: #5865df;
+        flex-shrink: 0;
+    }
+
+    .point-box h3 {
+        font-size: 1.15rem;
+        font-weight: 850;
+        margin: 0;
+        color: #2b3674;
+    }
+
+    .point-box small {
+        display: block;
+        color: #8492a6;
+        font-size: .72rem;
+        font-weight: 700;
+        margin-top: 3px;
+    }
+
+    /* Reward list */
+
+    .reward-list-title {
+        font-size: .95rem;
+        font-weight: 850;
+        margin-bottom: 14px;
+        color: #2b3674;
+    }
+
+    .reward-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+        padding: 13px 14px;
+        background: #fafbfe;
+        border: 1px solid #f0f2f8;
+        border-radius: 13px;
+        margin-bottom: 10px;
+    }
+
+    .reward-item i {
+        color: #8b5cf6;
+        font-size: 17px;
+        margin-top: 3px;
+        min-width: 19px;
+    }
+
+    .reward-item span {
+        color: #52617e;
+        font-size: .86rem;
+        line-height: 1.5;
+        font-weight: 650;
+    }
+
+    /* Winner status */
+
+    .winner-status {
+        padding: 14px 16px;
+        border-radius: 13px;
+        margin: 20px 0 15px;
+        font-size: .85rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .winner-status i {
+        font-size: 19px;
+    }
+
+    .status-winner {
+        background: #ecfdf3;
+        color: #15803d;
+    }
+
+    .status-locked {
+        background: #fff1f2;
+        color: #be123c;
+    }
+
+    .status-claimed {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    /* Claim button */
+
+    .claim-btn {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 13px;
+        background: linear-gradient(120deg, #00b8f0, #7658ed);
+        color: white;
+        font-size: .92rem;
+        font-weight: 850;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .claim-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, .25);
+    }
+
+    .claim-btn.locked {
+        background: #e5e7eb;
+        color: #687385;
+    }
+
+    .claim-btn.locked:hover {
+        background: #dfe2e8;
+        box-shadow: none;
+    }
+
+    .claim-btn.claimed {
+        background: #dbeafe;
+        color: #1d4ed8;
+        cursor: default;
+    }
+
+    /* Flash messages */
+
+    .flash-message {
+        padding: 14px 18px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        font-weight: 750;
+        font-size: .9rem;
+    }
+
+    .flash-success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .flash-error {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .flash-info {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    /* Empty state */
+
+    .empty-rewards {
+        background: white;
+        padding: 60px 20px;
+        border-radius: 22px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(112, 144, 176, .10);
+    }
+
+    .empty-rewards i {
+        font-size: 55px;
+        color: #a5b4fc;
+        margin-bottom: 15px;
+    }
+
+    .empty-rewards h2 {
+        color: #2b3674;
+    }
+
+    .empty-rewards p {
+        color: #8492a6;
+    }
+
+    @media(max-width: 850px) {
+        .rewards-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media(max-width: 550px) {
+        .rewards-header {
+            padding: 25px;
+        }
+
+        .rewards-header h1 {
+            font-size: 1.55rem;
+        }
+
+        .header-icon {
+            font-size: 65px;
+            right: 15px;
+        }
+
+        .reward-card {
+            padding: 20px;
+        }
+
+        .points-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+</style>
+
+
+<div class="rewards-page">
+
+    <!-- HEADER -->
+
+    <div class="rewards-header">
+
+        <div class="header-icon">
+            <i class="fa-solid fa-trophy"></i>
+        </div>
+
+        <h1>
+            <i class="fa-solid fa-gift"></i>
+            My Rewards
+        </h1>
+
+        <p>
+            Celebrate your achievements and explore the rewards
+            you can earn through university tournaments.
+        </p>
+
+    </div>
+
+
+    <!-- FLASH MESSAGES -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+
+            <div class="flash-message flash-{{ category }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+    {% endwith %}
+
+
+    <!-- REWARDS -->
+
+   
+<!-- SEQUENTIAL TOURNAMENT REWARDS -->
+
+{% if rewards %}
+
+<div class="rewards-grid">
+
+    {% for reward in rewards %}
+
+    <div class="reward-card">
+
+        <div class="reward-top">
+            <div class="reward-trophy">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+
+            <span class="reward-tag">
+                TOURNAMENT REWARD
+            </span>
+        </div>
+
+        <h2>{{ reward.title }}</h2>
+
+        <div class="reward-subtitle">
+            Exclusive rewards for tournament champions
+        </div>
+
+
+        {% if reward.claimed_at %}
+
+            <!-- ALREADY CLAIMED -->
+
+            <div class="winner-status status-claimed">
+                <i class="fa-solid fa-circle-check"></i>
+                Reward Successfully Claimed
+            </div>
+
+            <button class="claim-btn claimed" disabled>
+                <i class="fa-solid fa-check"></i>
+                Already Claimed
+            </button>
+
+
+        {% elif reward.is_winner %}
+
+            <!-- WINNER REVEAL SECTION -->
+
+            <div class="winner-status status-winner">
+                <i class="fa-solid fa-crown"></i>
+                Congratulations! You are a Winner.
+            </div>
+
+            <div class="reveal-container"
+                 data-rewards='{{ [
+                    {
+                        "icon": "fa-crown",
+                        "name": reward.champion_title,
+                        "description": "Your official Tournament Champion Title"
+                    },
+                    {
+                        "icon": "fa-star",
+                        "name": reward.rp_points|string ~ " RP Points",
+                        "description": "Reward points added to your profile"
+                    },
+                    {
+                        "icon": "fa-coins",
+                        "name": reward.phase_coins|string ~ " Phase Coins",
+                        "description": "Special Phase Coin reward"
+                    },
+                    {
+                        "icon": "fa-certificate",
+                        "name": reward.certificate,
+                        "description": "Your official winner certificate"
+                    },
+                    {
+                        "icon": "fa-gift",
+                        "name": reward.special_reward or "Special Tournament Reward",
+                        "description": "Your exclusive tournament achievement"
+                    }
+                ] | tojson }}'>
+
+                <div class="reveal-heading">
+                    <span class="reveal-label">
+                        YOUR CHAMPION REWARDS
+                    </span>
+
+                    <div class="reveal-progress">
+                        REWARD <span class="current-step">1</span> / 5
+                    </div>
+                </div>
+
+                <div class="reveal-stage">
+
+                    <div class="reveal-glow"></div>
+
+                    <div class="reveal-icon">
+                        <i class="fa-solid fa-gift"></i>
+                    </div>
+
+                    <div class="reveal-step-name">
+                        Your reward is waiting!
+                    </div>
+
+                    <div class="reveal-description">
+                        Click below to reveal your first reward.
+                    </div>
+
+                    <div class="reveal-number">
+                        01
+                    </div>
+
+                </div>
+
+                <div class="reveal-progress-track">
+                    <div class="reveal-progress-fill"></div>
+                </div>
+
+                <button type="button"
+                        class="claim-btn reveal-next-btn">
+
+                    <i class="fa-solid fa-gift"></i>
+                    Reveal My Reward
+
+                </button>
+<div class="reveal-complete-message"
+     style="display:none;">
+
+    <i class="fa-solid fa-trophy"></i>
+
+    <h3>All Rewards Revealed!</h3>
+
+    <p>
+        Congratulations, Champion!
+        You have unlocked all five rewards.
+    </p>
+
+    <form method="POST"
+          action="{{ url_for('claim_reward', tournament_id=reward.tournament_id) }}"
+          onsubmit="return confirm('Are you sure you want to claim your rewards?');">
+
+        <button type="submit" class="claim-btn">
+            <i class="fa-solid fa-crown"></i>
+            CONFIRM & CLAIM REWARDS
+        </button>
+
+    </form>
+
+</div>
+            </div>
+
+
+        {% else %}
+
+            <!-- NON-WINNER -->
+
+            <div class="winner-status status-locked">
+                <i class="fa-solid fa-lock"></i>
+                You have not won this reward.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+
+{% else %}
+
+<div class="empty-rewards">
+
+    <i class="fa-solid fa-gift"></i>
+
+    <h2>No Rewards Available</h2>
+
+    <p>
+        Tournament rewards will appear here once they
+        have been announced by the administration.
+    </p>
+
+</div>
+
+{% endif %}
+
+
+<style>
+
+.reveal-container {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #111827, #242044);
+    color: white;
+    overflow: hidden;
+}
+
+.reveal-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.reveal-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #fbbf24;
+    letter-spacing: 1px;
+}
+
+.reveal-progress {
+    font-size: 0.8rem;
+    color: #d1d5db;
+}
+
+.reveal-progress-track {
+    height: 7px;
+    background: #374151;
+    border-radius: 20px;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+.reveal-progress-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #f59e0b, #fde68a);
+    transition: width 0.5s ease;
+}
+
+.reveal-stage {
+    position: relative;
+    min-height: 230px;
+    margin-top: 20px;
+    padding: 25px 12px;
+    border: 1px solid rgba(251,191,36,0.3);
+    border-radius: 18px;
+    background: radial-gradient(
+        circle at center,
+        #40315e,
+        #17172f 75%
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+.reveal-glow {
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    background: rgba(251,191,36,0.15);
+    filter: blur(50px);
+    border-radius: 50%;
+}
+
+.reveal-icon {
+    position: relative;
+    font-size: 55px;
+    color: #fbbf24;
+    margin-bottom: 15px;
+}
+
+.reveal-icon.revealed {
+    animation: rewardPop 0.65s ease;
+}
+
+.reveal-step-name {
+    position: relative;
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #fef3c7;
+    margin-bottom: 8px;
+}
+
+.reveal-description {
+    position: relative;
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.reveal-number {
+    position: absolute;
+    right: 15px;
+    bottom: 5px;
+    font-size: 50px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.06);
+}
+
+.reveal-next-btn {
+    width: 100%;
+    margin-top: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.reveal-complete-message {
+    text-align: center;
+    padding: 20px 5px 5px;
+}
+
+.reveal-complete-message > i {
+    font-size: 45px;
+    color: #fbbf24;
+    margin-bottom: 12px;
+}
+
+.reveal-complete-message h3 {
+    color: #fde68a;
+    font-size: 1.3rem;
+}
+
+.reveal-complete-message p {
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+
+
+.reveal-complete-message button {
+    width: 100%;
+    margin-top: 12px;
+    opacity: 1;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.reveal-complete-message button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+}
+
+@keyframes rewardPop {
+    0% {
+        transform: scale(0.3) rotate(-15deg);
+        opacity: 0;
+    }
+
+    70% {
+        transform: scale(1.2) rotate(5deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1) rotate(0);
+    }
+}
+
+@media(max-width:550px) {
+    .reveal-container {
+        padding: 15px;
+    }
+
+    .reveal-stage {
+        min-height: 210px;
+    }
+
+    .reveal-step-name {
+        font-size: 1.05rem;
+    }
+}
+
+</style>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll(".reveal-container").forEach(function (container) {
+
+        const rewards = JSON.parse(
+            container.dataset.rewards
+        );
+
+        const nextButton =
+            container.querySelector(".reveal-next-btn");
+
+        const icon =
+            container.querySelector(".reveal-icon i");
+
+        const iconContainer =
+            container.querySelector(".reveal-icon");
+
+        const name =
+            container.querySelector(".reveal-step-name");
+
+        const description =
+            container.querySelector(".reveal-description");
+
+        const number =
+            container.querySelector(".reveal-number");
+
+        const currentStep =
+            container.querySelector(".current-step");
+
+        const progressFill =
+            container.querySelector(".reveal-progress-fill");
+
+        const completeMessage =
+            container.querySelector(".reveal-complete-message");
+
+        let currentIndex = -1;
+
+        nextButton.addEventListener("click", function () {
+
+            currentIndex++;
+
+            if (currentIndex >= rewards.length) {
+                return;
+            }
+
+            const reward = rewards[currentIndex];
+
+            icon.className =
+                "fa-solid " + reward.icon;
+
+            iconContainer.classList.remove("revealed");
+
+            void iconContainer.offsetWidth;
+
+            iconContainer.classList.add("revealed");
+
+            name.textContent = reward.name;
+
+            description.textContent =
+                reward.description;
+
+            number.textContent =
+                String(currentIndex + 1).padStart(2, "0");
+
+            currentStep.textContent =
+                currentIndex + 1;
+
+            progressFill.style.width =
+                ((currentIndex + 1) / rewards.length * 100) + "%";
+
+            if (currentIndex === 0) {
+                nextButton.innerHTML =
+                    '<i class="fa-solid fa-arrow-right"></i> Next Reward';
+            }
+
+            if (currentIndex === rewards.length - 1) {
+
+                nextButton.style.display = "none";
+
+                completeMessage.style.display = "block";
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+
+
+</div>
+
+{% endblock %}

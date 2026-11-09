@@ -650,6 +650,18 @@ def course_leaderboard(course_code):
         """, (course_code,))
 
         results = cursor.fetchall()
+        # Fetch all students who have claimed tournament rewards
+        cursor.execute("""
+            SELECT DISTINCT student_id
+            FROM tournament_reward_winners
+            WHERE is_winner = 1
+            AND claimed_at IS NOT NULL
+        """)
+
+        champion_ids = {
+            str(row['student_id'])
+            for row in cursor.fetchall()
+        }
 
         # Rank students in score order.
         # Equal scores receive the same rank.
@@ -667,7 +679,8 @@ def course_leaderboard(course_code):
                 **row,
                 'score': score,
                 'rank': current_rank,
-                'is_me': str(row['student_id']) == str(session['user_id'])
+                'is_me': str(row['student_id']) == str(session['user_id']),
+                'is_champion': str(row['student_id']) in champion_ids
             })
 
             previous_score = score
@@ -1071,6 +1084,221 @@ def register_tournament(tournament_id):
 
 
     return redirect(url_for('tournaments'))
+
+@app.route('/rewards')
+def rewards():
+
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if session.get('role') != 'student':
+        return redirect(url_for('login'))
+
+    student_id = session['user_id']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            tr.reward_id,
+            tr.tournament_id,
+            t.title,
+            tr.champion_title,
+            tr.rp_points,
+            tr.phase_coins,
+            tr.certificate,
+            tr.special_reward,
+
+            CASE
+                WHEN w.is_winner = 1 THEN 1
+                ELSE 0
+            END AS is_winner,
+
+            w.claimed_at
+
+        FROM tournament_rewards tr
+
+        JOIN tournaments t
+            ON tr.tournament_id = t.tournament_id
+
+        LEFT JOIN tournament_reward_winners w
+            ON w.tournament_id = tr.tournament_id
+            AND w.student_id = %s
+
+        ORDER BY tr.tournament_id
+    """, (student_id,))
+
+    rewards = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template(
+        'rewards.html',
+        rewards=rewards
+    )
+
+
+
+@app.route('/claim-reward/<int:tournament_id>', methods=['POST'])
+def claim_reward(tournament_id):
+
+    if 'user_id' not in session or session.get('role') != 'student':
+        return redirect(url_for('login'))
+
+    student_id = session['user_id']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Start an explicit transaction because the connection
+        # is configured with autocommit=True.
+        conn.begin()
+
+        # 1. Lock the winner record to prevent simultaneous claims.
+        cursor.execute("""
+            SELECT winner_id, claimed_at
+            FROM tournament_reward_winners
+            WHERE tournament_id = %s
+              AND student_id = %s
+              AND is_winner = 1
+            FOR UPDATE
+        """, (tournament_id, student_id))
+
+        winner = cursor.fetchone()
+
+        if not winner:
+            raise Exception("You are not the winner of this tournament.")
+
+        if winner['claimed_at'] is not None:
+            raise Exception("You have already claimed this reward.")
+
+        # 2. Get reward amounts from the database.
+        cursor.execute("""
+            SELECT rp_points, phase_coins, champion_title
+            FROM tournament_rewards
+            WHERE tournament_id = %s
+        """, (tournament_id,))
+
+        reward = cursor.fetchone()
+
+        if not reward:
+            raise Exception("Reward configuration not found.")
+
+        rp_points = int(reward['rp_points'])
+        phase_coins = int(reward['phase_coins'])
+
+        if rp_points < 0 or phase_coins < 0:
+            raise Exception("Invalid reward configuration.")
+
+        winner_id = winner['winner_id']
+
+        
+        # 3. Ensure student profile exists.
+        cursor.execute("""
+            INSERT INTO student_profiles (student_id, rp_points)
+            VALUES (%s, 0)
+            ON DUPLICATE KEY UPDATE
+                student_id = student_id
+        """, (student_id,))
+
+        # 4. Lock the student's profile balance.
+        cursor.execute("""
+            SELECT student_id
+            FROM student_profiles
+            WHERE student_id = %s
+            FOR UPDATE
+        """, (student_id,))
+
+        profile = cursor.fetchone()
+
+        if not profile:
+            raise Exception("Student profile not found.")
+
+
+        # 4. Credit RP points.
+        cursor.execute("""
+            UPDATE student_profiles
+            SET rp_points = COALESCE(rp_points, 0) + %s
+            WHERE student_id = %s
+        """, (rp_points, student_id))
+
+        # 5. Record RP transaction.
+        cursor.execute("""
+            INSERT INTO rp_transactions
+                (student_id, points, transaction_type,
+                 reference_id, description)
+            VALUES (%s, %s, 'bonus', %s, %s)
+        """, (
+            student_id,
+            rp_points,
+            tournament_id,
+            f"Tournament reward: {reward['champion_title']}"
+        ))
+
+        # 6. Create Phase Coin wallet if it does not exist.
+        cursor.execute("""
+            INSERT INTO phase_coin_wallets (user_id, balance)
+            VALUES (%s, 0)
+            ON DUPLICATE KEY UPDATE user_id = user_id
+        """, (student_id,))
+
+        # 7. Credit Phase Coins.
+        cursor.execute("""
+            UPDATE phase_coin_wallets
+            SET balance = balance + %s
+            WHERE user_id = %s
+        """, (phase_coins, student_id))
+
+        # 8. Record Phase Coin transaction.
+        cursor.execute("""
+            INSERT INTO phase_coin_transactions
+                (user_id, transaction_type, amount, description,
+                 reference_type, reference_id, admin_id)
+            VALUES (%s, 'credit', %s, %s, %s, %s, NULL)
+        """, (
+            student_id,
+            phase_coins,
+            f"Tournament reward: {reward['champion_title']}",
+            'tournament_reward',
+            winner_id
+        ))
+
+        # 9. Mark the reward as claimed.
+        cursor.execute("""
+            UPDATE tournament_reward_winners
+            SET claimed_at = NOW()
+            WHERE winner_id = %s
+              AND claimed_at IS NULL
+        """, (winner_id,))
+
+        if cursor.rowcount != 1:
+            raise Exception("Reward was already claimed.")
+
+        # 10. Commit all operations together.
+        conn.commit()
+
+        flash(
+            f"Congratulations! You received {rp_points} RP "
+            f"and {phase_coins} Phase Coins!",
+            "success"
+        )
+
+    except Exception as e:
+        conn.rollback()
+
+        print("Tournament Reward Claim Error:", e)
+
+        flash(str(e), "error")
+
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('rewards'))
+
 @app.route('/student/assignments', methods=['GET', 'POST'])
 def student_assignments():
     if 'user_id' not in session or session.get('role') != 'student':
@@ -2005,6 +2233,30 @@ def profile():
     """, (student_id,))
 
     tournament_history = cursor.fetchall()
+    # -------------------------------------------------
+# TOURNAMENT CHAMPION ACHIEVEMENTS
+# -------------------------------------------------
+
+    cursor.execute("""
+        SELECT
+            t.tournament_id,
+            t.title AS tournament_title,
+            rw.champion_title,
+            tr.claimed_at
+        FROM tournament_reward_winners tr
+        INNER JOIN tournaments t
+            ON tr.tournament_id = t.tournament_id
+        INNER JOIN tournament_rewards rw
+            ON tr.tournament_id = rw.tournament_id
+        WHERE tr.student_id = %s
+        AND tr.is_winner = 1
+        AND tr.claimed_at IS NOT NULL
+        ORDER BY tr.claimed_at DESC
+    """, (student_id,))
+
+    champion_achievements = cursor.fetchall()
+
+    total_champion_titles = len(champion_achievements)
 
     cursor.close()
     conn.close()
@@ -2018,7 +2270,9 @@ def profile():
     total_tournaments=total_tournaments,
     tournaments_won=tournaments_won,
     tournament_win_rate=tournament_win_rate,
-    tournament_history=tournament_history
+    tournament_history=tournament_history,
+    champion_achievements=champion_achievements,
+    total_champion_titles=total_champion_titles
 )
 
 
@@ -2299,6 +2553,11 @@ def admin_shop_purchases():
     '/admin/tournaments',
     methods=['GET', 'POST']
 )
+
+@app.route(
+    '/admin/tournaments',
+    methods=['GET', 'POST']
+)
 def admin_tournaments():
 
     if 'user_id' not in session or session.get('role') != 'admin':
@@ -2307,12 +2566,7 @@ def admin_tournaments():
     conn = get_db_connection()
 
     if conn is None:
-
-        flash(
-            "Database Connection Failed!",
-            "danger"
-        )
-
+        flash("Database Connection Failed!", "danger")
         return redirect(url_for('admin_portal'))
 
     cursor = conn.cursor()
@@ -2336,29 +2590,14 @@ def admin_tournaments():
                 '80'
             )
 
-
-            # Validate required fields
-
             if not title or not description:
-                flash(
-                    "Title and description are required.",
-                    "danger"
-                )
-
-                return redirect(
-                    url_for('admin_tournaments')
-                )
-
-
-            # Convert deadline from HTML datetime-local
+                flash("Title and description are required.", "danger")
+                return redirect(url_for('admin_tournaments'))
 
             deadline_datetime = datetime.strptime(
                 registration_deadline,
                 '%Y-%m-%dT%H:%M'
             )
-
-
-            # Insert tournament
 
             cursor.execute("""
                 INSERT INTO tournaments
@@ -2374,7 +2613,6 @@ def admin_tournaments():
                     status,
                     created_by
                 )
-
                 VALUES
                 (
                     %s, %s, %s, %s, %s,
@@ -2392,68 +2630,102 @@ def admin_tournaments():
                 session['user_id']
             ))
 
-
             conn.commit()
 
-
-            flash(
-                "Tournament created successfully!",
-                "success"
-            )
-
-            return redirect(
-                url_for('admin_tournaments')
-            )
-
+            flash("Tournament created successfully!", "success")
+            return redirect(url_for('admin_tournaments'))
 
         # Fetch tournaments for admin
-
         cursor.execute("""
-    SELECT
-        t.*,
-        u.name AS admin_name,
-        DATE_FORMAT(t.start_time, '%%h:%%i %%p') AS formatted_start_time
-
-    FROM tournaments t
-
-    LEFT JOIN users u
-        ON t.created_by = u.id
-
-    ORDER BY
-        t.tournament_date ASC,
-        t.start_time ASC
-""")
+            SELECT
+                t.*,
+                u.name AS admin_name,
+                DATE_FORMAT(
+                    t.start_time,
+                    '%%h:%%i %%p'
+                ) AS formatted_start_time
+            FROM tournaments t
+            LEFT JOIN users u
+                ON t.created_by = u.id
+            ORDER BY
+                t.tournament_date ASC,
+                t.start_time ASC
+        """)
 
         tournaments_list = cursor.fetchall()
-
 
     except Exception as e:
 
         conn.rollback()
+        app.logger.exception("Admin Tournament Error")
 
-        print(
-            "Admin Tournament Error:",
-            e
-        )
-
-        flash(
-            "Unable to process tournament.",
-            "danger"
-        )
-
+        flash("Unable to process tournament.", "danger")
         tournaments_list = []
 
-
     finally:
-
         cursor.close()
         conn.close()
-
 
     return render_template(
         'admin_tournaments.html',
         tournaments=tournaments_list
     )
+
+@app.route(
+    '/admin/tournaments/<int:tournament_id>/registered-students',
+    methods=['GET']
+)
+def get_tournament_registered_students(tournament_id):
+
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return jsonify({
+            'success': False,
+            'message': 'Unauthorized'
+        }), 403
+
+    conn = get_db_connection()
+
+    if conn is None:
+        return jsonify({
+            'success': False,
+            'message': 'Database connection failed'
+        }), 500
+
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT
+                u.id,
+                u.name,
+                u.username
+            FROM tournament_registrations tr
+            JOIN users u
+                ON u.id = tr.student_id
+            WHERE tr.tournament_id = %s
+              AND tr.registration_status = 'Registered'
+            ORDER BY u.name ASC
+        """, (tournament_id,))
+
+        students = cursor.fetchall()
+
+        return jsonify({
+            'success': True,
+            'students': students
+        })
+
+    except Exception:
+        app.logger.exception("Registered student fetch error")
+
+        return jsonify({
+            'success': False,
+            'message': 'Unable to fetch registered students'
+        }), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
 
 # 5. Admin Approve Purchase
 @app.route('/admin/shop/purchase/<int:purchase_id>/approve', methods=['POST'])

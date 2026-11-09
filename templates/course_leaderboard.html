@@ -74,6 +74,50 @@
     margin-bottom: 4px;
     animation: crownFloat 1.7s ease-in-out infinite;
 }
+
+/* Tournament Champion Badge */
+
+/* GOLDEN SHINING CHAMPION NAME */
+
+.champion-name {
+    font-weight: 900;
+    background: linear-gradient(
+        90deg,
+        #b8860b,
+        #ffd700,
+        #fff2a8,
+        #d4a017,
+        #b8860b
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: leaderboardChampionShine 3s linear infinite;
+}
+
+@keyframes leaderboardChampionShine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+
+.champion-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 5px;
+    color: #ffd700;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.champion-badge i {
+    filter: drop-shadow(0 0 4px #ffd700);
+}
+
 .podium-name {
     font-weight: 800;
     overflow-wrap: anywhere;
@@ -196,7 +240,20 @@
             <div class="podium-avatar">
                 <i class="fa-solid fa-user-astronaut"></i>
             </div>
-            <div class="podium-name">{{ rank_item.student_name }}</div>
+            <div class="podium-name">
+
+    <span class="{% if rank_item.is_champion %}champion-name{% endif %}">
+        {{ rank_item.student_name }}
+    </span>
+
+    {% if rank_item.is_champion %}
+        <span class="champion-badge" title="Tournament Champion">
+            <i class="fa-solid fa-crown"></i>
+            Champion
+        </span>
+    {% endif %}
+
+</div>
             <div class="podium-score">{{ rank_item.score|round(2) }} pts</div>
             <div class="podium-block">{{ rank_item.rank }}</div>
         </div>
@@ -223,9 +280,21 @@
                         {% endif %}
                     </td>
                     <td>
-                        {{ row.student_name }}
-                        {% if row.is_me %}<strong> (You)</strong>{% endif %}
-                    </td>
+    <span class="{% if row.is_champion %}champion-name{% endif %}">
+        {{ row.student_name }}
+    </span>
+
+    {% if row.is_champion %}
+        <span class="champion-badge" title="Tournament Champion">
+            <i class="fa-solid fa-crown"></i>
+            Champion
+        </span>
+    {% endif %}
+
+    {% if row.is_me %}
+        <strong> (You)</strong>
+    {% endif %}
+</td>
                     <td>{{ row.score|round(2) }}</td>
                 </tr>
                 {% endfor %}

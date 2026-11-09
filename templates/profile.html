@@ -660,6 +660,174 @@
         align-items: flex-start;
     }
 }
+
+/* =====================================
+   CHAMPION NAME - GOLDEN SHINING EFFECT
+===================================== */
+
+.profile-hero-info .champion-name {
+    color: #f5b700;
+    background: linear-gradient(
+        90deg,
+        #b8860b,
+        #ffd700,
+        #fff2a8,
+        #d4a017,
+        #b8860b
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: championShine 3s linear infinite;
+}
+
+.champion-crown {
+    color: #f5b700;
+    -webkit-text-fill-color: #f5b700;
+    margin-left: 6px;
+    animation: crownGlow 1.8s ease-in-out infinite alternate;
+}
+
+.champion-title-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 8px;
+    padding: 7px 13px;
+    border: 1px solid #e6bd45;
+    border-radius: 20px;
+    background: rgba(255, 215, 0, 0.12);
+    color: #b8860b;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* =====================================
+   HALL OF CHAMPIONS
+===================================== */
+
+.champion-achievements-section {
+    margin: 25px 0;
+    padding: 24px;
+    border: 1px solid rgba(218, 165, 32, 0.35);
+    border-radius: 18px;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 215, 0, 0.08),
+        rgba(255, 255, 255, 0.96)
+    );
+}
+
+.champion-achievements-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.champion-achievements-heading > i {
+    color: #d4a017;
+    font-size: 28px;
+}
+
+.champion-achievements-heading h2 {
+    margin: 0;
+    color: #9a6b00;
+}
+
+.champion-achievements-heading p {
+    margin: 5px 0 0;
+    color: #777;
+    font-size: 13px;
+}
+
+.champion-achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.champion-achievement-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 18px;
+    border: 1px solid rgba(218, 165, 32, 0.4);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(184, 134, 11, 0.08);
+}
+
+.champion-achievement-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #fff3c4;
+    color: #c28b00;
+    font-size: 22px;
+}
+
+.champion-achievement-info {
+    min-width: 0;
+}
+
+.champion-label {
+    color: #b8860b;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.champion-achievement-info h3 {
+    margin: 5px 0;
+    color: #4b3900;
+    font-size: 16px;
+}
+
+.champion-achievement-info p {
+    margin: 0 0 7px;
+    color: #666;
+    font-size: 13px;
+}
+
+.champion-achievement-date {
+    color: #888;
+    font-size: 11px;
+}
+
+/* ANIMATIONS */
+
+@keyframes championShine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+@keyframes crownGlow {
+    from {
+        filter: drop-shadow(0 0 2px #d4a017);
+    }
+    to {
+        filter: drop-shadow(0 0 7px #ffd700);
+    }
+}
+
+/* MOBILE RESPONSIVENESS */
+
+@media (max-width: 600px) {
+    .champion-achievements-section {
+        padding: 16px;
+    }
+
+    .champion-achievements-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 </style>
 
 
@@ -700,7 +868,21 @@
 
             <div class="profile-hero-info">
 
-                <h2>{{ user.name if user else session.get('name', 'Student') }}</h2>
+                <h2 class="{% if total_champion_titles|default(0) > 0 %}champion-name{% endif %}">
+    {{ user.name if user else session.get('name', 'Student') }}
+
+    {% if total_champion_titles|default(0) > 0 %}
+        <i class="fa-solid fa-crown champion-crown"
+           title="Tournament Champion"></i>
+    {% endif %}
+</h2>
+
+{% if total_champion_titles|default(0) > 0 %}
+    <div class="champion-title-badge">
+        <i class="fa-solid fa-trophy"></i>
+        {{ total_champion_titles }}× Tournament Champion
+    </div>
+{% endif %}
 
                 <p>
                     {{ profile.course if profile and profile.course else 'B.Tech' }}
@@ -728,6 +910,56 @@
         </div>
 
     </div>
+    
+<!-- CHAMPION ACHIEVEMENTS -->
+
+{% if champion_achievements %}
+
+<div class="champion-achievements-section">
+
+    <div class="champion-achievements-heading">
+        <i class="fa-solid fa-crown"></i>
+        <div>
+            <h2>Hall of Champions</h2>
+            <p>Your tournament victories and achievements</p>
+        </div>
+    </div>
+
+    <div class="champion-achievements-grid">
+
+        {% for achievement in champion_achievements %}
+
+        <div class="champion-achievement-card">
+
+            <div class="champion-achievement-icon">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+
+            <div class="champion-achievement-info">
+
+                <span class="champion-label">TOURNAMENT CHAMPION</span>
+
+                <h3>{{ achievement.champion_title or 'Champion' }}</h3>
+
+                <p>{{ achievement.tournament_title }}</p>
+
+                <span class="champion-achievement-date">
+                    <i class="fa-regular fa-calendar"></i>
+                    {{ achievement.claimed_at.strftime('%d %b %Y') }}
+                </span>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endif %}
+
 
 
     <!-- PROFILE MAIN LAYOUT -->

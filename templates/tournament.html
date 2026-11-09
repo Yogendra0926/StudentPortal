@@ -213,22 +213,82 @@
         .tournament-info {
             grid-template-columns: 1fr;
         }
+
     }
+    .tournament-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.btn-rewards {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 21px;
+    background: white;
+    color: #6554d9;
+    border-radius: 13px;
+    text-decoration: none;
+    font-size: .9rem;
+    font-weight: 800;
+    white-space: nowrap;
+    transition: .25s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,.10);
+}
+
+.btn-rewards:hover {
+    transform: translateY(-3px);
+    color: #4c3bc0;
+    box-shadow: 0 9px 20px rgba(0,0,0,.15);
+}
+
+@media(max-width: 600px) {
+    .tournament-header-content {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .btn-rewards {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
 </style>
 
 
 <div class="tournament-page">
 
-    <div class="tournament-header">
-        <h1>
-            <i class="fa-solid fa-trophy"></i>
-            Tournaments
-        </h1>
+    
+<div class="tournament-header">
 
-        <p>
-            Participate in university tournaments and compete with your fellow students.
-        </p>
+    <div class="tournament-header-content">
+        <div>
+            <h1>
+                <i class="fa-solid fa-trophy"></i>
+                Tournaments
+            </h1>
+
+            <p>
+                Participate in university tournaments and compete with your fellow students.
+            </p>
+        </div>
+
+        <a href="{{ url_for('rewards') }}" class="btn-rewards">
+
+            <i class="fa-solid fa-gift"></i>
+
+            View Rewards
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
     </div>
+
+</div>
+
 
 
     {% if tournaments %}
