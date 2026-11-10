@@ -52,7 +52,7 @@ href="{{ url_for('static', filename='lms.css') }}">
 
             <i class="fa-solid fa-book"></i>
 
-            <h2>6</h2>
+            <h2>9</h2>
 
             <span>Total Courses</span>
 
@@ -62,7 +62,7 @@ href="{{ url_for('static', filename='lms.css') }}">
 
             <i class="fa-solid fa-circle-play"></i>
 
-            <h2>3</h2>
+            <h2>5</h2>
 
             <span>Active Courses</span>
 
@@ -396,7 +396,123 @@ href="{{ url_for('static', filename='lms.css') }}">
     </div>
 
 </div>
+<div class="course-card">
 
+    <div class="course-header blue">
+        <i class="fa-solid fa-brain"></i>
+    </div>
+    <div class="course-body">
+        <span class="course-code">
+            CSE0213[T]
+        </span>
+
+        <h2>Gen AI</h2>
+
+        <p>
+            <i class="fa-solid fa-user"></i>
+            Instructor :
+            <strong>Yogendra Jain</strong>
+        </p>
+
+        <p>
+            <i class="fa-solid fa-calendar"></i>
+            Phase-2
+        </p>
+
+        <p>
+            <i class="fa-solid fa-star"></i>
+            Credits : 3
+        </p>
+
+        <a href="{{ url_for('genai_course') }}"
+           class="open-btn">
+            Open Course
+        </a>
+
+    </div>
+
+</div>
+
+<div class="course-card">
+
+    <div class="course-header" style="background: linear-gradient(135deg, #047857, #10b981);">
+        <i class="fa-solid fa-brain"></i>
+    </div>
+
+    <div class="course-body">
+
+        <span class="course-code">
+            AP0201
+        </span>
+
+        <h2>Aptitude &amp; Reasoning</h2>
+
+        <p>
+            <i class="fa-solid fa-user"></i>
+            Instructor :
+            <strong>Yogendra Jain</strong>
+        </p>
+
+        <p>
+            <i class="fa-solid fa-calendar"></i>
+            Phase-2
+        </p>
+
+        <p>
+            <i class="fa-solid fa-star"></i>
+            Credits : 3
+        </p>
+
+        <a href="{{ url_for('aptitude_course') }}"
+           class="open-btn"
+           style="background: linear-gradient(135deg, #047857, #10b981);">
+            Explore Course
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+
+    </div>
+
+</div>
+<div class="course-card">
+
+    <div class="course-header" style="background: linear-gradient(135deg, #1d4ed8, #38bdf8);">
+        <i class="fa-brands fa-python"></i>
+    </div>
+
+    <div class="course-body">
+
+        <span class="course-code">
+            CSL0203
+        </span>
+
+        <h2>Python Programming</h2>
+
+        <p>
+            <i class="fa-solid fa-user"></i>
+            Instructor :
+            <strong>Yogendra Jain</strong>
+        </p>
+
+        <p>
+            <i class="fa-solid fa-calendar"></i>
+            Phase-2
+        </p>
+
+        <p>
+            <i class="fa-solid fa-star"></i>
+            Credits : 3
+        </p>
+
+        <a href="{{ url_for('python_course') }}"
+           class="open-btn"
+           style="background: linear-gradient(135deg, #1d4ed8, #38bdf8);">
+            Explore Course
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+
+    </div>
+
+</div>
     </div>
 
 </div>

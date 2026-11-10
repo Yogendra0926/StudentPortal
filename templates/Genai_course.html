@@ -1,0 +1,792 @@
+{% extends "base.html" %}
+
+{% block title %}Generative AI{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+/* =========================================================
+   GENERATIVE AI COURSE PAGE
+   Reuses the visual language of deep_learning_course.html
+========================================================= */
+
+.genai-page {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px 60px;
+    color: #1e293b;
+}
+
+/* HERO */
+.genai-hero {
+    min-height: 270px;
+    padding: 45px 50px;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    background: linear-gradient(135deg, #312e81, #7c3aed, #2563eb);
+    color: #fff;
+    box-shadow: 0 15px 40px rgba(99, 102, 241, .20);
+    position: relative;
+    overflow: hidden;
+}
+
+.genai-hero::before,
+.genai-hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .08);
+    pointer-events: none;
+}
+
+.genai-hero::before {
+    width: 280px;
+    height: 280px;
+    right: 100px;
+    top: -140px;
+}
+
+.genai-hero::after {
+    width: 200px;
+    height: 200px;
+    right: -50px;
+    bottom: -90px;
+}
+
+.genai-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+}
+
+.genai-course-code {
+    display: inline-block;
+    padding: 7px 14px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .16);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.genai-hero h1 {
+    margin: 0 0 12px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.genai-hero p {
+    margin: 0;
+    max-width: 700px;
+    color: rgba(255, 255, 255, .92);
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.genai-hero-icon {
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+    font-size: 100px;
+    color: rgba(255, 255, 255, .92);
+    margin-right: 35px;
+}
+
+/* COURSE INFORMATION */
+.genai-info {
+    margin-top: 25px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.genai-info-card {
+    min-width: 0;
+    background: #fff;
+    padding: 22px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 8px 25px rgba(15, 23, 42, .06);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.genai-info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, .10);
+}
+
+.genai-info-icon {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef2ff;
+    color: #6366f1;
+    font-size: 18px;
+}
+
+.genai-info-card strong {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.genai-info-card span {
+    display: block;
+    margin-top: 3px;
+    color: #0f172a;
+    font-size: 15px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+/* INTRODUCTION */
+.genai-overview {
+    margin-top: 40px;
+    padding: 28px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(15, 23, 42, .045);
+}
+
+.genai-section-heading {
+    margin-bottom: 18px;
+}
+
+.genai-section-heading h2 {
+    margin: 0 0 7px;
+    color: #0f172a;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.genai-section-heading p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.genai-overview-text {
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.85;
+    margin: 0;
+}
+
+/* LEARNING AREAS — high-level overview only, not syllabus */
+.genai-focus {
+    margin-top: 30px;
+}
+
+.genai-focus-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.genai-focus-card {
+    min-width: 0;
+    padding: 22px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(15, 23, 42, .045);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.genai-focus-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, .09);
+}
+
+.genai-focus-card i {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #eef2ff;
+    color: #4f46e5;
+    font-size: 19px;
+    margin-bottom: 15px;
+}
+
+.genai-focus-card h3 {
+    color: #172554;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 8px;
+}
+
+.genai-focus-card p {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* PRACTICAL / CAREER FOCUS */
+.genai-practical {
+    margin-top: 30px;
+    padding: 28px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+    border: 1px solid #e0e7ff;
+}
+
+.genai-practical h2 {
+    margin: 0 0 8px;
+    color: #312e81;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.genai-practical > p {
+    margin: 0 0 20px;
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.genai-practical-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.genai-practical-item {
+    padding: 17px;
+    background: rgba(255, 255, 255, .85);
+    border: 1px solid #e0e7ff;
+    border-radius: 13px;
+}
+
+.genai-practical-item strong {
+    display: block;
+    margin-bottom: 7px;
+    color: #312e81;
+    font-size: 14px;
+}
+
+.genai-practical-item p {
+    margin: 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+/* BACK BUTTON */
+.genai-back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    margin-top: 30px;
+    padding: 12px 19px;
+    border-radius: 10px;
+    background: #4f46e5;
+    color: #fff !important;
+    text-decoration: none !important;
+    font-size: 13px;
+    font-weight: 800;
+    transition: background .2s ease, transform .2s ease;
+}
+
+.genai-back-btn:hover {
+    background: #3730a3;
+    color: #fff !important;
+    transform: translateY(-2px);
+}
+
+/* RESPONSIVE */
+@media (max-width: 850px) {
+    .genai-focus-grid,
+    .genai-practical-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .genai-hero-icon {
+        margin-right: 5px;
+        font-size: 75px;
+    }
+}
+
+@media (max-width: 600px) {
+    .genai-page {
+        margin: 15px auto;
+        padding: 0 12px 40px;
+    }
+
+    .genai-hero {
+        min-height: auto;
+        padding: 30px 25px;
+        border-radius: 18px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .genai-hero h1 {
+        font-size: 29px;
+    }
+
+    .genai-hero p {
+        font-size: 14px;
+    }
+
+    .genai-hero-icon {
+        align-self: flex-end;
+        font-size: 62px;
+        margin: 0;
+    }
+
+    .genai-info {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .genai-info-card {
+        padding: 18px;
+    }
+
+    .genai-overview,
+    .genai-practical {
+        padding: 20px;
+    }
+
+    .genai-focus-grid,
+    .genai-practical-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .genai-section-heading h2 {
+        font-size: 22px;
+    }
+
+    .genai-back-btn {
+        width: 100%;
+    }
+}
+
+/* Explicit text colors prevent inherited base-template contrast issues */
+.genai-page h1,
+.genai-page h2,
+.genai-page h3,
+.genai-page p,
+.genai-page strong,
+.genai-page span {
+    opacity: 1;
+}
+.course-study-materials {
+    margin: 35px 0;
+    padding: 28px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+    color: #1e293b !important;
+}
+
+.course-study-materials * {
+    box-sizing: border-box;
+}
+
+.study-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+}
+
+.study-header-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #eef2ff;
+    color: #4f46e5 !important;
+    border-radius: 13px;
+    font-size: 21px;
+}
+
+.study-header h2 {
+    margin: 0;
+    color: #172554 !important;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.study-subtitle {
+    margin: 5px 0 24px;
+    color: #64748b !important;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.study-material-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+}
+
+.study-material-card {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    transition: all 0.25s ease;
+    min-width: 0;
+}
+
+.study-material-card:hover {
+    transform: translateY(-4px);
+    border-color: #a5b4fc;
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.10);
+}
+
+.study-card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin-bottom: 15px;
+}
+
+.study-pdf-icon {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #fff1f2;
+    color: #e11d48 !important;
+    border-radius: 11px;
+    font-size: 21px;
+}
+
+.study-card-title {
+    margin: 2px 0 5px;
+    color: #172554 !important;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.study-file-type {
+    display: inline-block;
+    color: #dc2626 !important;
+    background: #fef2f2;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.study-card-description {
+    color: #64748b !important;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0 0 17px;
+    overflow-wrap: anywhere;
+}
+
+.study-card-meta {
+    color: #64748b !important;
+    font-size: 11px;
+    margin-top: auto;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+.study-download-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    color: #ffffff !important;
+    border-radius: 9px;
+    text-decoration: none !important;
+    font-size: 13px;
+    font-weight: 800;
+    transition: all 0.2s ease;
+}
+
+.study-download-btn:hover {
+    background: #3730a3;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+.study-empty-state {
+    padding: 30px 15px;
+    text-align: center;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 13px;
+}
+
+.study-empty-state i {
+    font-size: 30px;
+    color: #94a3b8 !important;
+    margin-bottom: 12px;
+}
+
+.study-empty-state h3 {
+    color: #334155 !important;
+    font-size: 16px;
+    margin: 0 0 6px;
+}
+
+.study-empty-state p {
+    color: #64748b !important;
+    font-size: 13px;
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .course-study-materials {
+        padding: 17px;
+        margin: 22px 0;
+    }
+
+    .study-header h2 {
+        font-size: 18px;
+    }
+
+    .study-material-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .study-material-card {
+        padding: 16px;
+    }
+}
+</style>
+
+<div class="genai-page">
+
+    <!-- HERO -->
+    <section class="genai-hero">
+        <div class="genai-hero-content">
+            <span class="genai-course-code">CSE0213</span>
+
+            <h1>Generative AI</h1>
+
+            <p>
+                Explore the concepts and applications of Generative AI,
+                large language models, prompt engineering and intelligent
+                AI-powered applications.
+            </p>
+        </div>
+
+        <i class="fa-solid fa-wand-magic-sparkles genai-hero-icon"
+           aria-hidden="true"></i>
+    </section>
+
+    <!-- COURSE INFORMATION -->
+    <section class="genai-info" aria-label="Course information">
+
+        <div class="genai-info-card">
+            <div class="genai-info-icon">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <div>
+                <strong>Course</strong>
+                <span>Generative AI</span>
+            </div>
+        </div>
+
+        <div class="genai-info-card">
+            <div class="genai-info-icon">
+                <i class="fa-solid fa-hashtag"></i>
+            </div>
+            <div>
+                <strong>Course Code</strong>
+                <span>CSE0213</span>
+            </div>
+        </div>
+
+        <div class="genai-info-card">
+            <div class="genai-info-icon">
+                <i class="fa-solid fa-file-pdf"></i>
+            </div>
+            <div>
+                <strong>Course Resources</strong>
+                <span>Notes &amp; PDF Materials</span>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- COURSE OVERVIEW -->
+    <section class="genai-overview">
+        <div class="genai-section-heading">
+            <h2>Course Overview</h2>
+            <p>A practical introduction to the field of Generative AI.</p>
+        </div>
+
+        <p class="genai-overview-text">
+            Generative Artificial Intelligence focuses on systems that can
+            generate new content such as text, images, code and other forms
+            of data. This course introduces the foundations, tools and
+            real-world applications of generative models and AI-powered
+            solutions.
+        </p>
+    </section>
+
+    <!-- HIGH-LEVEL LEARNING AREAS: NOT A SYLLABUS -->
+    <section class="genai-focus">
+        <div class="genai-section-heading">
+            <h2>What You Will Explore</h2>
+            <p>Broad areas and applications related to Generative AI.</p>
+        </div>
+
+        <div class="genai-focus-grid">
+
+            <article class="genai-focus-card">
+                <i class="fa-solid fa-brain"></i>
+                <h3>Generative Models</h3>
+                <p>
+                    Understand how AI systems learn patterns and generate
+                    new content from data.
+                </p>
+            </article>
+
+            <article class="genai-focus-card">
+                <i class="fa-solid fa-comments"></i>
+                <h3>Language Models</h3>
+                <p>
+                    Explore language-based AI systems and their ability
+                    to understand and generate text.
+                </p>
+            </article>
+
+            <article class="genai-focus-card">
+                <i class="fa-solid fa-terminal"></i>
+                <h3>Prompt Engineering</h3>
+                <p>
+                    Learn how instructions and context guide the responses
+                    of generative AI tools.
+                </p>
+            </article>
+
+            <article class="genai-focus-card">
+                <i class="fa-solid fa-diagram-project"></i>
+                <h3>AI Applications</h3>
+                <p>
+                    Discover how generative models can be integrated into
+                    useful software applications.
+                </p>
+            </article>
+
+            <article class="genai-focus-card">
+                <i class="fa-solid fa-database"></i>
+                <h3>Knowledge &amp; Retrieval</h3>
+                <p>
+                    Explore approaches for connecting AI systems with
+                    external information sources.
+                </p>
+            </article>
+
+            <article class="genai-focus-card">
+                <i class="fa-solid fa-shield-halved"></i>
+                <h3>Responsible AI</h3>
+                <p>
+                    Consider reliability, limitations, privacy and
+                    responsible use of generative systems.
+                </p>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- PRACTICAL AND CAREER FOCUS -->
+    <section class="genai-practical">
+        <h2>
+            <i class="fa-solid fa-rocket"></i>
+            Practical Learning Focus
+        </h2>
+
+        <p>
+            Connect concepts with hands-on experimentation and
+            real-world problem solving.
+        </p>
+
+        <div class="genai-practical-grid">
+
+            <div class="genai-practical-item">
+                <strong>
+                    <i class="fa-solid fa-code"></i>
+                    Build
+                </strong>
+                <p>
+                    Experiment with AI tools and develop small
+                    generative AI applications.
+                </p>
+            </div>
+
+            <div class="genai-practical-item">
+                <strong>
+                    <i class="fa-solid fa-lightbulb"></i>
+                    Apply
+                </strong>
+                <p>
+                    Identify practical use cases and design
+                    AI-assisted solutions.
+                </p>
+            </div>
+
+            <div class="genai-practical-item">
+                <strong>
+                    <i class="fa-solid fa-comments"></i>
+                    Explain
+                </strong>
+                <p>
+                    Communicate model capabilities, limitations
+                    and design decisions clearly.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- BACK TO LMS -->
+    <a href="{{ url_for('lms') }}" class="genai-back-btn">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to LMS
+    </a>
+</div>
+<!-- Shared LMS study materials component.
+     The Flask route must pass study_materials filtered for CSE0213. -->
+{% include "study_materials_section.html" %}
+{% endblock %}

@@ -1,0 +1,505 @@
+{% extends "base.html" %}
+
+{% block title %}Python Programming | LMS{% endblock %}
+
+{% block content %}
+<style>
+    .python-course {
+        --python-blue: #2563eb;
+        --python-yellow: #f4c542;
+        max-width: 1180px;
+        margin: 28px auto 50px;
+        padding: 0 18px;
+        color: #172033;
+    }
+
+    .python-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 42px;
+        border-radius: 22px;
+        color: #fff;
+        background: linear-gradient(120deg, #142b55 0%, #2563eb 65%, #38bdf8 100%);
+        box-shadow: 0 14px 35px rgba(37, 99, 235, .18);
+    }
+
+    .python-hero::after {
+        content: "Py";
+        position: absolute;
+        right: 45px;
+        top: 5px;
+        color: rgba(255,255,255,.10);
+        font-size: 190px;
+        line-height: 1;
+        font-weight: 900;
+        pointer-events: none;
+    }
+
+    .python-tag {
+        display: inline-block;
+        padding: 7px 13px;
+        border: 1px solid rgba(255,255,255,.35);
+        border-radius: 30px;
+        background: rgba(255,255,255,.12);
+        font-size: 13px;
+        letter-spacing: .4px;
+    }
+
+    .python-hero h1 {
+        margin: 18px 0 10px;
+        font-size: clamp(30px, 5vw, 46px);
+        font-weight: 800;
+        color: #fff;
+    }
+
+    .python-hero p {
+        max-width: 680px;
+        margin: 0;
+        color: rgba(255,255,255,.88);
+        font-size: 16px;
+        line-height: 1.7;
+    }
+
+    .python-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    .python-meta span {
+        padding: 9px 13px;
+        border-radius: 9px;
+        background: rgba(255,255,255,.14);
+        font-size: 13px;
+    }
+
+    .python-section {
+        margin-top: 30px;
+        padding: 27px;
+        border: 1px solid #e8edf5;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 7px 24px rgba(15, 23, 42, .045);
+    }
+
+    .python-section h2 {
+        margin: 0 0 12px;
+        color: #172b4d;
+        font-size: 23px;
+        font-weight: 750;
+    }
+
+    .python-section > p {
+        color: #64748b;
+        line-height: 1.75;
+        margin: 0;
+    }
+
+    .python-topic-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-top: 22px;
+    }
+
+    .python-topic {
+        padding: 20px;
+        border: 1px solid #e8edf5;
+        border-radius: 14px;
+        background: #f8faff;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .python-topic:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 22px rgba(37, 99, 235, .09);
+    }
+
+    .python-topic i {
+        display: inline-flex;
+        width: 42px;
+        height: 42px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        color: #1d4ed8;
+        background: #dbeafe;
+        font-size: 18px;
+        margin-bottom: 13px;
+    }
+
+    .python-topic h3 {
+        margin: 0 0 7px;
+        color: #1e293b;
+        font-size: 16px;
+    }
+
+    .python-topic p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .python-highlight {
+        margin-top: 22px;
+        padding: 19px 21px;
+        border-left: 4px solid #2563eb;
+        border-radius: 10px;
+        background: #eff6ff;
+        color: #334155;
+        line-height: 1.7;
+    }
+
+    .python-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    .python-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 11px 18px;
+        border-radius: 10px;
+        background: #2563eb;
+        color: #fff !important;
+        text-decoration: none !important;
+        font-weight: 650;
+        transition: .2s ease;
+    }
+
+    .python-btn:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+    }
+
+    .python-btn.secondary {
+        color: #1e40af !important;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+    }
+
+    @media (max-width: 640px) {
+        .python-hero { padding: 28px 22px; }
+        .python-hero::after { right: 8px; top: 20px; font-size: 110px; }
+        .python-section { padding: 21px; }
+    }
+    .course-study-materials {
+    margin: 35px 0;
+    padding: 28px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+    color: #1e293b !important;
+}
+
+.course-study-materials * {
+    box-sizing: border-box;
+}
+
+.study-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+}
+
+.study-header-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #eef2ff;
+    color: #4f46e5 !important;
+    border-radius: 13px;
+    font-size: 21px;
+}
+
+.study-header h2 {
+    margin: 0;
+    color: #172554 !important;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.study-subtitle {
+    margin: 5px 0 24px;
+    color: #64748b !important;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.study-material-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+}
+
+.study-material-card {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    transition: all 0.25s ease;
+    min-width: 0;
+}
+
+.study-material-card:hover {
+    transform: translateY(-4px);
+    border-color: #a5b4fc;
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.10);
+}
+
+.study-card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin-bottom: 15px;
+}
+
+.study-pdf-icon {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #fff1f2;
+    color: #e11d48 !important;
+    border-radius: 11px;
+    font-size: 21px;
+}
+
+.study-card-title {
+    margin: 2px 0 5px;
+    color: #172554 !important;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.study-file-type {
+    display: inline-block;
+    color: #dc2626 !important;
+    background: #fef2f2;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.study-card-description {
+    color: #64748b !important;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0 0 17px;
+    overflow-wrap: anywhere;
+}
+
+.study-card-meta {
+    color: #64748b !important;
+    font-size: 11px;
+    margin-top: auto;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+.study-download-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    color: #ffffff !important;
+    border-radius: 9px;
+    text-decoration: none !important;
+    font-size: 13px;
+    font-weight: 800;
+    transition: all 0.2s ease;
+}
+
+.study-download-btn:hover {
+    background: #3730a3;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+.study-empty-state {
+    padding: 30px 15px;
+    text-align: center;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 13px;
+}
+
+.study-empty-state i {
+    font-size: 30px;
+    color: #94a3b8 !important;
+    margin-bottom: 12px;
+}
+
+.study-empty-state h3 {
+    color: #334155 !important;
+    font-size: 16px;
+    margin: 0 0 6px;
+}
+
+.study-empty-state p {
+    color: #64748b !important;
+    font-size: 13px;
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .course-study-materials {
+        padding: 17px;
+        margin: 22px 0;
+    }
+
+    .study-header h2 {
+        font-size: 18px;
+    }
+
+    .study-material-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .study-material-card {
+        padding: 16px;
+    }
+}
+</style>
+
+<div class="python-course">
+    <section class="python-hero">
+        <span class="python-tag">
+            <i class="fa-solid fa-code"></i> COURSE · CSL0203
+        </span>
+        <h1>Python Programming</h1>
+        <p>
+            Build a strong programming foundation with Python. Learn to write
+            clean code, solve problems, work with data, and develop practical
+            programming skills through hands-on practice.
+        </p>
+
+        <div class="python-meta">
+            <span><i class="fa-solid fa-book-open"></i> CSL0203</span>
+            <span><i class="fa-solid fa-user"></i> Instructor: <strong>Yogendra Jain</strong></span>
+            <span><i class="fa-solid fa-calendar"></i> Phase-2</span>
+            <span><i class="fa-solid fa-laptop-code"></i> Programming & Practice</span>
+        </div>
+
+        <div class="python-actions">
+            <a href="#course-overview" class="python-btn">
+                Explore Course <i class="fa-solid fa-arrow-down"></i>
+            </a>
+            <a href="{{ url_for('lms') }}" class="python-btn secondary">
+                <i class="fa-solid fa-arrow-left"></i> Back to LMS
+            </a>
+        </div>
+    </section>
+
+    <section class="python-section" id="course-overview">
+        <h2><i class="fa-solid fa-graduation-cap"></i> Course Overview</h2>
+        <p>
+            Python is a versatile, high-level programming language widely used
+            in software development, automation, data science, artificial
+            intelligence, and machine learning. This course focuses on
+            developing logical thinking and the ability to translate problems
+            into efficient Python programs.
+        </p>
+
+        <div class="python-highlight">
+            <strong>Learning approach:</strong>
+            Understand programming concepts, implement them through code,
+            debug errors, and apply Python to real-world problem-solving tasks.
+        </div>
+    </section>
+
+    <section class="python-section">
+        <h2><i class="fa-solid fa-layer-group"></i> Key Learning Areas</h2>
+        <p>Explore the major concepts and practical skills covered in Python programming.</p>
+
+        <div class="python-topic-grid">
+            <article class="python-topic">
+                <i class="fa-solid fa-terminal"></i>
+                <h3>Python Fundamentals</h3>
+                <p>Syntax, variables, data types, operators, input/output, and type conversion.</p>
+            </article>
+
+            <article class="python-topic">
+                <i class="fa-solid fa-code-branch"></i>
+                <h3>Control Flow</h3>
+                <p>Conditional statements, loops, nested conditions, and logical problem-solving.</p>
+            </article>
+
+            <article class="python-topic">
+                <i class="fa-solid fa-cubes"></i>
+                <h3>Data Structures</h3>
+                <p>Strings, lists, tuples, sets, dictionaries, and common operations.</p>
+            </article>
+
+            <article class="python-topic">
+                <i class="fa-solid fa-gears"></i>
+                <h3>Functions & Modules</h3>
+                <p>Defining functions, parameters, return values, scope, modules, and packages.</p>
+            </article>
+
+            <article class="python-topic">
+                <i class="fa-solid fa-object-group"></i>
+                <h3>Object-Oriented Programming</h3>
+                <p>Classes, objects, constructors, inheritance, encapsulation, and polymorphism.</p>
+            </article>
+
+            <article class="python-topic">
+                <i class="fa-solid fa-bug"></i>
+                <h3>File Handling & Exceptions</h3>
+                <p>Reading and writing files, handling exceptions, and debugging programs.</p>
+            </article>
+
+            <article class="python-topic">
+                <i class="fa-solid fa-brain"></i>
+                <h3>Problem Solving</h3>
+                <p>Algorithmic thinking, coding exercises, pattern-based problems, and debugging.</p>
+            </article>
+
+            <article class="python-topic">
+                <i class="fa-solid fa-chart-line"></i>
+                <h3>Practical Applications</h3>
+                <p>Small Python projects, automation tasks, and introductory data-processing applications.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="python-section">
+        <h2><i class="fa-solid fa-bullseye"></i> Learning Outcomes</h2>
+        <p>By the end of this course, students should be able to:</p>
+        <ul style="color:#475569; line-height:2; padding-left:22px; margin:15px 0 0;">
+            <li>Write and execute Python programs using appropriate syntax.</li>
+            <li>Apply control structures and built-in data structures to solve problems.</li>
+            <li>Develop reusable programs using functions and modules.</li>
+            <li>Understand and implement object-oriented programming concepts.</li>
+            <li>Handle files, exceptions, and common programming errors.</li>
+            <li>Build small applications using Python problem-solving skills.</li>
+        </ul>
+    </section>
+
+    {% include "study_materials_section.html" %}
+</div>
+{% endblock %}

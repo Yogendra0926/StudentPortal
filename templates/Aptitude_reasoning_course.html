@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+{% block title %}Aptitude &amp; Reasoning{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+.aptitude-page{max-width:1200px;margin:30px auto;padding:0 20px 60px;color:#1e293b}
+.aptitude-page *{box-sizing:border-box}
+.aptitude-hero{min-height:270px;padding:45px 50px;border-radius:24px;display:flex;align-items:center;justify-content:space-between;gap:25px;background:linear-gradient(135deg,#064e3b,#059669,#0f766e);color:#fff;box-shadow:0 15px 40px rgba(5,150,105,.18);position:relative;overflow:hidden}
+.aptitude-hero:before,.aptitude-hero:after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.08);pointer-events:none}
+.aptitude-hero:before{width:280px;height:280px;right:100px;top:-140px}
+.aptitude-hero:after{width:200px;height:200px;right:-50px;bottom:-90px}
+.aptitude-hero-content{position:relative;z-index:2;max-width:760px}
+.aptitude-course-code{display:inline-block;padding:7px 14px;border-radius:8px;background:rgba(255,255,255,.16);color:#fff;font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:15px}
+.aptitude-hero h1{margin:0 0 12px;color:#fff;font-size:40px;font-weight:800;line-height:1.2}
+.aptitude-hero p{margin:0;max-width:700px;color:rgba(255,255,255,.92);font-size:16px;line-height:1.7}
+.aptitude-hero-icon{position:relative;z-index:2;flex-shrink:0;font-size:100px;color:rgba(255,255,255,.92);margin-right:35px}
+.aptitude-info{margin-top:25px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.aptitude-info-card{min-width:0;background:#fff;padding:22px;border-radius:16px;display:flex;align-items:center;gap:14px;border:1px solid #e5e7eb;box-shadow:0 8px 25px rgba(15,23,42,.06);transition:transform .25s ease,box-shadow .25s ease}
+.aptitude-info-card:hover,.aptitude-focus-card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(15,23,42,.10)}
+.aptitude-info-icon{width:45px;height:45px;min-width:45px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#ecfdf5;color:#059669;font-size:18px}
+.aptitude-info-card strong{display:block;color:#64748b;font-size:13px}
+.aptitude-info-card span{display:block;margin-top:3px;color:#0f172a;font-size:15px;font-weight:700;overflow-wrap:anywhere}
+.aptitude-overview{margin-top:40px;padding:28px;background:#fff;border:1px solid #e5e7eb;border-radius:18px;box-shadow:0 8px 25px rgba(15,23,42,.045)}
+.aptitude-section-heading{margin-bottom:18px}
+.aptitude-section-heading h2{margin:0 0 7px;color:#0f172a;font-size:25px;font-weight:800}
+.aptitude-section-heading p{margin:0;color:#64748b;font-size:14px;line-height:1.7}
+.aptitude-overview-text{color:#475569;font-size:14px;line-height:1.85;margin:0}
+.aptitude-focus{margin-top:30px}
+.aptitude-focus-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.aptitude-focus-card{min-width:0;padding:22px;background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 8px 25px rgba(15,23,42,.045);transition:transform .25s ease,box-shadow .25s ease}
+.aptitude-focus-card>i{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:#ecfdf5;color:#059669;font-size:19px;margin-bottom:15px}
+.aptitude-focus-card h3{color:#064e3b;font-size:16px;font-weight:800;margin:0 0 8px}
+.aptitude-focus-card p{color:#64748b;font-size:13px;line-height:1.7;margin:0}
+.aptitude-placement{margin-top:30px;padding:28px;border-radius:18px;background:linear-gradient(135deg,#ecfdf5,#f0fdfa);border:1px solid #d1fae5}
+.aptitude-placement h2{margin:0 0 8px;color:#064e3b;font-size:22px;font-weight:800}
+.aptitude-placement>p{margin:0 0 20px;color:#475569;font-size:14px;line-height:1.7}
+.aptitude-placement-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.aptitude-placement-item{padding:17px;background:rgba(255,255,255,.88);border:1px solid #d1fae5;border-radius:13px}
+.aptitude-placement-item strong{display:block;margin-bottom:7px;color:#065f46;font-size:14px}
+.aptitude-placement-item p{margin:0;color:#64748b;font-size:12px;line-height:1.65}
+.aptitude-back-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;margin-top:30px;padding:12px 19px;border-radius:10px;background:#059669;color:#fff!important;text-decoration:none!important;font-size:13px;font-weight:800;transition:background .2s ease,transform .2s ease}
+.aptitude-back-btn:hover{background:#047857;color:#fff!important;transform:translateY(-2px)}
+@media(max-width:850px){.aptitude-focus-grid,.aptitude-placement-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.aptitude-hero-icon{margin-right:5px;font-size:75px}}
+@media(max-width:600px){.aptitude-page{margin:15px auto;padding:0 12px 40px}.aptitude-hero{min-height:auto;padding:30px 25px;border-radius:18px;flex-direction:column;align-items:flex-start;gap:20px}.aptitude-hero h1{font-size:29px}.aptitude-hero p{font-size:14px}.aptitude-hero-icon{align-self:flex-end;font-size:62px;margin:0}.aptitude-info{grid-template-columns:1fr;gap:12px}.aptitude-info-card{padding:18px}.aptitude-overview,.aptitude-placement{padding:20px}.aptitude-focus-grid,.aptitude-placement-grid{grid-template-columns:1fr}.aptitude-section-heading h2{font-size:22px}.aptitude-back-btn{width:100%}}
+.course-study-materials {
+    margin: 35px 0;
+    padding: 28px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+    color: #1e293b !important;
+}
+
+.course-study-materials * {
+    box-sizing: border-box;
+}
+
+.study-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+}
+
+.study-header-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #eef2ff;
+    color: #4f46e5 !important;
+    border-radius: 13px;
+    font-size: 21px;
+}
+
+.study-header h2 {
+    margin: 0;
+    color: #172554 !important;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.study-subtitle {
+    margin: 5px 0 24px;
+    color: #64748b !important;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.study-material-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+}
+
+.study-material-card {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    transition: all 0.25s ease;
+    min-width: 0;
+}
+
+.study-material-card:hover {
+    transform: translateY(-4px);
+    border-color: #a5b4fc;
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.10);
+}
+
+.study-card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin-bottom: 15px;
+}
+
+.study-pdf-icon {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #fff1f2;
+    color: #e11d48 !important;
+    border-radius: 11px;
+    font-size: 21px;
+}
+
+.study-card-title {
+    margin: 2px 0 5px;
+    color: #172554 !important;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.study-file-type {
+    display: inline-block;
+    color: #dc2626 !important;
+    background: #fef2f2;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.study-card-description {
+    color: #64748b !important;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0 0 17px;
+    overflow-wrap: anywhere;
+}
+
+.study-card-meta {
+    color: #64748b !important;
+    font-size: 11px;
+    margin-top: auto;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+.study-download-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    color: #ffffff !important;
+    border-radius: 9px;
+    text-decoration: none !important;
+    font-size: 13px;
+    font-weight: 800;
+    transition: all 0.2s ease;
+}
+
+.study-download-btn:hover {
+    background: #3730a3;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+.study-empty-state {
+    padding: 30px 15px;
+    text-align: center;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 13px;
+}
+
+.study-empty-state i {
+    font-size: 30px;
+    color: #94a3b8 !important;
+    margin-bottom: 12px;
+}
+
+.study-empty-state h3 {
+    color: #334155 !important;
+    font-size: 16px;
+    margin: 0 0 6px;
+}
+
+.study-empty-state p {
+    color: #64748b !important;
+    font-size: 13px;
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .course-study-materials {
+        padding: 17px;
+        margin: 22px 0;
+    }
+
+    .study-header h2 {
+        font-size: 18px;
+    }
+
+    .study-material-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .study-material-card {
+        padding: 16px;
+    }
+}
+
+</style>
+
+<div class="aptitude-page">
+    <section class="aptitude-hero">
+        <div class="aptitude-hero-content">
+            <span class="aptitude-course-code">AP0201</span>
+            <h1>Aptitude &amp; Reasoning</h1>
+            <p>Strengthen quantitative aptitude, logical thinking and problem-solving abilities for academic assessments, competitive examinations and placement interviews.</p>
+        </div>
+        <i class="fa-solid fa-brain aptitude-hero-icon" aria-hidden="true"></i>
+    </section>
+
+    <section class="aptitude-info" aria-label="Course information">
+        <div class="aptitude-info-card"><div class="aptitude-info-icon"><i class="fa-solid fa-book-open"></i></div><div><strong>Course</strong><span>Aptitude &amp; Reasoning</span></div></div>
+        <div class="aptitude-info-card"><div class="aptitude-info-icon"><i class="fa-solid fa-hashtag"></i></div><div><strong>Course Code</strong><span>AP0201</span></div></div>
+        <div class="aptitude-info-card"><div class="aptitude-info-icon"><i class="fa-solid fa-bullseye"></i></div><div><strong>Learning Focus</strong><span>Problem Solving &amp; Placement Prep</span></div></div>
+    </section>
+
+    <section class="aptitude-overview">
+        <div class="aptitude-section-heading"><h2>Course Overview</h2><p>Build the analytical skills needed to approach problems confidently.</p></div>
+        <p class="aptitude-overview-text">Aptitude and Reasoning develops numerical ability, logical interpretation, analytical thinking and structured problem-solving. The course encourages students to evaluate information, identify patterns, make sound decisions and solve problems accurately under time constraints.</p>
+    </section>
+
+    <section class="aptitude-focus">
+        <div class="aptitude-section-heading"><h2>Key Learning Areas</h2><p>Broad skill areas developed through aptitude and reasoning practice.</p></div>
+        <div class="aptitude-focus-grid">
+            <article class="aptitude-focus-card"><i class="fa-solid fa-calculator"></i><h3>Quantitative Aptitude</h3><p>Develop numerical understanding and confidence in solving mathematical problems.</p></article>
+            <article class="aptitude-focus-card"><i class="fa-solid fa-puzzle-piece"></i><h3>Logical Reasoning</h3><p>Improve the ability to recognize patterns, evaluate relationships and draw logical conclusions.</p></article>
+            <article class="aptitude-focus-card"><i class="fa-solid fa-chart-line"></i><h3>Analytical Ability</h3><p>Interpret information, compare possibilities and make decisions using structured reasoning.</p></article>
+            <article class="aptitude-focus-card"><i class="fa-solid fa-language"></i><h3>Verbal Ability</h3><p>Strengthen reading comprehension, vocabulary and clear communication skills.</p></article>
+            <article class="aptitude-focus-card"><i class="fa-solid fa-shapes"></i><h3>Critical Thinking</h3><p>Examine situations carefully, identify assumptions and evaluate possible solutions.</p></article>
+            <article class="aptitude-focus-card"><i class="fa-solid fa-stopwatch"></i><h3>Speed &amp; Accuracy</h3><p>Build efficient problem-solving habits while maintaining accuracy within time limits.</p></article>
+        </div>
+    </section>
+
+    <section class="aptitude-placement">
+        <h2><i class="fa-solid fa-briefcase"></i> Placement Preparation</h2>
+        <p>Apply aptitude and reasoning skills to common recruitment assessments and interview preparation.</p>
+        <div class="aptitude-placement-grid">
+            <div class="aptitude-placement-item"><strong><i class="fa-solid fa-clipboard-check"></i> Assessment Practice</strong><p>Practice structured questions similar to placement and competitive assessments.</p></div>
+            <div class="aptitude-placement-item"><strong><i class="fa-solid fa-lightbulb"></i> Logical Approach</strong><p>Learn to break complex questions into smaller, manageable steps.</p></div>
+            <div class="aptitude-placement-item"><strong><i class="fa-solid fa-trophy"></i> Interview Readiness</strong><p>Improve confidence and readiness for aptitude-based recruitment rounds.</p></div>
+        </div>
+    </section>
+
+    <a href="{{ url_for('lms') }}" class="aptitude-back-btn"><i class="fa-solid fa-arrow-left"></i> Back to LMS</a>
+
+    <!-- Shared study materials component: route must pass study_materials filtered for AP0201. -->
+    {% include "study_materials_section.html" %}
+</div>
+{% endblock %}

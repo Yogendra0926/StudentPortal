@@ -227,6 +227,79 @@
     .section-card .btn-green,
     .section-card .btn-purple { width: 100%; }
 }
+/* Admin dashboard text visibility and layout fixes */
+.admin-container,
+.admin-container .tab-content,
+.admin-container .section-card {
+    color: #1e293b !important;
+}
+
+.admin-container h3 {
+    color: #172033 !important;
+}
+
+.admin-container p,
+.admin-container label,
+.admin-container span {
+    opacity: 1;
+}
+
+.admin-container .section-description {
+    color: #64748b !important;
+}
+
+.admin-container .form-group label,
+.admin-container .filter-bar label {
+    color: #334155 !important;
+}
+
+.admin-container .data-table th {
+    color: #334155 !important;
+}
+
+.admin-container .data-table td {
+    color: #475569 !important;
+}
+
+.admin-container .form-control {
+    color: #1e293b !important;
+    background: #fff !important;
+}
+
+.admin-container .form-control::placeholder {
+    color: #94a3b8 !important;
+    opacity: 1;
+}
+
+/* Dashboard tabs */
+.admin-tabs {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    align-items: stretch;
+}
+
+.admin-tabs .tab-btn {
+    color: #475569 !important;
+    opacity: 1 !important;
+    min-width: 0;
+    line-height: 1.5;
+}
+
+.admin-tabs .tab-btn.active {
+    color: #fff !important;
+}
+
+@media (max-width: 900px) {
+    .admin-tabs {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .admin-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
 </style>
 
 <div class="admin-container">
@@ -256,6 +329,11 @@
                 onclick="switchTab('manage_quizzes', this)">
             <i class="fa-solid fa-list-check"></i> MANAGE QUIZZES
         </button>
+        <button type="button" class="tab-btn"
+        onclick="switchTab('study_materials', this)">
+    <i class="fa-solid fa-book-open"></i>
+    STUDY MATERIALS
+</button>
     </div>
 
     <!-- TAB 1: EXISTING PHASE-1 ATTENDANCE -->
@@ -606,7 +684,135 @@
             </div>
         </div>
     </div>
+<!-- TAB 6: STUDY MATERIALS -->
+<div id="tab-study_materials" class="tab-content"
+     style="display:none;">
 
+    <div class="section-card" style="max-width:850px;">
+        <h3>
+            <i class="fa-solid fa-book-open"></i>
+            Upload Course Study Material
+        </h3>
+
+        <p class="section-description">
+            Upload PDF notes for a course. Students can access
+            them from their respective LMS course pages.
+        </p>
+
+        <form action="{{ url_for('admin_upload_study_material') }}"
+              method="POST"
+              enctype="multipart/form-data"
+              class="form-grid">
+
+            <div class="form-group col-span-2">
+                <label for="study_course_code">Course</label>
+
+                <select name="course_code"
+                        id="study_course_code"
+                        class="form-control"
+                        required>
+                    <option value="">Select Course</option>
+
+                    {% for code, course_name in study_material_courses.items() %}
+                    <option value="{{ code }}">
+                        {{ code }} — {{ course_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group col-span-2">
+                <label for="study_title">Material Title</label>
+
+                <input type="text"
+                       name="title"
+                       id="study_title"
+                       class="form-control"
+                       maxlength="180"
+                       placeholder="e.g. Unit 1 - Introduction to Deep Learning"
+                       required>
+            </div>
+
+            <div class="form-group col-span-2">
+                <label for="study_description">Description</label>
+
+                <textarea name="description"
+                          id="study_description"
+                          rows="4"
+                          class="form-control"
+                          placeholder="Optional message for students"></textarea>
+            </div>
+
+            <div class="form-group col-span-2">
+                <label for="study_pdf">Select PDF (Maximum 50 MB)</label>
+
+                <input type="file"
+                       name="pdf_file"
+                       id="study_pdf"
+                       class="form-control"
+                       accept=".pdf,application/pdf"
+                       required>
+            </div>
+
+            <div class="col-span-2">
+                <button type="submit" class="btn-purple">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    Upload PDF
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="section-card">
+        <h3>Uploaded Study Materials</h3>
+
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>COURSE</th>
+                        <th>TITLE</th>
+                        <th>DESCRIPTION</th>
+                        <th>FILE</th>
+                        <th>UPLOADED</th>
+                        <th>ACTION</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for material in study_material_records %}
+                    <tr>
+                        <td>{{ material.course_code }}</td>
+                        <td>{{ material.title }}</td>
+                        <td>{{ material.description or '—' }}</td>
+                        <td>{{ material.original_filename }}</td>
+                        <td>{{ material.uploaded_at }}</td>
+                        <td>
+                            <form method="POST"
+                                  action="{{ url_for('admin_delete_study_material', material_id=material.id) }}"
+                                  onsubmit="return confirm('Delete this material?');">
+
+                                <button type="submit" class="btn-red-sm">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center;">
+                            No study materials uploaded yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
 </div>
 
 <script>
@@ -635,10 +841,28 @@ function switchTab(tabName, clickedButton) {
 document.addEventListener('DOMContentLoaded', function() {
     const params = new URLSearchParams(window.location.search);
 
-    if (params.has('assign_id')) {
-        switchTab('review_assign', document.querySelectorAll('.tab-btn')[3]);
+    const tab = params.get('tab');
+
+    if (tab === 'study_materials') {
+        switchTab(
+            'study_materials',
+            document.querySelectorAll('.tab-btn')[5]
+        );
+    } else if (params.has('assign_id')) {
+        switchTab(
+            'review_assign',
+            document.querySelectorAll('.tab-btn')[3]
+        );
     } else if (params.get('attendance_tab') === 'phase2_attendance') {
-        switchTab('phase2_attendance', document.querySelectorAll('.tab-btn')[1]);
+        switchTab(
+            'phase2_attendance',
+            document.querySelectorAll('.tab-btn')[1]
+        );
+    } else {
+        switchTab(
+            'attendance',
+            document.querySelectorAll('.tab-btn')[0]
+        );
     }
 });
 </script>

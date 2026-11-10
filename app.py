@@ -7,6 +7,9 @@ import requests
 from flask import request, jsonify
 from zoneinfo import ZoneInfo
 from datetime import datetime, date
+from uuid import uuid4
+from werkzeug.utils import secure_filename
+from supabase import create_client
 
 
 
@@ -34,6 +37,58 @@ razorpay_client = (
 # Create both directories if they don't exist
 os.makedirs(app.config['STUDY_MATERIALS_FOLDER'], exist_ok=True)
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+# =========================================================
+# SUPABASE STORAGE — COURSE STUDY MATERIALS
+# =========================================================
+app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
+
+SUPABASE_URL = os.getenv("SUPABASE_URL", "").strip()
+SUPABASE_SECRET_KEY = os.getenv("SUPABASE_SECRET_KEY", "").strip()
+SUPABASE_BUCKET = os.getenv("SUPABASE_BUCKET", "study-materials").strip()
+_supabase_client = None
+
+def get_supabase_client():
+    global _supabase_client
+    if not SUPABASE_URL or not SUPABASE_SECRET_KEY:
+        return None
+    if _supabase_client is None:
+        _supabase_client = create_client(SUPABASE_URL, SUPABASE_SECRET_KEY)
+    return _supabase_client
+
+STUDY_MATERIAL_COURSES = {
+    "CSP0101": "OOPS using JAVA",
+    "CSP0102": "Data Structures",
+    "CSL0109": "Design & Analysis of Complex Structures",
+    "CSL0105": "Artificial Intelligence",
+    "CSD0201": "Placement Readiness Program",
+    "CSE0212[T]": "Deep Learning",
+    "CSE0213": "Generative AI",
+    "AP0201": "Aptitude & Reasoning",
+    "CSL0203": "Python Programming"
+}
+
+def get_course_study_materials(course_code):
+    conn = get_db_connection()
+    if conn is None:
+        app.logger.error("Database unavailable while loading study materials.")
+        return []
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""
+            SELECT id, course_code, title, description, original_filename, uploaded_at
+            FROM study_materials
+            WHERE course_code = %s
+            ORDER BY uploaded_at DESC, id DESC
+        """, (course_code,))
+        return cursor.fetchall()
+    except Exception:
+        app.logger.exception("Could not load course study materials.")
+        return []
+    finally:
+        cursor.close()
+        conn.close()
+
 
 # Database Connection Helper
 def get_db_connection():
@@ -2794,37 +2849,85 @@ def java_course():
     if 'user_id' not in session or session['role'] != 'student':
         return redirect(url_for('login'))
 
-    return render_template("java_course.html")
+    return render_template("java_course.html", study_materials=get_course_study_materials("CSP0101"))
 @app.route("/data_structures-course")
 def dsa_course():
 
     if 'user_id' not in session or session['role'] != 'student':
         return redirect(url_for('login'))
 
-    return render_template("data_structures.html")
+    return render_template("data_structures.html", study_materials=get_course_study_materials("CSP0102"))
 @app.route("/adv_dsa")
 def adv_dsa_course():
 
     if 'user_id' not in session or session['role'] != 'student':
         return redirect(url_for('login'))
 
-    return render_template("adv_dsa.html")
+    return render_template("adv_dsa.html", study_materials=get_course_study_materials("CSL0109"))
 @app.route("/Ai")
 def Ai_course():
 
     if 'user_id' not in session or session['role'] != 'student':
         return redirect(url_for('login'))
 
-    return render_template("Ai.html")
+    return render_template("Ai.html", study_materials=get_course_study_materials("CSL0105"))
 @app.route("/lms/placement-readiness")
 def placement_course():
-    return render_template("placement_course.html")
+    return render_template("placement_course.html", study_materials=get_course_study_materials("CSD0201"))
 
 
 @app.route("/lms/deep-learning")
 def deep_learning_course():
-    return render_template("deep_learning_course.html")
+    return render_template("deep_learning_course.html", study_materials=get_course_study_materials("CSE0212[T]"))
 
+@app.route('/genai_course')
+def genai_course():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM study_materials
+        WHERE course_code = %s
+        ORDER BY uploaded_at DESC
+    """, ("CSE0213",))
+
+    study_materials = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template(
+        "Genai_course.html",
+        study_materials=study_materials
+    )
+
+@app.route('/aptitude_course')
+def aptitude_course():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    study_materials = get_course_study_materials("AP0201")
+
+    return render_template(
+        "Aptitude_reasoning_course.html",
+        study_materials=study_materials
+    )
+
+@app.route('/python_course')
+def python_course():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    study_materials = get_course_study_materials("CSL0203")
+
+    return render_template(
+        "python_programming_course.html",
+        study_materials=study_materials
+    )
 @app.route('/announcements')
 def announcements():
 
@@ -2995,6 +3098,7 @@ def admin_portal():
     assignments = []
     submissions = []
     admin_quizzes = []
+    study_material_records = []
     phase2_students = []
     assignment_courses = []
 
@@ -3141,6 +3245,18 @@ def admin_portal():
         except Exception:
             app.logger.exception("Failed to load quizzes")
 
+        # STUDY MATERIALS
+        try:
+            cursor.execute("""
+                SELECT id, course_code, title, description,
+                       original_filename, uploaded_at
+                FROM study_materials
+                ORDER BY uploaded_at DESC, id DESC
+            """)
+            study_material_records = cursor.fetchall()
+        except Exception:
+            app.logger.exception("Failed to load study materials")
+
     except Exception:
         app.logger.exception("Error loading admin portal")
         flash(
@@ -3166,7 +3282,9 @@ def admin_portal():
         phase2_students=phase2_students,
         selected_phase2_course=selected_phase2_course,
         selected_phase2_date=selected_phase2_date,
-        assignment_courses=assignment_courses
+        assignment_courses=assignment_courses,
+        study_material_records=study_material_records,
+        study_material_courses=STUDY_MATERIAL_COURSES
     )
 
 @app.route('/admin/save_attendance', methods=['POST'])
@@ -3603,6 +3721,152 @@ def admin_add_question():
 
     flash("Question added to the quiz successfully!", "success")
     return redirect(url_for('admin_portal'))
+
+
+
+# =========================================================
+# STUDY MATERIALS — SUPABASE STORAGE
+# =========================================================
+@app.route("/admin/study-materials/upload", methods=["POST"])
+def admin_upload_study_material():
+    if "user_id" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
+
+    course_code = request.form.get("course_code", "").strip()
+    title = request.form.get("title", "").strip()
+    description = request.form.get("description", "").strip()
+    pdf_file = request.files.get("pdf_file")
+
+    if course_code not in STUDY_MATERIAL_COURSES:
+        flash("Please select a valid course.", "danger")
+        return redirect(url_for("admin_portal"))
+    if not title or not pdf_file or not pdf_file.filename:
+        flash("Course, title and PDF file are required.", "warning")
+        return redirect(url_for("admin_portal"))
+    if not pdf_file.filename.lower().endswith(".pdf"):
+        flash("Only PDF files are allowed.", "danger")
+        return redirect(url_for("admin_portal"))
+
+    file_bytes = pdf_file.read()
+    if not file_bytes.startswith(b"%PDF-"):
+        flash("The selected file is not a valid PDF.", "danger")
+        return redirect(url_for("admin_portal"))
+    if not file_bytes or len(file_bytes) > 50 * 1024 * 1024:
+        flash("PDF must be 50 MB or smaller.", "danger")
+        return redirect(url_for("admin_portal"))
+
+    storage = get_supabase_client()
+    if storage is None:
+        flash("Supabase credentials are missing on the server.", "danger")
+        return redirect(url_for("admin_portal"))
+
+    original_filename = secure_filename(pdf_file.filename) or "study-material.pdf"
+    # Remove square brackets from the storage folder name
+    safe_course_folder = secure_filename(
+        course_code.replace("[", "").replace("]", "")
+    )
+
+    storage_path = f"{safe_course_folder}/{uuid4().hex}_{original_filename}"
+    conn = get_db_connection()
+    if conn is None:
+        flash("Database connection failed.", "danger")
+        return redirect(url_for("admin_portal"))
+    cursor = conn.cursor()
+    try:
+        storage.storage.from_(SUPABASE_BUCKET).upload(
+            path=storage_path,
+            file=file_bytes,
+            file_options={"content-type": "application/pdf", "upsert": "false"}
+        )
+        cursor.execute("""
+            INSERT INTO study_materials
+                (course_code, title, description, original_filename, storage_path, uploaded_by)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (course_code, title, description or None, original_filename,
+              storage_path, session["user_id"]))
+        flash("Study material uploaded successfully.", "success")
+    except Exception:
+        app.logger.exception("Study material upload failed")
+        try:
+            storage.storage.from_(SUPABASE_BUCKET).remove([storage_path])
+        except Exception:
+            app.logger.exception("Storage cleanup failed after upload error")
+        flash("Could not upload the PDF. Check server logs.", "danger")
+    finally:
+        cursor.close()
+        conn.close()
+    return redirect(url_for("admin_portal", tab="study_materials"))
+
+
+@app.route("/admin/study-materials/<int:material_id>/delete", methods=["POST"])
+def admin_delete_study_material(material_id):
+    if "user_id" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
+    storage = get_supabase_client()
+    if storage is None:
+        flash("Supabase credentials are missing on the server.", "danger")
+        return redirect(url_for("admin_portal", tab="study_materials"))
+    conn = get_db_connection()
+    if conn is None:
+        flash("Database connection failed.", "danger")
+        return redirect(url_for("admin_portal", tab="study_materials"))
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT storage_path FROM study_materials WHERE id = %s", (material_id,))
+        row = cursor.fetchone()
+        if not row:
+            flash("Study material not found.", "warning")
+            return redirect(url_for("admin_portal", tab="study_materials"))
+        storage.storage.from_(SUPABASE_BUCKET).remove([row["storage_path"]])
+        cursor.execute("DELETE FROM study_materials WHERE id = %s", (material_id,))
+        flash("Study material deleted successfully.", "success")
+    except Exception:
+        app.logger.exception("Study material deletion failed")
+        flash("Could not delete the study material.", "danger")
+    finally:
+        cursor.close()
+        conn.close()
+    return redirect(url_for("admin_portal", tab="study_materials"))
+
+
+@app.route("/study-materials/<int:material_id>/download")
+def download_study_material(material_id):
+    if "user_id" not in session or session.get("role") != "student":
+        return redirect(url_for("login"))
+    conn = get_db_connection()
+    if conn is None:
+        flash("Database connection failed.", "danger")
+        return redirect(url_for("home"))
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "SELECT storage_path FROM study_materials WHERE id = %s",
+            (material_id,)
+        )
+        row = cursor.fetchone()
+    finally:
+        cursor.close()
+        conn.close()
+    if not row:
+        flash("Study material not found.", "warning")
+        return redirect(url_for("lms"))
+    storage = get_supabase_client()
+    if storage is None:
+        flash("Study material storage is unavailable.", "danger")
+        return redirect(url_for("lms"))
+    try:
+        result = storage.storage.from_(SUPABASE_BUCKET).create_signed_url(
+            row["storage_path"], 900
+        )
+        signed_url = result.get("signedURL") or result.get("signedUrl")
+        if not signed_url:
+            raise RuntimeError("No signed URL returned by Supabase.")
+        return redirect(signed_url)
+    except Exception:
+        app.logger.exception("Signed PDF URL creation failed")
+        flash("Could not open this PDF. Please try again.", "danger")
+        return redirect(url_for("lms"))
+
 
 if __name__ == "__main__":
     app.run(debug=False)

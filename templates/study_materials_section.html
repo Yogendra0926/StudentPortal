@@ -1,0 +1,94 @@
+
+<section class="course-study-materials">
+
+    <div class="study-header">
+        <div class="study-header-icon">
+            <i class="fa-solid fa-book-open"></i>
+        </div>
+
+        <div>
+            <h2>Study Materials &amp; Notes</h2>
+        </div>
+    </div>
+
+    <p class="study-subtitle">
+        Access lecture notes, practice questions, assignments
+        and other PDF resources shared by your instructor.
+    </p>
+
+    {% if study_materials %}
+
+    <div class="study-material-grid">
+
+        {% for material in study_materials %}
+
+        <article class="study-material-card">
+
+            <div class="study-card-top">
+
+                <div class="study-pdf-icon">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+
+                <div>
+                    <h3 class="study-card-title">
+                        {{ material.title }}
+                    </h3>
+
+                    <span class="study-file-type">PDF DOCUMENT</span>
+                </div>
+
+            </div>
+
+            {% if material.description %}
+            <p class="study-card-description">
+                {{ material.description }}
+            </p>
+            {% else %}
+            <p class="study-card-description">
+                Study resource shared by your instructor.
+            </p>
+            {% endif %}
+
+            <div class="study-card-meta">
+                <i class="fa-solid fa-file-pdf"></i>
+
+                <span>{{ material.original_filename }}</span>
+
+                {% if material.uploaded_at %}
+                <span>•</span>
+                <span>{{ material.uploaded_at }}</span>
+                {% endif %}
+            </div>
+
+            <a href="{{ url_for('download_study_material', material_id=material.id) }}"
+               class="study-download-btn">
+
+                <i class="fa-solid fa-download"></i>
+                View / Download PDF
+
+            </a>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="study-empty-state">
+        <i class="fa-solid fa-folder-open"></i>
+
+        <h3>No Study Materials Available</h3>
+
+        <p>
+            Your instructor hasn't uploaded any PDF resources yet.
+            Please check again later.
+        </p>
+    </div>
+
+    {% endif %}
+
+</section>
+

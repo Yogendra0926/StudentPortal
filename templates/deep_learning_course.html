@@ -917,6 +917,206 @@
     }
 }
 
+/* =====================================
+   LMS STUDY MATERIALS SECTION
+===================================== */
+
+.course-study-materials {
+    margin: 35px 0;
+    padding: 28px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+    color: #1e293b !important;
+}
+
+.course-study-materials * {
+    box-sizing: border-box;
+}
+
+.study-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+}
+
+.study-header-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #eef2ff;
+    color: #4f46e5 !important;
+    border-radius: 13px;
+    font-size: 21px;
+}
+
+.study-header h2 {
+    margin: 0;
+    color: #172554 !important;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.study-subtitle {
+    margin: 5px 0 24px;
+    color: #64748b !important;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.study-material-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+}
+
+.study-material-card {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    transition: all 0.25s ease;
+    min-width: 0;
+}
+
+.study-material-card:hover {
+    transform: translateY(-4px);
+    border-color: #a5b4fc;
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.10);
+}
+
+.study-card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin-bottom: 15px;
+}
+
+.study-pdf-icon {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #fff1f2;
+    color: #e11d48 !important;
+    border-radius: 11px;
+    font-size: 21px;
+}
+
+.study-card-title {
+    margin: 2px 0 5px;
+    color: #172554 !important;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.study-file-type {
+    display: inline-block;
+    color: #dc2626 !important;
+    background: #fef2f2;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.study-card-description {
+    color: #64748b !important;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0 0 17px;
+    overflow-wrap: anywhere;
+}
+
+.study-card-meta {
+    color: #64748b !important;
+    font-size: 11px;
+    margin-top: auto;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+.study-download-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    color: #ffffff !important;
+    border-radius: 9px;
+    text-decoration: none !important;
+    font-size: 13px;
+    font-weight: 800;
+    transition: all 0.2s ease;
+}
+
+.study-download-btn:hover {
+    background: #3730a3;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+.study-empty-state {
+    padding: 30px 15px;
+    text-align: center;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 13px;
+}
+
+.study-empty-state i {
+    font-size: 30px;
+    color: #94a3b8 !important;
+    margin-bottom: 12px;
+}
+
+.study-empty-state h3 {
+    color: #334155 !important;
+    font-size: 16px;
+    margin: 0 0 6px;
+}
+
+.study-empty-state p {
+    color: #64748b !important;
+    font-size: 13px;
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .course-study-materials {
+        padding: 17px;
+        margin: 22px 0;
+    }
+
+    .study-header h2 {
+        font-size: 18px;
+    }
+
+    .study-material-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .study-material-card {
+        padding: 16px;
+    }
+}
+
 </style>
 
 
@@ -1141,425 +1341,7 @@
         </div>
 
 
-        <div class="syllabus-grid">
-
-
-            <!-- =================================================
-                 UNIT 1
-                 ================================================= -->
-
-            <div class="unit-card">
-
-                <span class="unit-number">
-                    01
-                </span>
-
-                <div class="unit-title">
-
-                    <div class="unit-icon">
-                        <i class="fa-solid fa-brain"></i>
-                    </div>
-
-                    <div>
-
-                        <h3>
-                            Unit 1 — Neural Network Foundations
-                        </h3>
-
-                        <span>
-                            ANN Fundamentals &amp; Mathematical Basics
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <ul class="unit-topics">
-
-                    <li>
-                        Introduction to Deep Learning
-                    </li>
-
-                    <li>
-                        Artificial Neural Network architecture
-                    </li>
-
-                    <li>
-                        Neurons, weights and biases
-                    </li>
-
-                    <li>
-                        Activation functions
-                    </li>
-
-                    <li>
-                        Forward propagation
-                    </li>
-
-                    <li>
-                        Loss and cost functions
-                    </li>
-
-                    <li>
-                        Gradient descent
-                    </li>
-
-                    <li>
-                        Basic matrix operations for neural networks
-                    </li>
-
-                </ul>
-
-
-                <div class="unit-focus">
-
-                    <strong>
-                        Placement Focus:
-                    </strong>
-
-                    Be prepared to explain neurons, activation
-                    functions, forward propagation, loss functions
-                    and gradient descent with simple examples.
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================================
-                 UNIT 2
-                 ================================================= -->
-
-            <div class="unit-card">
-
-                <span class="unit-number">
-                    02
-                </span>
-
-                <div class="unit-title">
-
-                    <div class="unit-icon">
-                        <i class="fa-solid fa-gears"></i>
-                    </div>
-
-                    <div>
-
-                        <h3>
-                            Unit 2 — Training &amp; Optimization
-                        </h3>
-
-                        <span>
-                            Backpropagation, Optimization &amp; Regularization
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <ul class="unit-topics">
-
-                    <li>
-                        Backpropagation algorithm
-                    </li>
-
-                    <li>
-                        Chain rule and gradients
-                    </li>
-
-                    <li>
-                        Learning rate
-                    </li>
-
-                    <li>
-                        Batch, mini-batch and stochastic gradient descent
-                    </li>
-
-                    <li>
-                        Adam, RMSProp and Momentum
-                    </li>
-
-                    <li>
-                        Overfitting and underfitting
-                    </li>
-
-                    <li>
-                        Dropout and regularization
-                    </li>
-
-                    <li>
-                        Batch normalization
-                    </li>
-
-                </ul>
-
-
-                <div class="unit-focus">
-
-                    <strong>
-                        Placement Focus:
-                    </strong>
-
-                    Understand why models overfit, how
-                    backpropagation works and how optimizers
-                    improve neural-network training.
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================================
-                 UNIT 3
-                 ================================================= -->
-
-            <div class="unit-card">
-
-                <span class="unit-number">
-                    03
-                </span>
-
-                <div class="unit-title">
-
-                    <div class="unit-icon">
-                        <i class="fa-solid fa-image"></i>
-                    </div>
-
-                    <div>
-
-                        <h3>
-                            Unit 3 — Convolutional Neural Networks
-                        </h3>
-
-                        <span>
-                            Computer Vision &amp; Image Processing
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <ul class="unit-topics">
-
-                    <li>
-                        CNN architecture
-                    </li>
-
-                    <li>
-                        Convolution operation
-                    </li>
-
-                    <li>
-                        Filters and feature maps
-                    </li>
-
-                    <li>
-                        Stride and padding
-                    </li>
-
-                    <li>
-                        Pooling layers
-                    </li>
-
-                    <li>
-                        ReLU and other activations
-                    </li>
-
-                    <li>
-                        CNN output-size calculations
-                    </li>
-
-                    <li>
-                        Image classification
-                    </li>
-
-                </ul>
-
-
-                <div class="unit-focus">
-
-                    <strong>
-                        Placement Focus:
-                    </strong>
-
-                    Practice CNN numerical problems involving
-                    convolution output size, padding, stride,
-                    pooling and parameter calculations.
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================================
-                 UNIT 4
-                 ================================================= -->
-
-            <div class="unit-card">
-
-                <span class="unit-number">
-                    04
-                </span>
-
-                <div class="unit-title">
-
-                    <div class="unit-icon">
-                        <i class="fa-solid fa-arrows-rotate"></i>
-                    </div>
-
-                    <div>
-
-                        <h3>
-                            Unit 4 — RNN, LSTM &amp; Sequential Learning
-                        </h3>
-
-                        <span>
-                            Sequence Modeling &amp; Natural Language Processing
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <ul class="unit-topics">
-
-                    <li>
-                        Sequential data and sequence modeling
-                    </li>
-
-                    <li>
-                        Recurrent Neural Networks
-                    </li>
-
-                    <li>
-                        Hidden states
-                    </li>
-
-                    <li>
-                        Backpropagation Through Time
-                    </li>
-
-                    <li>
-                        Vanishing and exploding gradients
-                    </li>
-
-                    <li>
-                        LSTM architecture
-                    </li>
-
-                    <li>
-                        Forget, input and output gates
-                    </li>
-
-                    <li>
-                        GRU and sequence applications
-                    </li>
-
-                </ul>
-
-
-                <div class="unit-focus">
-
-                    <strong>
-                        Placement Focus:
-                    </strong>
-
-                    Know why basic RNNs struggle with long sequences
-                    and how LSTM gates help preserve important information.
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================================
-                 UNIT 5
-                 ================================================= -->
-
-            <div class="unit-card">
-
-                <span class="unit-number">
-                    05
-                </span>
-
-                <div class="unit-title">
-
-                    <div class="unit-icon">
-                        <i class="fa-solid fa-rocket"></i>
-                    </div>
-
-                    <div>
-
-                        <h3>
-                            Unit 5 — Modern Deep Learning
-                        </h3>
-
-                        <span>
-                            Transfer Learning, Deployment &amp; Practical AI
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <ul class="unit-topics">
-
-                    <li>
-                        Transfer learning
-                    </li>
-
-                    <li>
-                        Pre-trained neural networks
-                    </li>
-
-                    <li>
-                        Fine-tuning
-                    </li>
-
-                    <li>
-                        Data augmentation
-                    </li>
-
-                    <li>
-                        Autoencoders
-                    </li>
-
-                    <li>
-                        Introduction to attention mechanisms
-                    </li>
-
-                    <li>
-                        Model evaluation and error analysis
-                    </li>
-
-                    <li>
-                        Deep learning model deployment concepts
-                    </li>
-
-                </ul>
-
-
-                <div class="unit-focus">
-
-                    <strong>
-                        Placement Focus:
-                    </strong>
-
-                    Understand transfer learning, fine-tuning,
-                    model evaluation and how a trained deep-learning
-                    model can be integrated into a real application.
-
-                </div>
-
-            </div>
-
-
-        </div>
-
+      
 
         <!-- =====================================================
              PLACEMENT PREPARATION
@@ -1650,6 +1432,8 @@
 
 
 </div>
+
+{% include "study_materials_section.html" %}
 
 {% endblock %}
 ```
